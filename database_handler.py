@@ -13,7 +13,7 @@ def reset():
 
 
 # takes a form and returs the new plan's id
-def createPlan(form):
+def create_plan(form):
     try:
         name = form['name']
 
