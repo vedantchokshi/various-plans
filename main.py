@@ -17,10 +17,12 @@ import logging
 
 # [START imports]
 from flask import Flask, render_template, request
+from forms import PlanForm
 # [END imports]
 
 # [START create_app]
 app = Flask(__name__)
+app.secret_key = 'development key lol'
 # [END create_app]
 
 # [START homepage]
@@ -48,20 +50,17 @@ def plan(planid):
 # [END plan view]
 
 # [START newplan]
-@app.route('/plan/new', methods=['POST'])
-def plan(planid):
-    # get plan form db or smth
-    plan = {'id': planid, 'name':'CS BNO','phase':2, 'chosenRoute':None}
-    # get events
-    events = [{'name': 'Staags', 'votes':3}, {'name': 'Mitre', 'votes':-2}, {'name': 'Sobar', 'votes':5}, {'name': 'manzils', 'votes':4}]
-    # get routes
-    routes = [{'name': 'Route 1', 'votes':6}, {'name': 'Route 2', 'votes':-4}, {'name': 'Route 3', 'votes':3}, {'name': 'Route 4', 'votes':1}]
+@app.route('/plan/new', methods=['POST','GET'])
+def new_plan():
+    if (request.method == "GET"):
+        form = PlanForm()
+        return render_template('new_plan.html', form=form)
+    elif (request.method == 'POST'):
 
+        # create new plan in db
+        # plan = db.createPlan()
+        return plan(1)
 
-    plan['events'] = events
-    plan['routes'] = routes
-
-    return render_template('plan.html', plan=plan)
 # [END new plan]
 
 
