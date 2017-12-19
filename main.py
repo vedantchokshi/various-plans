@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START app]
 import logging
 
 # [START imports]
@@ -20,25 +19,18 @@ from flask import Flask, render_template, request
 from forms import PlanForm
 import database_handler as db
 
-# [END imports]
-
-# [START create_app]
 app = Flask(__name__)
 app.secret_key = 'development key lol'
 
 
-# [END create_app]
-
-# [START homepage]
+# [homepage]
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
     return render_template('index.html')
 
 
-# [END homepage]
-
-# [START plan view]
+# [plan view]
 @app.route('/plan/<planid>', methods=['GET'])
 def plan(planid):
     # get plan form db or smth
@@ -56,9 +48,7 @@ def plan(planid):
     return render_template('plan.html', plan=plan)
 
 
-# [END plan view]
-
-# [START newplan]
+# [newplan]
 @app.route('/plan/new', methods=['POST', 'GET'])
 def new_plan():
     if (request.method == "GET"):
@@ -72,15 +62,12 @@ def new_plan():
         return plan(1)
 
 
-# [END new plan]
-
-
 @app.errorhandler(500)
 def server_error(e):
     # Log the error and stacktrace.
     logging.exception('An error occurred during a request.')
     return 'An internal error occurred.', 500
-# [END app]
+
 
 if __name__ == '__main__':
     app.run(debug=True)
