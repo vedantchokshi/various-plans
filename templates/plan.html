@@ -4,10 +4,24 @@
    <link rel="stylesheet" type="text/css" href="/static/style.css">
   </head>
   <body>
-    <h1>{{plan.name}} (Plan {{plan.id}})</h1>
-    {% for event in plan.events %}
-        <div><p>{{ event.name }} has <b>{{ event.votes }}</b> votes.</p></div>
-    {% endfor %}
-    OI OI big ladz 'av made planz
+    <h1>{{plan.name}} ({{plan.id}})</h1>
+
+    {% if plan.phase == 1 %}
+      <div>
+        <h2>Events</h2>
+        {% for event in plan.events %}
+            <div><p>{{ event.name }} has <b>{{ event.votes }}</b> votes.</p></div>
+        {% endfor %}
+      </div>
+      OI OI big ladz 'av made planz
+    {% elif plan.phase == 2 %}
+      <div>
+        <h2>Routes</h2>
+        {% for route in plan.routes %}
+            <div><p>{{ route.name }} has <b>{{ route.votes }}</b> votes.</p></div>
+        {% endfor %}
+      </div>
+      OI OI big ladz 'av made planz
+    {% endif %}
   </body>
 </html>

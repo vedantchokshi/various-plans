@@ -31,15 +31,38 @@ def index():
 # [END homepage]
 
 # [START plan view]
-@app.route('/plan', methods=['GET'])
-def plan():
+@app.route('/plan/<planid>', methods=['GET'])
+def plan(planid):
     # get plan form db or smth
-    plan = {'id': 1, 'name':'CS BNO'}
+    plan = {'id': planid, 'name':'CS BNO','phase':2, 'chosenRoute':None}
     # get events
     events = [{'name': 'Staags', 'votes':3}, {'name': 'Mitre', 'votes':-2}, {'name': 'Sobar', 'votes':5}, {'name': 'manzils', 'votes':4}]
+    # get routes
+    routes = [{'name': 'Route 1', 'votes':6}, {'name': 'Route 2', 'votes':-4}, {'name': 'Route 3', 'votes':3}, {'name': 'Route 4', 'votes':1}]
+
+
     plan['events'] = events
+    plan['routes'] = routes
+
     return render_template('plan.html', plan=plan)
 # [END plan view]
+
+# [START newplan]
+@app.route('/plan/new', methods=['POST'])
+def plan(planid):
+    # get plan form db or smth
+    plan = {'id': planid, 'name':'CS BNO','phase':2, 'chosenRoute':None}
+    # get events
+    events = [{'name': 'Staags', 'votes':3}, {'name': 'Mitre', 'votes':-2}, {'name': 'Sobar', 'votes':5}, {'name': 'manzils', 'votes':4}]
+    # get routes
+    routes = [{'name': 'Route 1', 'votes':6}, {'name': 'Route 2', 'votes':-4}, {'name': 'Route 3', 'votes':3}, {'name': 'Route 4', 'votes':1}]
+
+
+    plan['events'] = events
+    plan['routes'] = routes
+
+    return render_template('plan.html', plan=plan)
+# [END new plan]
 
 
 @app.errorhandler(500)
