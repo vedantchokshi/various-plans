@@ -7,7 +7,7 @@ def reset():
     conn = sqlite3.connect(dbName)
     print("Opened database successfully")
 
-    conn.execute('CREATE TABLE Plans (id INT AUTOINCREMENT PRIMARY KEY, name TEXT)')
+    conn.execute('CREATE TABLE Plans (id INT PRIMARY KEY, name TEXT)')
     print("Table created successfully")
     conn.close()
 
