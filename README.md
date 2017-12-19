@@ -1,16 +1,68 @@
-# App Engine Standard Flask Tutorial App
+## PLEASE NOTE
+A Linux/Unix shell is recommended for this project; look into Bash on Ubuntu on Windows or consider dual-booting. These installations and commands are guarenteed to work on Bash on Ubuntu on Windows, mileage may vary on other shells or OSs.
 
-[![Open in Cloud Shell][shell_img]][shell_link]
+### Prerequisites
+* git
+* python2
+* gcloud
+* virtualenv
+* pip
 
-[shell_img]: http://gstatic.com/cloudssh/images/open-btn.png
-[shell_link]: https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/python-docs-samples&page=editor&open_in_editor=appengine/standard/flask/tutorial/README.md
+Check you have all these commands before continuing
 
-This sample shows how to use [Flask](http://flask.pocoo.org/) to handle
-requests, forms, templates, and static files on Google App Engine Standard.
+### Clone repository / pull
+By now you should have cloned the repository, make sure you have the latest branch references
+```bash
+$ git fetch
+```
+### Create virtual environment
+You should be in the root directory (directory with the main.py)
+```bash
+$ virtualenv env
+```
+Creating a virtual environment only needs to happen once, now you should have an env folder
 
-Before running or deploying this application, install the dependencies using
-[pip](http://pip.readthedocs.io/en/stable/):
+### Use virtual environment
+Whenever you begin working, you will need to activate the environment
+```bash
+$ source env/bin/activate
+```
+### Install modules
+Now you can use pip to install the module requirements
+```bash
+$ pip install -t lib -r requirements.txt
+```
+This will create a lib folder containing Flask and a bunch of other modules. You only need to do this once.
+Now that a virtual environment with all the modules you need is set up, you can run the server locally
 
-    pip install -t lib -r requirements.txt
+### Run server locally
+```bash
+$ dev_appserver.py app.yaml
+```
+This will start the server at http://localhost:8080/
 
-For more information, see the [App Engine Standard README](../../README.md)
+The dev server is super smart and will restart itself if it detects a change to a file, so you can go off programming, refresh the localhost page and see how badly you fucked things up.
+
+Quit the dev server with `Ctrl+C`
+
+### Exit virtual environment
+To exit the virtual environment...
+```bash
+$ deactivate
+```
+
+### Pushing to gcloud
+You may need to first authenticate gcloud and point it to the project if you have not done the initial setup
+```bash
+$ gcloud auth login
+...
+$ gcloud config set project various-artists
+```
+To deploy a new version of the app...
+```bash
+$ gcloud app deploy
+```
+If you're lazy and can't find the URL for the project...
+```bash
+$ gcloud app browse
+```
