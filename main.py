@@ -23,31 +23,23 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 # [END create_app]
 
+# [START homepage]
+@app.route('/', methods=['GET'])
+@app.route('/index', methods=['GET'])
+def index():
+    return render_template('index.html')
+# [END homepage]
 
-# [START form]
-@app.route('/form')
-def form():
-    return render_template('form.html')
-# [END form]
-
-
-# [START submitted]
-@app.route('/submitted', methods=['POST'])
-def submitted_form():
-    name = request.form['name']
-    email = request.form['email']
-    site = request.form['site_url']
-    comments = request.form['comments']
-
-    # [END submitted]
-    # [START render_template]
-    return render_template(
-        'submitted_form.html',
-        name=name,
-        email=email,
-        site=site,
-        comments=comments)
-    # [END render_template]
+# [START plan view]
+@app.route('/plan', methods=['GET'])
+def plan():
+    # get plan form db or smth
+    plan = {'id': 1, 'name':'CS BNO'}
+    # get events
+    events = [{'name': 'Staags', 'votes':3}, {'name': 'Mitre', 'votes':-2}, {'name': 'Sobar', 'votes':5}, {'name': 'manzils', 'votes':4}]
+    plan['events'] = events
+    return render_template('plan.html', plan=plan)
+# [END plan view]
 
 
 @app.errorhandler(500)

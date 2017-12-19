@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title>Varous Plans - Plan {{plan.id}}</title>
+   <link rel="stylesheet" type="text/css" href="/static/style.css">
+  </head>
+  <body>
+    <h1>{{plan.name}} (Plan {{plan.id}})</h1>
+    {% for event in plan.events %}
+        <div><p>{{ event.name }} has <b>{{ event.votes }}</b> votes.</p></div>
+    {% endfor %}
+    OI OI big ladz 'av made planz
+  </body>
+</html>
