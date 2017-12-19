@@ -18,6 +18,7 @@ import logging
 # [START imports]
 from flask import Flask, render_template, request
 from forms import PlanForm
+import database_handler as db
 # [END imports]
 
 # [START create_app]
@@ -58,7 +59,8 @@ def new_plan():
     elif (request.method == 'POST'):
 
         # create new plan in db
-        # plan = db.createPlan()
+        db.reset()
+        # planid = db.createPlan(request.form)
         return plan(1)
 
 # [END new plan]

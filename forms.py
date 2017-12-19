@@ -1,6 +1,6 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import TextField, SubmitField
 
-class PlanForm(Form):
+class PlanForm(FlaskForm):
    name = TextField("Name Of Plan")
    submit = SubmitField("Create!")

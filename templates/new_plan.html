@@ -5,7 +5,7 @@
   </head>
   <body>
     <h1>New Plan</h1>
-    <form action = "http://localhost:8080/plan/new" method = post>
+    <form action = "{{ url_for('new_plan') }}" method = post>
 
                 {{ form.hidden_tag() }}
 
