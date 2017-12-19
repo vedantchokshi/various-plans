@@ -19,11 +19,14 @@ import logging
 from flask import Flask, render_template, request
 from forms import PlanForm
 import database_handler as db
+
 # [END imports]
 
 # [START create_app]
 app = Flask(__name__)
 app.secret_key = 'development key lol'
+
+
 # [END create_app]
 
 # [START homepage]
@@ -31,27 +34,32 @@ app.secret_key = 'development key lol'
 @app.route('/index', methods=['GET'])
 def index():
     return render_template('index.html')
+
+
 # [END homepage]
 
 # [START plan view]
 @app.route('/plan/<planid>', methods=['GET'])
 def plan(planid):
     # get plan form db or smth
-    plan = {'id': planid, 'name':'CS BNO','phase':2, 'chosenRoute':None}
+    plan = {'id': planid, 'name': 'CS BNO', 'phase': 2, 'chosenRoute': None}
     # get events
-    events = [{'name': 'Staags', 'votes':3}, {'name': 'Mitre', 'votes':-2}, {'name': 'Sobar', 'votes':5}, {'name': 'manzils', 'votes':4}]
+    events = [{'name': 'Staags', 'votes': 3}, {'name': 'Mitre', 'votes': -2}, {'name': 'Sobar', 'votes': 5},
+              {'name': 'manzils', 'votes': 4}]
     # get routes
-    routes = [{'name': 'Route 1', 'votes':6}, {'name': 'Route 2', 'votes':-4}, {'name': 'Route 3', 'votes':3}, {'name': 'Route 4', 'votes':1}]
-
+    routes = [{'name': 'Route 1', 'votes': 6}, {'name': 'Route 2', 'votes': -4}, {'name': 'Route 3', 'votes': 3},
+              {'name': 'Route 4', 'votes': 1}]
 
     plan['events'] = events
     plan['routes'] = routes
 
     return render_template('plan.html', plan=plan)
+
+
 # [END plan view]
 
 # [START newplan]
-@app.route('/plan/new', methods=['POST','GET'])
+@app.route('/plan/new', methods=['POST', 'GET'])
 def new_plan():
     if (request.method == "GET"):
         form = PlanForm()
@@ -62,6 +70,7 @@ def new_plan():
         db.reset()
         # planid = db.createPlan(request.form)
         return plan(1)
+
 
 # [END new plan]
 
