@@ -56,7 +56,7 @@ You may need to first authenticate gcloud and point it to the project if you hav
 ```bash
 $ gcloud auth login
 ...
-$ gcloud config set project various-artists
+$ gcloud config set project various-plans
 ```
 To deploy a new version of the app...
 ```bash
