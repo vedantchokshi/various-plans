@@ -17,6 +17,7 @@ def create_plan(form):
     try:
         name = form['name']
 
+        # TODO Remove catches and finally, with statement does this already
         with sqlite3.connect(dbName) as con:
             cur = con.cursor()
             cur.execute("INSERT INTO Plans (name) VALUES (?)", (name))
