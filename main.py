@@ -17,11 +17,39 @@ import logging
 # [START imports]
 from flask import Flask, render_template, request
 from forms import PlanForm
-import database_handler as db
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key = 'development key lol'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
+ # 'mysql+mysqldb://root@/<dbname>?unix_socket=/cloudsql/<projectid>:<instancename>'
 
+db = SQLAlchemy(app)
+
+class Plan(db.Model):
+   id = db.Column('id',db.Integer, primary_key = True)
+   name = db.Column(db.String(100), nullable=False)
+   phase = db.Column(db.Integer, nullable =False)
+   startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+   endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+   def __init__(self, name, phase):
+       self.name = name
+       self.phase = phase
+
+class Event(db.Model):
+   id = db.Column('id',db.Integer, primary_key = True)
+   planid = db.Column(db.Integer, db.ForeignKey('Plan.id'), nullable=False)
+   name = db.Column(db.String(100), nullable=False)
+   location  = db.Column(db.String(100))
+
+   plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
+
+   def __init__(self, name, location):
+       self.name = name
+       self.location = location
+
+db.create_all()
 
 # [homepage]
 @app.route('/', methods=['GET'])
@@ -32,9 +60,10 @@ def index():
 
 # [plan view]
 @app.route('/plan/<planid>', methods=['GET'])
-def plan(planid):
+def disp_plan(planid):
     # get plan form db or smth
-    plan = {'id': planid, 'name': 'CS BNO', 'phase': 2, 'chosenRoute': None}
+    plan = Plan.query.get(planid)
+
     # get events
     events = [{'name': 'Staags', 'votes': 3}, {'name': 'Mitre', 'votes': -2}, {'name': 'Sobar', 'votes': 5},
               {'name': 'manzils', 'votes': 4}]
@@ -42,8 +71,6 @@ def plan(planid):
     routes = [{'name': 'Route 1', 'votes': 6}, {'name': 'Route 2', 'votes': -4}, {'name': 'Route 3', 'votes': 3},
               {'name': 'Route 4', 'votes': 1}]
 
-    plan['events'] = events
-    plan['routes'] = routes
 
     return render_template('plan.html', plan=plan)
 
@@ -55,11 +82,11 @@ def new_plan():
         form = PlanForm()
         return render_template('new_plan.html', form=form)
     elif (request.method == 'POST'):
-
         # create new plan in db
-        db.reset()
-        # planid = db.createPlan(request.form)
-        return plan(1)
+        newPlan = Plan(request.form['name'],1)
+        db.session.add(newPlan)
+        db.session.commit()
+        return disp_plan(newPlan.id)
 
 
 @app.errorhandler(500)
