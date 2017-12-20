@@ -18,6 +18,7 @@ import logging
 from flask import Flask, render_template, request
 from forms import PlanForm
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'development key lol'
@@ -27,6 +28,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://vplans_db:COMP3207Plans
 db = SQLAlchemy(app)
 
 class Plan(db.Model):
+   __tablename__ = 'Plans'
    id = db.Column('id',db.Integer, primary_key = True)
    name = db.Column(db.String(100), nullable=False)
    phase = db.Column(db.Integer, nullable =False)
@@ -38,16 +40,35 @@ class Plan(db.Model):
        self.phase = phase
 
 class Event(db.Model):
-   id = db.Column('id',db.Integer, primary_key = True)
-   planid = db.Column(db.Integer, db.ForeignKey('Plan.id'), nullable=False)
-   name = db.Column(db.String(100), nullable=False)
-   location  = db.Column(db.String(100))
+    __tablename__ = 'Events'
+    id = db.Column('id',db.Integer, primary_key = True)
+    planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    location  = db.Column(db.String(100))
+    votes = db.Column(db.Integer, nullable=False, default=0)
 
-   plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
+    plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
 
-   def __init__(self, name, location):
+    def __init__(self, name, location):
        self.name = name
        self.location = location
+
+    def vote(self, vote):
+        self.votes = self.votes + vote
+
+
+class Route(db.Model):
+    __tablename__ = 'Routes'
+    id = db.Column('id',db.Integer, primary_key = True)
+    name = db.Column(db.String(100), nullable=False)
+    planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
+    votes = db.Column(db.Integer, nullable=False, default=0)
+
+
+    plan = db.relationship('Plan', backref=db.backref('routes', lazy=True))
+
+    def __init__(self, name):
+       self.name = name
 
 db.create_all()
 
@@ -63,15 +84,6 @@ def index():
 def disp_plan(planid):
     # get plan form db or smth
     plan = Plan.query.get(planid)
-
-    # get events
-    events = [{'name': 'Staags', 'votes': 3}, {'name': 'Mitre', 'votes': -2}, {'name': 'Sobar', 'votes': 5},
-              {'name': 'manzils', 'votes': 4}]
-    # get routes
-    routes = [{'name': 'Route 1', 'votes': 6}, {'name': 'Route 2', 'votes': -4}, {'name': 'Route 3', 'votes': 3},
-              {'name': 'Route 4', 'votes': 1}]
-
-
     return render_template('plan.html', plan=plan)
 
 
@@ -84,10 +96,34 @@ def new_plan():
     elif (request.method == 'POST'):
         # create new plan in db
         newPlan = Plan(request.form['name'],1)
+
+        e1 = Event('Booze up','Stags')
+        e2 = Event('Phil\'s sexy dnace moves','Sobar')
+        newPlan.events.append(e1)
+        newPlan.events.append(e2)
+
+        newPlan.routes.append(Route('Route 1'))
+
         db.session.add(newPlan)
         db.session.commit()
+
         return disp_plan(newPlan.id)
 
+# [vote]
+@app.route('/event/<eventid>/upvote', methods=['POST','GET'])
+def upvote_event(eventid):
+    return vote_event(eventid,1)
+
+@app.route('/plan/<planid>/event/<eventid>/downvote', methods=['POST'])
+def dwonvote_event(eventid):
+    return vote_event(eventid,-1)
+
+
+def vote_event(eventid,vote):
+    event = Event.query.get(eventid)
+    event.vote(vote)
+    db.session.commit()
+    return str(event.votes)
 
 @app.errorhandler(500)
 def server_error(e):
