@@ -10,18 +10,19 @@
       <div>
         <h2>Events</h2>
         {% for event in plan.events %}
-            <div><p>{{ event.name }} has <b>{{ event.votes }}</b> votes.</p></div>
+            <p>{{ event.name }} has <b>{{ event.votes }}</b> votes.</p>
         {% endfor %}
       </div>
-      OI OI big ladz 'av made planz
+      <a href="{{ url_for('new_event') }}">New Event</a><br>
     {% elif plan.phase == 2 %}
       <div>
         <h2>Routes</h2>
         {% for route in plan.routes %}
-            <div><p>{{ route.name }} has <b>{{ route.votes }}</b> votes.{{ route.events }}</p></div>
+            <p>{{ route.name }} has <b>{{ route.votes }}</b> votes.{{ route.events }}</p>
         {% endfor %}
       </div>
-      OI OI big ladz 'av made planz
+      <a href="{{ url_for('new_route') }}">New Route</a><br>
     {% endif %}
+    OI OI big ladz 'av made planz
   </body>
 </html>
