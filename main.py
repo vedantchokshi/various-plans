@@ -16,7 +16,7 @@ import logging
 
 # [START imports]
 from flask import Flask, render_template, request
-from forms import PlanForm
+from forms import PlanForm, EventForm, RouteForm
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -52,6 +52,7 @@ class Event(db.Model):
     def __init__(self, name, location):
        self.name = name
        self.location = location
+       self.votes = 0
 
     def vote(self, vote):
         self.votes = self.votes + vote
@@ -66,9 +67,30 @@ class Route(db.Model):
 
 
     plan = db.relationship('Plan', backref=db.backref('routes', lazy=True))
+    events = db.relationship("Event",  secondary='route_event')
 
     def __init__(self, name):
-       self.name = name
+        self.name = name
+        self.votes = 0
+
+    def vote(self, vote):
+        self.votes = self.votes + vote
+
+    def assignEvents(self, eventids):
+        for i,eventid in enumerate(eventids):
+           db.session.add(RouteEvent(self.id, eventid, i))
+
+class RouteEvent(db.Model):
+    __tablename__ = 'route_event'
+    routeid = db.Column(db.Integer, db.ForeignKey('Routes.id'), primary_key=True)
+    eventid = db.Column(db.Integer, db.ForeignKey('Events.id'), primary_key=True)
+    index = db.Column(db.Integer,  primary_key=True, nullable = False)
+
+    # events = db.relationship('Event', backref=db.backref('event', lazy=True))
+    def __init__(self, routeid, eventid, index):
+        self.routeid = routeid
+        self.eventid = eventid
+        self.index = index
 
 db.create_all()
 
@@ -82,12 +104,12 @@ def index():
 # [plan view]
 @app.route('/plan/<planid>', methods=['GET'])
 def disp_plan(planid):
-    # get plan form db or smth
+    # cant we redirect as well, to allow refreshes
     plan = Plan.query.get(planid)
     return render_template('plan.html', plan=plan)
 
 
-# [newplan]
+# [new plan]
 @app.route('/plan/new', methods=['POST', 'GET'])
 def new_plan():
     if (request.method == "GET"):
@@ -97,33 +119,83 @@ def new_plan():
         # create new plan in db
         newPlan = Plan(request.form['name'],1)
 
-        e1 = Event('Booze up','Stags')
-        e2 = Event('Phil\'s sexy dnace moves','Sobar')
-        newPlan.events.append(e1)
-        newPlan.events.append(e2)
-
-        newPlan.routes.append(Route('Route 1'))
-
         db.session.add(newPlan)
         db.session.commit()
-
         return disp_plan(newPlan.id)
 
+# [new event]
+@app.route('/event/new', methods=['POST', 'GET'])
+def new_event():
+    if (request.method == "GET"):
+        form = EventForm()
+        return render_template('new_event.html', form=form)
+    elif (request.method == 'POST'):
+
+        e = Event(request.form['name'],request.form['location'])
+        plan = Plan.query.get(int(request.form['planid']))
+        plan.events.append(e)
+        db.session.commit()
+        return disp_plan(plan.id)
+
+# [new route]
+@app.route('/route/new', methods=['POST', 'GET'])
+def new_route():
+    if (request.method == "GET"):
+        form = RouteForm()
+        return render_template('new_route.html', form=form)
+    elif (request.method == 'POST'):
+
+        plan = Plan.query.get(int(request.form['planid']))
+        # TODO check the phase!!
+
+        r = Route(request.form['name'])
+        plan.routes.append(r)
+        db.session.commit()
+
+        # TODO check events are in the plan!!
+        r.assignEvents(list(map(int,request.form['eventids'].split(','))))
+        db.session.commit()
+
+        return disp_plan(plan.id)
+
+# [count votes]
+@app.route('/plan/<planid>/countvotes', methods=['POST'])
+def countvotes(planid):
+    plan = Plan.query.get(planid)
+    plan.phase = plan.phase + 1
+
 # [vote]
-@app.route('/event/<eventid>/upvote', methods=['POST','GET'])
+@app.route('/event/<eventid>/upvote', methods=['POST'])
 def upvote_event(eventid):
     return vote_event(eventid,1)
 
-@app.route('/plan/<planid>/event/<eventid>/downvote', methods=['POST'])
-def dwonvote_event(eventid):
+@app.route('/event/<eventid>/downvote', methods=['POST'])
+def downvote_event(eventid):
     return vote_event(eventid,-1)
 
 
 def vote_event(eventid,vote):
+    # TODO check plan is in phase 1
     event = Event.query.get(eventid)
     event.vote(vote)
     db.session.commit()
     return str(event.votes)
+
+@app.route('/route/<routeid>/upvote', methods=['POST'])
+def upvote_route(routeid):
+    return vote_route(routeid,1)
+
+@app.route('/route/<routeid>/downvote', methods=['POST'])
+def downvote_route(routeid):
+    return vote_route(routeid,-1)
+
+
+def vote_route(eventid,vote):
+    # todo check plan is in phase 2
+    route = Route.query.get(routeid)
+    route.vote(vote)
+    db.session.commit()
+    return str(route.votes)
 
 @app.errorhandler(500)
 def server_error(e):
