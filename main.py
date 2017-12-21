@@ -8,36 +8,38 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'development key lol'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
- # 'mysql+mysqldb://root@/<dbname>?unix_socket=/cloudsql/<projectid>:<instancename>'
+# 'mysql+mysqldb://root@/<dbname>?unix_socket=/cloudsql/<projectid>:<instancename>'
 
 db = SQLAlchemy(app)
 
-class Plan(db.Model):
-   __tablename__ = 'Plans'
-   id = db.Column('id',db.Integer, primary_key = True)
-   name = db.Column(db.String(100), nullable=False)
-   phase = db.Column(db.Integer, nullable =False)
-   startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-   endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-   def __init__(self, name, phase):
-       self.name = name
-       self.phase = phase
+class Plan(db.Model):
+    __tablename__ = 'Plans'
+    id = db.Column('id', db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    phase = db.Column(db.Integer, nullable=False)
+    startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __init__(self, name, phase):
+        self.name = name
+        self.phase = phase
+
 
 class Event(db.Model):
     __tablename__ = 'Events'
-    id = db.Column('id',db.Integer, primary_key = True)
+    id = db.Column('id', db.Integer, primary_key=True)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    location  = db.Column(db.String(100))
+    location = db.Column(db.String(100))
     votes = db.Column(db.Integer, nullable=False, default=0)
 
     plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
 
     def __init__(self, name, location):
-       self.name = name
-       self.location = location
-       self.votes = 0
+        self.name = name
+        self.location = location
+        self.votes = 0
 
     def vote(self, vote):
         self.votes = self.votes + vote
@@ -45,14 +47,13 @@ class Event(db.Model):
 
 class Route(db.Model):
     __tablename__ = 'Routes'
-    id = db.Column('id',db.Integer, primary_key = True)
+    id = db.Column('id', db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
     votes = db.Column(db.Integer, nullable=False, default=0)
 
-
     plan = db.relationship('Plan', backref=db.backref('routes', lazy=True))
-    events = db.relationship("Event",  secondary='route_event')
+    events = db.relationship("Event", secondary='route_event')
 
     def __init__(self, name):
         self.name = name
@@ -62,14 +63,15 @@ class Route(db.Model):
         self.votes = self.votes + vote
 
     def assignEvents(self, eventids):
-        for i,eventid in enumerate(eventids):
-           db.session.add(RouteEvent(self.id, eventid, i))
+        for i, eventid in enumerate(eventids):
+            db.session.add(RouteEvent(self.id, eventid, i))
+
 
 class RouteEvent(db.Model):
     __tablename__ = 'route_event'
     routeid = db.Column(db.Integer, db.ForeignKey('Routes.id'), primary_key=True)
     eventid = db.Column(db.Integer, db.ForeignKey('Events.id'), primary_key=True)
-    index = db.Column(db.Integer,  primary_key=True, nullable = False)
+    index = db.Column(db.Integer, primary_key=True, nullable=False)
 
     # events = db.relationship('Event', backref=db.backref('event', lazy=True))
     def __init__(self, routeid, eventid, index):
@@ -77,13 +79,16 @@ class RouteEvent(db.Model):
         self.eventid = eventid
         self.index = index
 
+
 db.create_all()
+
 
 # [homepage]
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
     return render_template('index.html')
+
 
 # [plan view]
 @app.route('/plan/<planid>', methods=['GET'])
@@ -101,11 +106,12 @@ def new_plan():
         return render_template('new_plan.html', form=form)
     elif (request.method == 'POST'):
         # create new plan in db
-        newPlan = Plan(request.form['name'],1)
+        newPlan = Plan(request.form['name'], 1)
 
         db.session.add(newPlan)
         db.session.commit()
         return redirect(url_for('disp_plan', planid=newPlan.id))
+
 
 # [new event]
 @app.route('/plan/<planid>/event/new', methods=['POST', 'GET'])
@@ -115,11 +121,12 @@ def new_event(planid):
         return render_template('new_event.html', form=form, plan=Plan.query.get(planid))
     elif (request.method == 'POST'):
 
-        e = Event(request.form['name'],request.form['location'])
+        e = Event(request.form['name'], request.form['location'])
         plan = Plan.query.get(planid)
         plan.events.append(e)
         db.session.commit()
         return redirect(url_for('disp_plan', planid=plan.id))
+
 
 # [new route]
 @app.route('/plan/<planid>/route/new', methods=['POST', 'GET'])
@@ -137,10 +144,11 @@ def new_route(planid):
         db.session.commit()
 
         # TODO check events are in the plan!!
-        r.assignEvents(list(map(int,request.form['eventids'].split(','))))
+        r.assignEvents(list(map(int, request.form['eventids'].split(','))))
         db.session.commit()
 
         return redirect(url_for('disp_plan', planid=plan.id))
+
 
 # [count votes]
 @app.route('/plan/<planid>/countvotes', methods=['POST'])
@@ -150,38 +158,43 @@ def countvotes(planid):
     db.session.commit()
     return redirect(url_for('disp_plan', planid=plan.id))
 
+
 # [vote]
 @app.route('/event/<eventid>/upvote', methods=['POST'])
 def upvote_event(eventid):
-    return vote_event(eventid,1)
+    return vote_event(eventid, 1)
+
 
 @app.route('/event/<eventid>/downvote', methods=['POST'])
 def downvote_event(eventid):
-    return vote_event(eventid,-1)
+    return vote_event(eventid, -1)
 
 
-def vote_event(eventid,vote):
+def vote_event(eventid, vote):
     # TODO check plan is in phase 1
     event = Event.query.get(eventid)
     event.vote(vote)
     db.session.commit()
     return redirect(url_for('disp_plan', planid=event.planid))
 
+
 @app.route('/route/<routeid>/upvote', methods=['POST'])
 def upvote_route(routeid):
-    return vote_route(routeid,1)
+    return vote_route(routeid, 1)
+
 
 @app.route('/route/<routeid>/downvote', methods=['POST'])
 def downvote_route(routeid):
-    return vote_route(routeid,-1)
+    return vote_route(routeid, -1)
 
 
-def vote_route(routeid,vote):
+def vote_route(routeid, vote):
     # todo check plan is in phase 2
     route = Route.query.get(routeid)
     route.vote(vote)
     db.session.commit()
     return redirect(url_for('disp_plan', planid=route.planid))
+
 
 @app.errorhandler(500)
 def server_error(e):
