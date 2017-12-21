@@ -4,11 +4,12 @@ from flask import Flask, render_template, request, redirect, url_for
 from forms import PlanForm, EventForm, RouteForm
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import config
 
 app = Flask(__name__)
-app.secret_key = 'development key lol'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
+app.config.from_object(config)
 # 'mysql+mysqldb://root@/<dbname>?unix_socket=/cloudsql/<projectid>:<instancename>'
+app.debug = True
 
 db = SQLAlchemy(app)
 
@@ -204,4 +205,4 @@ def server_error(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
