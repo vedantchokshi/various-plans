@@ -101,3 +101,4 @@ ENV/
 .mypy_cache/
 .idea
 pycharm_env
+cloud_sql_proxy
