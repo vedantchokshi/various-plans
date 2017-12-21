@@ -12,12 +12,10 @@ class EventForm(FlaskForm):
     # TODO TextField is deprecated
     name = TextField("Name Of Event")
     location = TextField("Location Of Event")
-    planid = TextField("Plan no.")
     submit = SubmitField("Create!")
 
 class RouteForm(FlaskForm):
     # TODO TextField is deprecated
     name = TextField("Name Of Route")
-    planid = TextField("Plan no.")
     eventids = TextField("Comma separated event nos.")
     submit = SubmitField("Create!")

@@ -5,13 +5,13 @@
   </head>
   <body>
     <h1>New Route</h1>
-    <form action = "{{ url_for('new_route') }}" method = post>
+    Avaliable Events: {{plan.events}}
+    <form action = "{{ url_for('new_route', planid=plan.id) }}" method = post>
 
                 {{ form.hidden_tag() }}
 
                 <div style = font-size:20px; font-weight:bold; margin-left:150px;>
                    {{ form.name.label }} {{ form.name }} <br>
-                   {{ form.planid.label }} {{ form.planid }} <br>
                    {{ form.eventids.label }} {{ form.eventids }} <br>
 
                    <br>

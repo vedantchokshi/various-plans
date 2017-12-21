@@ -108,28 +108,28 @@ def new_plan():
         return disp_plan(newPlan.id)
 
 # [new event]
-@app.route('/event/new', methods=['POST', 'GET'])
-def new_event():
+@app.route('/plan/<planid>/event/new', methods=['POST', 'GET'])
+def new_event(planid):
     if (request.method == "GET"):
         form = EventForm()
-        return render_template('new_event.html', form=form)
+        return render_template('new_event.html', form=form, plan=Plan.query.get(planid))
     elif (request.method == 'POST'):
 
         e = Event(request.form['name'],request.form['location'])
-        plan = Plan.query.get(int(request.form['planid']))
+        plan = Plan.query.get(planid)
         plan.events.append(e)
         db.session.commit()
         return disp_plan(plan.id)
 
 # [new route]
-@app.route('/route/new', methods=['POST', 'GET'])
-def new_route():
+@app.route('/plan/<planid>/route/new', methods=['POST', 'GET'])
+def new_route(planid):
     if (request.method == "GET"):
         form = RouteForm()
-        return render_template('new_route.html', form=form)
+        return render_template('new_route.html', form=form, plan=Plan.query.get(planid))
     elif (request.method == 'POST'):
 
-        plan = Plan.query.get(int(request.form['planid']))
+        plan = Plan.query.get(planid)
         # TODO check the phase!!
 
         r = Route(request.form['name'])
@@ -165,7 +165,7 @@ def vote_event(eventid,vote):
     event = Event.query.get(eventid)
     event.vote(vote)
     db.session.commit()
-    return str(event.votes)
+    return disp_plan(event.planid)
 
 @app.route('/route/<routeid>/upvote', methods=['POST'])
 def upvote_route(routeid):
@@ -176,12 +176,12 @@ def downvote_route(routeid):
     return vote_route(routeid,-1)
 
 
-def vote_route(eventid,vote):
+def vote_route(routeid,vote):
     # todo check plan is in phase 2
     route = Route.query.get(routeid)
     route.vote(vote)
     db.session.commit()
-    return str(route.votes)
+    return disp_plan(route.planid)
 
 @app.errorhandler(500)
 def server_error(e):
