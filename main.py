@@ -1,6 +1,6 @@
 # [START imports]
 import logging
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from forms import PlanForm, EventForm, RouteForm
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -105,7 +105,7 @@ def new_plan():
 
         db.session.add(newPlan)
         db.session.commit()
-        return disp_plan(newPlan.id)
+        return redirect(url_for('disp_plan', planid=newPlan.id))
 
 # [new event]
 @app.route('/plan/<planid>/event/new', methods=['POST', 'GET'])
@@ -119,7 +119,7 @@ def new_event(planid):
         plan = Plan.query.get(planid)
         plan.events.append(e)
         db.session.commit()
-        return disp_plan(plan.id)
+        return redirect(url_for('disp_plan', planid=plan.id))
 
 # [new route]
 @app.route('/plan/<planid>/route/new', methods=['POST', 'GET'])
@@ -140,7 +140,7 @@ def new_route(planid):
         r.assignEvents(list(map(int,request.form['eventids'].split(','))))
         db.session.commit()
 
-        return disp_plan(plan.id)
+        return redirect(url_for('disp_plan', planid=plan.id))
 
 # [count votes]
 @app.route('/plan/<planid>/countvotes', methods=['POST'])
@@ -148,7 +148,7 @@ def countvotes(planid):
     plan = Plan.query.get(planid)
     plan.phase = plan.phase + 1
     db.session.commit()
-    return disp_plan(plan.id)
+    return redirect(url_for('disp_plan', planid=plan.id))
 
 # [vote]
 @app.route('/event/<eventid>/upvote', methods=['POST'])
@@ -165,7 +165,7 @@ def vote_event(eventid,vote):
     event = Event.query.get(eventid)
     event.vote(vote)
     db.session.commit()
-    return disp_plan(event.planid)
+    return redirect(url_for('disp_plan', planid=event.planid))
 
 @app.route('/route/<routeid>/upvote', methods=['POST'])
 def upvote_route(routeid):
@@ -181,7 +181,7 @@ def vote_route(routeid,vote):
     route = Route.query.get(routeid)
     route.vote(vote)
     db.session.commit()
-    return disp_plan(route.planid)
+    return redirect(url_for('disp_plan', planid=route.planid))
 
 @app.errorhandler(500)
 def server_error(e):
