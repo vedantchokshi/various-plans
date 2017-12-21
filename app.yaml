@@ -6,6 +6,11 @@ threadsafe: true
 handlers:
 - url: /static
   static_dir: static
+
+- url: /favicon\.ico
+  static_files: static/res/favicon.ico
+  upload: static/res/favicon\.ico
+
 - url: /.*
   script: main.app
-# [END handlers]
+  # [END handlers]
