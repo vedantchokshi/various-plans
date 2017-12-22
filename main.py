@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from forms import PlanForm, EventForm, RouteForm
 import back_end as be
 import config
-from api import plans
+from api import register_api_blueprints
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -12,7 +12,7 @@ app.debug = True
 
 be.init(app)
 
-app.register_blueprint(plans.ROUTES, url_prefix='/api/plans')
+register_api_blueprints(app)
 
 
 # DEV
