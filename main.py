@@ -5,7 +5,7 @@ from forms import PlanForm, EventForm, RouteForm
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import config
-from api import plans
+from api import register_api_blueprints
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -14,7 +14,7 @@ app.debug = True
 
 db = SQLAlchemy(app)
 
-app.register_blueprint(plans.ROUTES, url_prefix='/api/plans')
+register_api_blueprints(app)
 
 
 class Plan(db.Model):

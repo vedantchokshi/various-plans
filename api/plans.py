@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-ROUTES = Blueprint('plans', __name__, static_folder='static', template_folder='templates')
+ROUTES = Blueprint('plans')
 
 
 @ROUTES.route("/")
