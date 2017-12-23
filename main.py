@@ -12,6 +12,12 @@ app.debug = True
 be.init(app)
 
 
+# DEV
+@app.route('/reset', methods=['GET'])
+def reset():
+    be.reset()
+    return 'Reset!'
+
 # [homepage]
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
