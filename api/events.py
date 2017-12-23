@@ -1,10 +1,10 @@
 from flask import Blueprint, request
 
-ROUTES = Blueprint('locations', __name__)
+ROUTES = Blueprint('events', __name__)
 
 
 @ROUTES.route('', methods=['GET'])
-def locations_get():
+def events_get():
     if request.args.has_key('id') and request.args.has_key('planid'):
         # both id and planid exist, doesn't make sense
         return '400: Too many arguments specified'
@@ -20,7 +20,7 @@ def locations_get():
             return '400: Argument id is not positive'
         # We are now happy the id is good
         # Do db tings
-        return 'Location with id {}'.format(id)
+        return 'event with id {}'.format(id)
 
     if request.args.has_key('planid'):
         # We know planid exists, try to cast to int
@@ -34,7 +34,7 @@ def locations_get():
             return '400: Argument planid is not positive'
         # We are now happy the id is good
         # Do db tings
-        return 'List of locations with planid {}'.format(planid)
+        return 'List of events with planid {}'.format(planid)
 
     # No filter specified, REST would return everything but we just error
-    return '400: Location resource id or planid not specified'
+    return '400: event resource id or planid not specified'
