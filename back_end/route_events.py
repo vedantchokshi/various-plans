@@ -1,0 +1,13 @@
+from . import db
+
+class RouteEvent(db.Model):
+    __tablename__ = 'route_event'
+    routeid = db.Column(db.Integer, db.ForeignKey('Routes.id'), primary_key=True)
+    eventid = db.Column(db.Integer, db.ForeignKey('Events.id'), primary_key=True)
+    index = db.Column(db.Integer, primary_key=True, nullable=False)
+
+    # events = db.relationship('Event', backref=db.backref('event', lazy=True))
+    def __init__(self, routeid, eventid, index):
+        self.routeid = routeid
+        self.eventid = eventid
+        self.index = index
