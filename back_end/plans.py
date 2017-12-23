@@ -8,8 +8,8 @@ class Plan(db.Model):
     phase = db.Column(db.Integer, nullable=False)
     eventVoteCloseDate = db.Column(db.DateTime, nullable=False)
     routeVoteCloseDate = db.Column(db.DateTime, nullable=False)
-    startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate):
         self.name = name
@@ -25,7 +25,7 @@ def get_from_id(planid):
     except ValueError:
         return None
 
-def create(name,eventVoteCloseDate, routeVoteCloseDate, startDate=datetime.utcnow, endDate = datetime.utcnow):
+def create(name,eventVoteCloseDate=datetime.utcnow(), routeVoteCloseDate=datetime.utcnow(), startDate=datetime.utcnow(), endDate = datetime.utcnow()):
     newPlan = Plan(name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate)
     db.session.add(newPlan)
     db.session.commit()

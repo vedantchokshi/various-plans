@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+import back_end as be
 
 ROUTES = Blueprint('plans', __name__)
 
@@ -17,8 +18,12 @@ def plans_get():
             # id must be positive integer
             return '400: Argument id is not positive'
         # We are now happy the id is good
-        # Do db tings
-        return 'Plan with id {}'.format(id)
+        plan = be.plans.get_from_id(id)
+        if not plan:
+            return 'No plan with id: ' + str(id)
+        else:
+            # TODO convert to json
+            return str(vars(plan))
 
     # No filter specified, REST would return everything but we just error
     return '400: Plan resource id not specified'

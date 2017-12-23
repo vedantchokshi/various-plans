@@ -1,5 +1,4 @@
-import plans, locations, routes
-
+from . import plans, events, routes
 
 def register_api_blueprints(app):
     app.register_blueprint(plans.ROUTES, url_prefix='/api/plans')
