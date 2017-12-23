@@ -59,7 +59,7 @@ def new_route(planid):
         plan = be.plans.get_from_id(planid)
         return render_template('new_route.html', form=form, plan=plan)
     elif (request.method == 'POST'):
-        r = be.routes.create(planid,request.form['name'],request.form['eventids'])
+        r = be.routes.create(planid,request.form['name'],list(map(int, (request.form['eventids']).split(','))))
         return redirect(url_for('disp_plan', planid=r.plan.id))
 
 

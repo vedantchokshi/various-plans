@@ -25,9 +25,11 @@ def get_from_id(eventid):
     except ValueError:
         return None
 
-def create(planid, name, location):
+def create(planid, name, location, longitude=0, latitude=0):
     plan = plans.get_from_id(planid)
-    # TODO check plan phase
+    if plan.phase !=1:
+        return None
+
     e = Event(name, location)
     plan.events.append(e)
     db.session.commit()

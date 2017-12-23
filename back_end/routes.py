@@ -1,6 +1,6 @@
 from . import db
 from route_events import RouteEvent
-import plans
+import plans, events
 
 class Route(db.Model):
     __tablename__ = 'Routes'
@@ -29,15 +29,19 @@ def get_from_id(routeid):
     except ValueError:
             return None
 
-def create(planid, name, events):
+def create(planid, name, eventids):
     plan = plans.get_from_id(planid)
-    # TODO check plan in phase 2
+        if plan.phase !=2:
+            return None
     r = Route(name)
     plan.routes.append(r)
     db.session.commit()
 
-    # TODO check events are valid for plan
-    r.assignEvents(list(map(int, events.split(','))))
+    for eventid in eventids:
+        if events.get_from_id(eventid).planid != planid:
+            return None
+
+    r.assignEvents(eventids)
     db.session.commit()
     return r
 
