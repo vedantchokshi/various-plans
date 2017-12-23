@@ -31,8 +31,8 @@ def get_from_id(routeid):
 
 def create(planid, name, eventids):
     plan = plans.get_from_id(planid)
-        if plan.phase !=2:
-            return None
+    if plan.phase !=2:
+        return None
     r = Route(name)
     plan.routes.append(r)
     db.session.commit()

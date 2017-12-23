@@ -6,12 +6,18 @@ class Plan(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     phase = db.Column(db.Integer, nullable=False)
+    eventVoteCloseDate = db.Column(db.DateTime, nullable=False)
+    routeVoteCloseDate = db.Column(db.DateTime, nullable=False)
     startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    def __init__(self, name, startDate=datetime.utcnow, endDate = datetime.utcnow):
+    def __init__(self, name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate):
         self.name = name
         self.phase = 1
+        self.eventVoteCloseDate = eventVoteCloseDate
+        self.routeVoteCloseDate = routeVoteCloseDate
+        self.startDate = startDate
+        self.endDate = endDate
 
 def get_from_id(planid):
     try:
@@ -19,8 +25,8 @@ def get_from_id(planid):
     except ValueError:
         return None
 
-def create(name):
-    newPlan = Plan(name)
+def create(name,eventVoteCloseDate, routeVoteCloseDate, startDate=datetime.utcnow, endDate = datetime.utcnow):
+    newPlan = Plan(name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate)
     db.session.add(newPlan)
     db.session.commit()
     return newPlan
