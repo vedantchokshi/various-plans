@@ -1,5 +1,10 @@
-from . import db
+from . import db, jsonify_decorator
 import plans
+from flask import Blueprint, request
+
+ROUTES = Blueprint('events', __name__)
+
+# TODO add exceptions to Blueprint or app
 
 class Event(db.Model):
     __tablename__ = 'Events'
@@ -13,7 +18,10 @@ class Event(db.Model):
 
     plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
 
-    # TODO serialize property https://stackoverflow.com/a/7103486
+    @property
+    def serialise(self):
+        # TODO serialize property https://stackoverflow.com/a/7103486
+        return {'name': self.name}
 
     def __init__(self, name, location, longitude, latitude):
         self.name = name
@@ -25,10 +33,14 @@ class Event(db.Model):
     def vote(self, vote):
         self.votes = self.votes + vote
 
-def get_from_id(eventid):
+@ROUTES.route('/id/<id>', methods=['GET'])
+@jsonify_decorator
+def get_from_id(id):
     try:
-        return Event.query.get(eventid)
+        return Event.query.get(id)
     except ValueError:
+        # TODO input validation
+        # TODO useful exceptions
         return None
 
 def create(planid, name, location, longitude=0, latitude=0):

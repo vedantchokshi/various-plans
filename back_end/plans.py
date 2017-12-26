@@ -11,7 +11,10 @@ class Plan(db.Model):
     startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
 
-    # TODO serialize property https://stackoverflow.com/a/7103486
+    @property
+    def serialise(self):
+        # TODO serialize property https://stackoverflow.com/a/7103486
+        return {'name': self.name}
 
     def __init__(self, name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate):
         self.name = name
