@@ -3,14 +3,13 @@ import logging, config
 from flask import Flask, render_template, request, redirect, url_for
 from forms import PlanForm, EventForm, RouteForm
 import back_end as be
-from api import register_api_blueprints
 
 app = Flask(__name__)
 app.config.from_object(config)
 app.debug = True
 
 be.init(app)
-register_api_blueprints(app)
+be.register_api_blueprints(app)
 
 
 # DEV

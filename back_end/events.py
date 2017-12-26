@@ -1,8 +1,10 @@
-from . import db, jsonify_decorator
+from flask import Blueprint
+
 import plans
-from flask import Blueprint, request
+from . import db, jsonify_decorator
 
 ROUTES = Blueprint('events', __name__)
+
 
 # TODO add exceptions to Blueprint or app
 
@@ -33,19 +35,17 @@ class Event(db.Model):
     def vote(self, vote):
         self.votes = self.votes + vote
 
+
 @ROUTES.route('/id/<id>', methods=['GET'])
 @jsonify_decorator
 def get_from_id(id):
-    try:
-        return Event.query.get(id)
-    except ValueError:
-        # TODO input validation
-        # TODO useful exceptions
-        return None
+    return Event.query.get(id)
+    # TODO input validation
+    # TODO useful exceptions
 
 def create(planid, name, location, longitude=0, latitude=0):
     plan = plans.get_from_id(planid)
-    if plan.phase !=1:
+    if plan.phase != 1:
         return None
 
     e = Event(name, location, longitude, latitude)
@@ -53,11 +53,13 @@ def create(planid, name, location, longitude=0, latitude=0):
     db.session.commit()
     return e
 
+
 def upvote(eventid):
     e = get_from_id(eventid)
     e.votes = e.votes + 1
     db.session.commit()
     return e
+
 
 def downvote(eventid):
     e = get_from_id(eventid)

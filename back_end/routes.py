@@ -1,6 +1,11 @@
 from . import db
 from route_events import RouteEvent
+from flask import Blueprint
+
 import plans, events
+
+ROUTES = Blueprint('routes', __name__)
+
 
 class Route(db.Model):
     __tablename__ = 'Routes'
@@ -28,16 +33,18 @@ class Route(db.Model):
         for i, eventid in enumerate(eventids):
             db.session.add(RouteEvent(self.id, eventid, i))
 
+
 def get_from_id(routeid):
     try:
         return Route.query.get(routeid)
     except ValueError:
-            return None
+        return None
+
 
 def create(planid, name, eventids):
     # TODO instead of return None: throw error and delete db entry.
     plan = plans.get_from_id(planid)
-    if plan.phase !=2:
+    if plan.phase != 2:
         return None
     r = Route(name)
     plan.routes.append(r)
@@ -51,11 +58,13 @@ def create(planid, name, eventids):
     db.session.commit()
     return r
 
+
 def upvote(routeid):
     r = get_from_id(routeid)
     r.votes = r.votes + 1
     db.session.commit()
     return r
+
 
 def downvote(routeid):
     r = get_from_id(routeid)

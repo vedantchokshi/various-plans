@@ -1,4 +1,9 @@
+from flask import Blueprint
+
 from . import db
+
+ROUTES = Blueprint('route_events', __name__)
+
 
 class RouteEvent(db.Model):
     __tablename__ = 'route_event'

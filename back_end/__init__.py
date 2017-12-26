@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-import plans, events, routes
 from flask import jsonify
 
 
@@ -16,8 +15,8 @@ def jsonify_decorator(func):
         if json:
             return jsonify(obj.serialise)  # TODO serialise property
         return obj
-    return wrapper
 
+    return wrapper
 
 
 def init(app):
@@ -31,14 +30,16 @@ def reset():
     db.drop_all()
 
 
-if __name__ == '__main__':
-    # Fake jsonify for testing
-    def jsonify(s):
-        return 'JSON:' + s
-
-    @jsonify_decorator
-    def test_func(s):
-        return s + ", test!"
-
-    print test_func('lol')
-    print test_func('lol2', json=False)
+# if __name__ == '__main__':
+#     # Fake jsonify for testing
+#     def jsonify(s):
+#         return 'JSON:' + s
+#
+#
+#     @jsonify_decorator
+#     def test_func(s):
+#         return s + ", test!"
+#
+#
+#     print test_func('lol')
+#     print test_func('lol2', json=False)

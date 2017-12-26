@@ -1,5 +1,10 @@
+from flask import Blueprint
+
 from datetime import datetime
 from . import db
+
+ROUTES = Blueprint('plans', __name__)
+
 
 class Plan(db.Model):
     __tablename__ = 'Plans'
@@ -24,17 +29,21 @@ class Plan(db.Model):
         self.startDate = startDate
         self.endDate = endDate
 
+
 def get_from_id(planid):
     try:
         return Plan.query.get(int(planid))
     except ValueError:
         return None
 
-def create(name,eventVoteCloseDate=datetime.utcnow(), routeVoteCloseDate=datetime.utcnow(), startDate=datetime.utcnow(), endDate = datetime.utcnow()):
+
+def create(name, eventVoteCloseDate=datetime.utcnow(), routeVoteCloseDate=datetime.utcnow(),
+           startDate=datetime.utcnow(), endDate=datetime.utcnow()):
     newPlan = Plan(name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate)
     db.session.add(newPlan)
     db.session.commit()
     return newPlan
+
 
 def countvotes(planid):
     plan = get_from_id(planid)
