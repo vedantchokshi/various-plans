@@ -13,6 +13,8 @@ class Event(db.Model):
 
     plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
 
+    # TODO serialize property https://stackoverflow.com/a/7103486
+
     def __init__(self, name, location, longitude, latitude):
         self.name = name
         self.location = location

@@ -6,6 +6,8 @@ class RouteEvent(db.Model):
     eventid = db.Column(db.Integer, db.ForeignKey('Events.id'), primary_key=True)
     index = db.Column(db.Integer, primary_key=True, nullable=False)
 
+    # TODO serialize property https://stackoverflow.com/a/7103486
+
     def __init__(self, routeid, eventid, index):
         self.routeid = routeid
         self.eventid = eventid

@@ -12,6 +12,8 @@ class Route(db.Model):
     plan = db.relationship('Plan', backref=db.backref('routes', lazy=True))
     events = db.relationship("Event", secondary='route_event')
 
+    # TODO serialize property https://stackoverflow.com/a/7103486
+
     def __init__(self, name):
         self.name = name
         self.votes = 0
