@@ -103,3 +103,4 @@ ENV/
 pycharm_env
 cloud_sql_proxy
 sql.sh
+**/.DS_Store
