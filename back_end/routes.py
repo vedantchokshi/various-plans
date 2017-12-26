@@ -30,15 +30,16 @@ def get_from_id(routeid):
             return None
 
 def create(planid, name, eventids):
+    # TODO instead of return None: throw error and delete db entry.
     plan = plans.get_from_id(planid)
     if plan.phase !=2:
         return None
     r = Route(name)
     plan.routes.append(r)
-    db.session.commit()
+    # db.session.commit()
 
     for eventid in eventids:
-        if events.get_from_id(eventid).planid != planid:
+        if events.get_from_id(eventid).planid != r.planid:
             return None
 
     r.assignEvents(eventids)
