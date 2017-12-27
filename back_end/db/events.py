@@ -1,12 +1,12 @@
-from . import db
+from . import db, default_str_len
 import plans
 
 class Event(db.Model):
     __tablename__ = 'Events'
     id = db.Column('id', db.Integer, primary_key=True)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    location = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(default_str_len), nullable=False)
+    location = db.Column(db.String(default_str_len), nullable=False)
     longitude = db.Column(db.Float, default=0, nullable=False)
     latitude = db.Column(db.Float, default=0, nullable=False)
     votes = db.Column(db.Integer, default=0, nullable=False)

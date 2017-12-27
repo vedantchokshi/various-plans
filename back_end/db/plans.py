@@ -1,10 +1,10 @@
 import time
-from . import db
+from . import db, default_str_len
 
 class Plan(db.Model):
     __tablename__ = 'Plans'
     id = db.Column('id', db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(default_str_len), nullable=False)
     phase = db.Column(db.Integer, nullable=False)
     eventVoteCloseTime = db.Column(db.Float, nullable=False)
     routeVoteCloseTime = db.Column(db.Float, nullable=False)

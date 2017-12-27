@@ -10,8 +10,3 @@ class RouteEvent(db.Model):
         self.routeid = routeid
         self.eventid = eventid
         self.index = index
-
-    @property
-    def serialise(self):
-        # TODO serialize property https://stackoverflow.com/a/7103486
-        return {'name': self.name}

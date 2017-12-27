@@ -1,11 +1,11 @@
-from . import db
+from . import db, default_str_len
 from route_events import RouteEvent
 import plans, events
 
 class Route(db.Model):
     __tablename__ = 'Routes'
     id = db.Column('id', db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(default_str_len), nullable=False)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
     votes = db.Column(db.Integer, nullable=False, default=0)
 
