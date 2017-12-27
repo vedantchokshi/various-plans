@@ -17,7 +17,7 @@ def reset():
     if not app.debug:
         #TODO throw error
         return 'Nope :)'
-    be.db.reset()
+    be.db.reset(app)
     return 'Reset!'
 
 # [homepage]

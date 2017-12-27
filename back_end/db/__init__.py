@@ -7,7 +7,8 @@ def init(app):
     global db
     db = SQLAlchemy(app)
     import plans, events, routes, route_events
-    db.create_all()
 
-def reset():
+def reset(app):
     db.drop_all()
+    import plans, events, routes, route_events
+    db.create_all()
