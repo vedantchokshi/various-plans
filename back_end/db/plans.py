@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 from . import db
 
 class Plan(db.Model):
@@ -6,19 +6,19 @@ class Plan(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     phase = db.Column(db.Integer, nullable=False)
-    eventVoteCloseDate = db.Column(db.DateTime, nullable=False)
-    routeVoteCloseDate = db.Column(db.DateTime, nullable=False)
-    startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
-    endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    eventVoteCloseTime = db.Column(db.Float, nullable=False)
+    routeVoteCloseTime = db.Column(db.Float, nullable=False)
+    startTime = db.Column(db.Float, nullable=False)
+    endTime = db.Column(db.Float, nullable=False)
 
 
-    def __init__(self, name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate):
+    def __init__(self, name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime):
         self.name = name
         self.phase = 1
-        self.eventVoteCloseDate = eventVoteCloseDate
-        self.routeVoteCloseDate = routeVoteCloseDate
-        self.startDate = startDate
-        self.endDate = endDate
+        self.eventVoteCloseTime = eventVoteCloseTime
+        self.routeVoteCloseTime = routeVoteCloseTime
+        self.startTime = startTime
+        self.endTime = endTime
 
     @property
     def serialise(self):
@@ -31,10 +31,10 @@ def get_from_id(planid):
     except ValueError:
         return None
 
-
-def create(name, eventVoteCloseDate=datetime.utcnow(), routeVoteCloseDate=datetime.utcnow(),
-           startDate=datetime.utcnow(), endDate=datetime.utcnow()):
-    newPlan = Plan(name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate)
+# TODO remove defaults for vote Times
+def create(name, eventVoteCloseTime=time.time(), routeVoteCloseTime=time.time(),
+           startTime=time.time(), endTime=time.time()):
+    newPlan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
     db.session.add(newPlan)
     db.session.commit()
     return newPlan

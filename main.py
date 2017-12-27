@@ -71,6 +71,18 @@ def new_route(planid):
         return redirect(url_for('disp_plan', planid=r.plan.id))
 
 
+
+@app.errorhandler(500)
+def server_error(e):
+    # Log the error and stacktrace.
+    logging.exception('An error occurred during a request.')
+    return 'An internal error occurred.', 500
+
+
+
+
+# TODO remove all below functions
+
 # [count votes]
 @app.route('/plan/<planid>/countvotes', methods=['POST'])
 def countvotes(planid):
@@ -102,9 +114,3 @@ def downvote_route(routeid):
     r = be.db.routes.downvote(routeid)
     return redirect(url_for('disp_plan', planid=r.planid))
 
-
-@app.errorhandler(500)
-def server_error(e):
-    # Log the error and stacktrace.
-    logging.exception('An error occurred during a request.')
-    return 'An internal error occurred.', 500
