@@ -22,8 +22,7 @@ class Plan(db.Model):
 
     @property
     def serialise(self):
-        # TODO serialize property https://stackoverflow.com/a/7103486
-        return {'name': self.name}
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 def get_from_id(planid):
     try:
