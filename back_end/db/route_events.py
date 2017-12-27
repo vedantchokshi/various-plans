@@ -10,3 +10,9 @@ class RouteEvent(db.Model):
         self.routeid = routeid
         self.eventid = eventid
         self.index = index
+
+def get_eventids_from_route_id(routeid):
+    try:
+        return RouteEvent.query.filter_by(routeid=int(routeid))
+    except ValueError:
+        return None

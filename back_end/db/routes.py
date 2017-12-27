@@ -1,6 +1,5 @@
 from . import db, default_str_len
-from route_events import RouteEvent
-import plans, events
+import plans, events, route_events
 
 class Route(db.Model):
     __tablename__ = 'Routes'
@@ -25,8 +24,11 @@ class Route(db.Model):
             db.session.add(RouteEvent(self.id, eventid, i))
 
     @property
-    def serialise(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    def serialise(self,recurseEvents=True):
+        s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        s['events'] = {re.index: (events.get_from_id(re.eventid).serialise if recurseEvents else re.eventid)
+                        for re in route_events.get_eventids_from_route_id(self.id).all()}
+        return s
 
 def get_from_id(routeid):
     try:
