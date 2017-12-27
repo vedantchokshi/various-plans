@@ -1,10 +1,5 @@
-from flask import Blueprint
-
 from datetime import datetime
 from . import db
-
-ROUTES = Blueprint('plans', __name__)
-
 
 class Plan(db.Model):
     __tablename__ = 'Plans'
@@ -16,10 +11,6 @@ class Plan(db.Model):
     startDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     endDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
 
-    @property
-    def serialise(self):
-        # TODO serialize property https://stackoverflow.com/a/7103486
-        return {'name': self.name}
 
     def __init__(self, name, eventVoteCloseDate, routeVoteCloseDate, startDate, endDate):
         self.name = name
@@ -29,6 +20,10 @@ class Plan(db.Model):
         self.startDate = startDate
         self.endDate = endDate
 
+    @property
+    def serialise(self):
+        # TODO serialize property https://stackoverflow.com/a/7103486
+        return {'name': self.name}
 
 def get_from_id(planid):
     try:

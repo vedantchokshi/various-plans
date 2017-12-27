@@ -1,11 +1,6 @@
 from . import db
 from route_events import RouteEvent
-from flask import Blueprint
-
 import plans, events
-
-ROUTES = Blueprint('routes', __name__)
-
 
 class Route(db.Model):
     __tablename__ = 'Routes'
@@ -17,10 +12,6 @@ class Route(db.Model):
     plan = db.relationship('Plan', backref=db.backref('routes', lazy=True))
     events = db.relationship("Event", secondary='route_event')
 
-    @property
-    def serialise(self):
-        # TODO serialize property https://stackoverflow.com/a/7103486
-        return {'name': self.name}
 
     def __init__(self, name):
         self.name = name
@@ -33,6 +24,10 @@ class Route(db.Model):
         for i, eventid in enumerate(eventids):
             db.session.add(RouteEvent(self.id, eventid, i))
 
+    @property
+    def serialise(self):
+        # TODO serialize property https://stackoverflow.com/a/7103486
+        return {'name': self.name}
 
 def get_from_id(routeid):
     try:

@@ -1,9 +1,4 @@
-from flask import Blueprint
-
 from . import db
-
-ROUTES = Blueprint('route_events', __name__)
-
 
 class RouteEvent(db.Model):
     __tablename__ = 'route_event'
@@ -11,12 +6,12 @@ class RouteEvent(db.Model):
     eventid = db.Column(db.Integer, db.ForeignKey('Events.id'), primary_key=True)
     index = db.Column(db.Integer, primary_key=True, nullable=False)
 
-    @property
-    def serialise(self):
-        # TODO serialize property https://stackoverflow.com/a/7103486
-        return {'name': self.name}
-
     def __init__(self, routeid, eventid, index):
         self.routeid = routeid
         self.eventid = eventid
         self.index = index
+
+    @property
+    def serialise(self):
+        # TODO serialize property https://stackoverflow.com/a/7103486
+        return {'name': self.name}

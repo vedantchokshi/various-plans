@@ -1,7 +1,7 @@
 # [START imports]
 import logging, config
 from flask import Flask, render_template, request, redirect, url_for
-from forms import PlanForm, EventForm, RouteForm
+from back_end.forms import PlanForm, EventForm, RouteForm
 import back_end as be
 
 app = Flask(__name__)
@@ -9,13 +9,15 @@ app.config.from_object(config)
 app.debug = True
 
 be.init(app)
-be.register_api_blueprints(app)
 
 
-# DEV
+# TDEV reset
 @app.route('/reset', methods=['GET'])
 def reset():
-    be.reset()
+    if not app.debug:
+        #TODO throw error
+        return 'Nope :)'
+    be.db.reset()
     return 'Reset!'
 
 # [homepage]
@@ -28,7 +30,7 @@ def index():
 # [plan view]
 @app.route('/plan/<planid>', methods=['GET'])
 def disp_plan(planid):
-    plan = be.plans.get_from_id(planid)
+    plan = be.db.plans.get_from_id(planid)
     return render_template('plan.html', plan=plan)
 
 
@@ -40,7 +42,7 @@ def new_plan():
         return render_template('new_plan.html', form=form)
     elif (request.method == 'POST'):
         # create new plan in db
-        newPlan = be.plans.create(request.form['name'])
+        newPlan = be.db.plans.create(request.form['name'])
         return redirect(url_for('disp_plan', planid=newPlan.id))
 
 
@@ -49,11 +51,11 @@ def new_plan():
 def new_event(planid):
     if (request.method == "GET"):
         form = EventForm()
-        plan = be.plans.get_from_id(planid)
+        plan = be.db.plans.get_from_id(planid)
         return render_template('new_event.html', form=form, plan=plan)
 
     elif (request.method == 'POST'):
-        e = be.events.create(planid, request.form['name'], request.form['location'])
+        e = be.db.events.create(planid, request.form['name'], request.form['location'])
         return redirect(url_for('disp_plan', planid=e.plan.id))
 
 
@@ -62,42 +64,42 @@ def new_event(planid):
 def new_route(planid):
     if (request.method == "GET"):
         form = RouteForm()
-        plan = be.plans.get_from_id(planid)
+        plan = be.db.plans.get_from_id(planid)
         return render_template('new_route.html', form=form, plan=plan)
     elif (request.method == 'POST'):
-        r = be.routes.create(planid,request.form['name'],list(map(int, (request.form['eventids']).split(','))))
+        r = be.db.routes.create(planid,request.form['name'],list(map(int, (request.form['eventids']).split(','))))
         return redirect(url_for('disp_plan', planid=r.plan.id))
 
 
 # [count votes]
 @app.route('/plan/<planid>/countvotes', methods=['POST'])
 def countvotes(planid):
-    plan = be.plans.countvotes(planid)
+    plan = be.db.plans.countvotes(planid)
     return redirect(url_for('disp_plan', planid=plan.id))
 
 
 # [vote]
 @app.route('/event/<eventid>/upvote', methods=['POST'])
 def upvote_event(eventid):
-    e = be.events.upvote(eventid)
+    e = be.db.events.upvote(eventid)
     return redirect(url_for('disp_plan', planid=e.planid))
 
 
 @app.route('/event/<eventid>/downvote', methods=['POST'])
 def downvote_event(eventid):
-    e = be.events.downvote(eventid)
+    e = be.db.events.downvote(eventid)
     return redirect(url_for('disp_plan', planid=e.planid))
 
 
 @app.route('/route/<routeid>/upvote', methods=['POST'])
 def upvote_route(routeid):
-    r = be.routes.upvote(routeid)
+    r = be.db.routes.upvote(routeid)
     return redirect(url_for('disp_plan', planid=r.planid))
 
 
 @app.route('/route/<routeid>/downvote', methods=['POST'])
 def downvote_route(routeid):
-    r = be.routes.downvote(routeid)
+    r = be.db.routes.downvote(routeid)
     return redirect(url_for('disp_plan', planid=r.planid))
 
 

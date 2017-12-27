@@ -1,12 +1,5 @@
-from flask import Blueprint
-
+from . import db
 import plans
-from . import db, jsonify_decorator
-
-ROUTES = Blueprint('events', __name__)
-
-
-# TODO add exceptions to Blueprint or app
 
 class Event(db.Model):
     __tablename__ = 'Events'
@@ -20,11 +13,6 @@ class Event(db.Model):
 
     plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
 
-    @property
-    def serialise(self):
-        # TODO serialize property https://stackoverflow.com/a/7103486
-        return {'name': self.name}
-
     def __init__(self, name, location, longitude, latitude):
         self.name = name
         self.location = location
@@ -35,9 +23,12 @@ class Event(db.Model):
     def vote(self, vote):
         self.votes = self.votes + vote
 
+    @property
+    def serialise(self):
+        # TODO serialize property https://stackoverflow.com/a/7103486
+        return {'name': self.name}
 
-@ROUTES.route('/id/<id>', methods=['GET'])
-@jsonify_decorator
+
 def get_from_id(id):
     return Event.query.get(id)
     # TODO input validation
