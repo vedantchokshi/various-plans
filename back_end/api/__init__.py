@@ -13,6 +13,8 @@ def jsonify_decorator(func):
         json = kwargs.pop('json', True)
         obj = func(*args, **kwargs)
         if json:
+            if isinstance(obj, list):
+                return jsonify(results=[i.serialise for i in obj])
             return jsonify(obj.serialise)  # TODO serialise property
         return obj
 
