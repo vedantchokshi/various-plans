@@ -1,6 +1,8 @@
 import time
 from . import db, default_str_len
 
+# TODO remove end time
+
 class Plan(db.Model):
     __tablename__ = 'Plans'
     id = db.Column('id', db.Integer, primary_key=True)
