@@ -14,20 +14,18 @@ def plans_get(planid):
 @ROUTES.route('/<planid>/events', methods=['GET'])
 @jsonify_decorator
 def plans_get(planid):
-    # Needs a routes.get_from_planid
-    return db.plans.get_from_id(planid)
+    return db.plans.get_from_id(planid).events
 
 
 @ROUTES.route('/<planid>/routes', methods=['GET'])
 @jsonify_decorator
 def plans_get(planid):
-    # Needs a events.get_from_planid
-    return db.plans.get_from_id(planid)
+    return db.plans.get_from_id(planid).routes
 
 
 @ROUTES.route('', methods=['POST'])
 @jsonify_decorator
 def plans_create():
-    json = request.json
+    json = request.get_json()
     # I think json is a dict but you'll need to check
-    return db.plans.create(json)
+    return db.plans.create(json.get('name'))
