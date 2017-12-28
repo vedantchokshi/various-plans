@@ -1,6 +1,7 @@
 import time
 from . import db, default_str_len
 
+
 # TODO remove end time
 
 class Plan(db.Model):
@@ -12,7 +13,6 @@ class Plan(db.Model):
     routeVoteCloseTime = db.Column(db.Float, nullable=False)
     startTime = db.Column(db.Float, nullable=False)
     endTime = db.Column(db.Float, nullable=False)
-
 
     def __init__(self, name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime):
         self.name = name
@@ -26,16 +26,31 @@ class Plan(db.Model):
     def serialise(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-def get_from_id(planid):
-    try:
-        return Plan.query.get(int(planid))
-    except ValueError:
-        return None
 
-# TODO remove defaults for vote Times
-def create(name, eventVoteCloseTime=time.time(), routeVoteCloseTime=time.time(),
-           startTime=time.time(), endTime=time.time()):
-    # TODO take in dict in order to do key checks
+def get_from_id(planid):
+    plan = Plan.query.get(int(planid))
+    if plan is None:
+        # TODO raise not found exception
+        pass
+    return plan
+
+
+# TODO remove defaults for vote times
+# If keys are not in json, function will be given None, therefore needs to cope with such value
+def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, startTime=None, endTime=None):
+    if name is None:
+        # TODO raise argument error
+        pass
+    if eventVoteCloseTime is None:
+        eventVoteCloseTime = time.time()
+    if routeVoteCloseTime is None:
+        routeVoteCloseTime = time.time()
+    if startTime is None:
+        startTime = time.time()
+    if endTime is None:
+        endTime = time.time()
+
+    # TODO does this complain if name = None?
     newPlan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
     db.session.add(newPlan)
     db.session.commit()
