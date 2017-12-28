@@ -1,5 +1,6 @@
 from flask import jsonify
 
+
 def init(app):
     import plans, events, routes
     app.register_blueprint(plans.ROUTES, url_prefix='/api/plan')
