@@ -7,25 +7,26 @@ ROUTES = Blueprint('plan', __name__)
 
 @ROUTES.route('/<planid>', methods=['GET'])
 @jsonify_decorator
-def plans_get(planid):
+def get_plan(planid):
     return db.plans.get_from_id(planid)
 
 
 @ROUTES.route('/<planid>/events', methods=['GET'])
 @jsonify_decorator
-def plans_get(planid):
+def get_events_from_plan(planid):
     return db.plans.get_from_id(planid).events
 
 
 @ROUTES.route('/<planid>/routes', methods=['GET'])
 @jsonify_decorator
-def plans_get(planid):
+def get_routes_from_plan(planid):
     return db.plans.get_from_id(planid).routes
 
 
 @ROUTES.route('', methods=['POST'])
 @jsonify_decorator
-def plans_create():
+def create_plan():
     json = request.get_json()
-    # I think json is a dict but you'll need to check
-    return db.plans.create(json.get('name'))
+    # If keys don't exist, None is used
+    return db.plans.create(json.get('name'), json.get('eventVoteCloseTime'), json.get('routeVoteCloseTime'),
+                           json.get('startTime'), json.get('endTime'))
