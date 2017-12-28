@@ -1,4 +1,5 @@
 from flask import jsonify
+from functools import wraps
 
 
 def init(app):
@@ -9,6 +10,7 @@ def init(app):
 
 
 def jsonify_decorator(func):
+    @wraps(func)
     def wrapper(*args, **kwargs):
         json = kwargs.pop('json', True)
         obj = func(*args, **kwargs)
