@@ -33,6 +33,7 @@ def get_from_id(planid):
 # TODO remove defaults for vote Times
 def create(name, eventVoteCloseTime=time.time(), routeVoteCloseTime=time.time(),
            startTime=time.time(), endTime=time.time()):
+    # TODO take in dict in order to do key checks
     newPlan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
     db.session.add(newPlan)
     db.session.commit()
