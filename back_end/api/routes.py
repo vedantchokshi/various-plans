@@ -9,3 +9,8 @@ ROUTES = Blueprint('route', __name__)
 @jsonify_decorator
 def routes_get(routeid):
     return db.routes.get_from_id(routeid)
+
+@ROUTES.route('/<routeid>/events', methods=['GET'])
+@jsonify_decorator
+def routes_get(routeid):
+    return db.route_events.get_eventids_from_route_id(routeid)
