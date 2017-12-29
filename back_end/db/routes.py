@@ -1,5 +1,10 @@
-from . import db, default_str_len
-import plans, events, route_events
+import events
+import plans
+import route_events
+from back_end.api.api_exceptions import InvalidRequest, ResourceNotFound, InvalidContent
+from back_end.db import db, default_str_len
+from route_events import RouteEvent
+
 
 class Route(db.Model):
     __tablename__ = 'Routes'
@@ -9,8 +14,7 @@ class Route(db.Model):
     votes = db.Column(db.Integer, nullable=False, default=0)
 
     plan = db.relationship('Plan', backref=db.backref('routes', lazy=True))
-    events = db.relationship("Event", secondary='route_event')
-
+    events = db.relationship('Event', secondary='route_event')
 
     def __init__(self, name):
         self.name = name
@@ -19,51 +23,78 @@ class Route(db.Model):
     def vote(self, vote):
         self.votes = self.votes + vote
 
-    def assignEvents(self, eventids):
+    def assign_events(self, eventids):
         for i, eventid in enumerate(eventids):
+            # This needs to change as self.id might not
             db.session.add(RouteEvent(self.id, eventid, i))
 
     @property
-    def serialise(self,recurseEvents=True):
+    def serialise(self):
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        s['events'] = {re.index: (events.get_from_id(re.eventid).serialise if recurseEvents else re.eventid)
-                        for re in route_events.get_eventids_from_route_id(self.id).all()}
+        s['eventids'] = [re.eventid for re in route_events.get_eventids_from_routeid(self.id).all()]
         return s
 
+
 def get_from_id(routeid):
-    try:
-        return Route.query.get(routeid)
-    except ValueError:
-        return None
+    if not str(routeid).isdigit():
+        raise InvalidRequest("Route id '{}' is not a valid id".format(routeid))
+    event = Route.query.get(routeid)
+    if event is None:
+        raise ResourceNotFound("Route not found for id '{}'".format(routeid))
+    return event
 
 
 def create(planid, name, eventids):
-    # TODO instead of return None: throw error and delete db entry.
+    if name is None or not name:
+        raise InvalidContent('Route name is not specified')
+    if eventids is None or len(eventids) == 0:
+        raise InvalidContent('Route event list must have a non-zero size')
+    if ordered_set(eventids) != eventids:
+        raise InvalidContent('Route cannot repeat an event')
+
+    # Finding a plan will check the validity of planid
     plan = plans.get_from_id(planid)
-    if plan.phase != 2:
-        return None
-    r = Route(name)
-    plan.routes.append(r)
-    # db.session.commit()
 
     for eventid in eventids:
-        if events.get_from_id(eventid).planid != r.planid:
-            return None
+        if events.get_from_id(eventid).planid != int(planid):
+            raise InvalidContent("Event '{}' is not in Plan '{}'".format(eventid, planid))
 
-    r.assignEvents(eventids)
+    # TODO plan phase not needed
+    # if plan.phase != 2:
+    #     raise InvalidRequest("Plan '{}' is not in phase 2".format(planid), 500)
+
+    new_route = Route(name)
+
+    plan.routes.append(new_route)
+
+    # db.session.commit()
+
+    # new_route.assign_events(eventids)
+    for i, eventid in enumerate(eventids):
+        event = events.get_from_id(eventid)
+        new_route.events.append(event)
+
     db.session.commit()
-    return r
+    return new_route
 
 
-def upvote(routeid):
-    r = get_from_id(routeid)
-    r.votes = r.votes + 1
+def update(routeid, vote):
+    route = get_from_id(routeid)
+
+    if vote is None:
+        raise InvalidContent("Route vote not specified")
+
+    # TODO change this when we have user authentication
+    if vote > 0:
+        route.votes += 1
+    if vote < 0:
+        route.vote -= 1
+
     db.session.commit()
-    return r
+    return route
 
 
-def downvote(routeid):
-    r = get_from_id(routeid)
-    r.votes = r.votes - 1
-    db.session.commit()
-    return r
+def ordered_set(seq):
+    seen = set()
+    seen_add = seen.add
+    return [x for x in seq if not (x in seen or seen_add(x))]
