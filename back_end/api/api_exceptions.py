@@ -27,5 +27,5 @@ class ResourceNotFound(BaseApiException):
     status_code = 404
 
 
-class InvalidInput(BaseApiException):
-    status_code = 405
+class InvalidContent(BaseApiException):
+    status_code = 422

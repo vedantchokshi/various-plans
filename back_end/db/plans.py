@@ -1,6 +1,6 @@
 import time
 
-from back_end.api.api_exceptions import InvalidInput, ResourceNotFound, InvalidRequest
+from back_end.api.api_exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 from back_end.db import db, default_str_len
 
 
@@ -44,7 +44,7 @@ def get_from_id(planid):
 def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, startTime=None, endTime=None):
     if name is None or not name:
         # name is not specified in json or is the empty string
-        raise InvalidInput("Plan name not specified")
+        raise InvalidContent("Plan name not specified")
 
     # TODO remove defaults for vote times, replace with raising InvalidInput
     if eventVoteCloseTime is None:
