@@ -15,7 +15,7 @@ def get_event(eventid):
 
 @ROUTES.route('/<eventid>/vote', methods=['POST'])
 @jsonify_decorator
-def update_event(eventid):
+def vote_event(eventid):
     json = request.get_json()
     if json is None:
         raise InvalidContent("Empty json not a valid event vote object")
