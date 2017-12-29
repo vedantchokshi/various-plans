@@ -1,5 +1,7 @@
 import time
-from . import db, default_str_len
+
+from back_end.api.api_exceptions import InvalidInput, ResourceNotFound, InvalidRequest
+from back_end.db import db, default_str_len
 
 
 # TODO remove end time
@@ -28,19 +30,23 @@ class Plan(db.Model):
 
 
 def get_from_id(planid):
-    plan = Plan.query.get(int(planid))
+    # TODO change when planid is alphanumeric hash
+    if not str(planid).isdigit():
+        raise InvalidRequest('Plan id \'{}\' is not a valid id'.format(planid))
+    plan = Plan.query.get(planid)
     if plan is None:
-        # TODO raise not found exception
-        pass
+        raise ResourceNotFound('Plan not found for id \'{}\''.format(planid))
     return plan
 
 
-# TODO remove defaults for vote times
 # If keys are not in json, function will be given None, therefore needs to cope with such value
+# Nones here are in order to use default values
 def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, startTime=None, endTime=None):
-    if name is None:
-        # TODO raise argument error
-        pass
+    if name is None or not name:
+        # name is not specified in json or is the empty string
+        raise InvalidInput("Plan name not specified")
+
+    # TODO remove defaults for vote times, replace with raising InvalidInput
     if eventVoteCloseTime is None:
         eventVoteCloseTime = time.time()
     if routeVoteCloseTime is None:
@@ -50,13 +56,21 @@ def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, startTime=Non
     if endTime is None:
         endTime = time.time()
 
-    # TODO does this complain if name = None?
     newPlan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
+
+    # The following isn't used as pymysql doesn't complain if name = "",
+    #   better to check argument before making plan
+    # try:
+    #     newPlan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
+    # except IntegrityError as e:
+    #     raise InvalidInput, InvalidInput(e.message),
+
     db.session.add(newPlan)
     db.session.commit()
     return newPlan
 
 
+# TODO remove as phase isn't needed
 def countvotes(planid):
     plan = get_from_id(planid)
     plan.phase = plan.phase + 1
