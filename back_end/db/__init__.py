@@ -12,7 +12,8 @@ def init(app):
     import plans, events, routes, route_events
 
 
-def reset(app):
+def reset():
+    global db
     db.drop_all()
     import plans, events, routes, route_events
     db.create_all()
