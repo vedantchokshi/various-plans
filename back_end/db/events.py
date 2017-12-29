@@ -1,24 +1,22 @@
-from . import db, default_str_len
 import plans
+from back_end.api.api_exceptions import InvalidRequest, ResourceNotFound, InvalidContent
+from back_end.db import db, default_str_len
+
 
 class Event(db.Model):
     __tablename__ = 'Events'
     id = db.Column('id', db.Integer, primary_key=True)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
     name = db.Column(db.String(default_str_len), nullable=False)
-    location = db.Column(db.String(default_str_len), nullable=False)
-    longitude = db.Column(db.Float, default=0, nullable=False)
-    latitude = db.Column(db.Float, default=0, nullable=False)
+    locationid = db.Column(db.String(default_str_len), nullable=False)
     votes = db.Column(db.Integer, default=0, nullable=False)
 
     plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
 
-    def __init__(self, name, location, longitude, latitude):
+    def __init__(self, name, locationid):
         self.name = name
-        self.location = location
+        self.locationid = locationid
         self.votes = 0
-        self.longitude = longitude
-        self.latitude = latitude
 
     def vote(self, vote):
         self.votes = self.votes + vote
@@ -28,31 +26,48 @@ class Event(db.Model):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-def get_from_id(id):
-    return Event.query.get(id)
-    # TODO input validation
-    # TODO useful exceptions
+def get_from_id(eventid):
+    if not str(eventid).isdigit():
+        raise InvalidRequest("Event id '{}' is not a valid id".format(eventid))
+    event = Event.query.get(eventid)
+    if event is None:
+        raise ResourceNotFound("Event not found for id '{}'".format(eventid))
+    return event
 
-def create(planid, name, location, longitude=0, latitude=0):
+
+def create(planid, name, locationid):
+    if name is None or not name:
+        raise InvalidContent('Event name is not specified')
+    if locationid is None or not locationid:
+        raise InvalidContent('Event locationid is not specified')
+
     plan = plans.get_from_id(planid)
+
+    # TODO plan phase not needed
     if plan.phase != 1:
-        return None
+        raise InvalidRequest("Plan '{}' is not in phase 1".format(planid), 500)
 
-    e = Event(name, location, longitude, latitude)
-    plan.events.append(e)
+    new_event = Event(name, locationid)
+
+    plan.events.append(new_event)
     db.session.commit()
-    return e
+    return new_event
 
 
-def upvote(eventid):
-    e = get_from_id(eventid)
-    e.votes = e.votes + 1
+def update(eventid, vote=None):
+    if not str(eventid).isdigit():
+        raise InvalidRequest("Event id '{}' is not a valid id".format(eventid))
+
+    event = Event.query.get(eventid)
+
+    if vote is None:
+        raise InvalidContent("Event vote not specified")
+
+    # TODO change this when we have user authentication
+    if vote > 0:
+        event.votes += 1
+    if vote < 0:
+        event.vote -= 1
+
     db.session.commit()
-    return e
-
-
-def downvote(eventid):
-    e = get_from_id(eventid)
-    e.votes = e.votes - 1
-    db.session.commit()
-    return e
+    return event
