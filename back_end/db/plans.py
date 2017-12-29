@@ -31,6 +31,8 @@ class Plan(db.Model):
 
 def get_from_id(planid):
     # TODO change when planid is alphanumeric hash
+    if planid is None:
+        raise InvalidRequest('Plan id not specified')
     if not str(planid).isdigit():
         raise InvalidRequest('Plan id \'{}\' is not a valid id'.format(planid))
     plan = Plan.query.get(planid)
@@ -56,18 +58,18 @@ def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, startTime=Non
     if endTime is None:
         endTime = time.time()
 
-    newPlan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
+    new_plan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
 
     # The following isn't used as pymysql doesn't complain if name = "",
     #   better to check argument before making plan
     # try:
-    #     newPlan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
+    #     new_plan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
     # except IntegrityError as e:
     #     raise InvalidInput, InvalidInput(e.message),
 
-    db.session.add(newPlan)
+    db.session.add(new_plan)
     db.session.commit()
-    return newPlan
+    return new_plan
 
 
 # TODO remove as phase isn't needed
