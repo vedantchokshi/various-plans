@@ -13,6 +13,9 @@ class Event(db.Model):
 
     plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
 
+    _plan_filtered = db.relationship("Plan", primaryjoin="and_(Plan.id==Event.planid, Event.votes>0)",
+     backref=db.backref("events_filtered", lazy=True))
+
     def __init__(self, name, locationid):
         self.name = name
         self.locationid = locationid
