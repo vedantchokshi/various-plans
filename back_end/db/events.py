@@ -43,9 +43,8 @@ def create(planid, name, locationid):
 
     plan = plans.get_from_id(planid)
 
-    # TODO plan phase not needed
-    # if plan.phase != 1:
-    #     raise InvalidRequest("Plan '{}' is not in phase 1".format(planid), 500)
+    if plan.phase != 1:
+        raise InvalidRequest("Plan '{}' is not in phase 1".format(planid))
 
     new_event = Event(name, locationid)
 
@@ -55,12 +54,15 @@ def create(planid, name, locationid):
 
 
 def update(eventid, vote):
-    event = get_from_id(eventid)
-
     if vote is None:
         raise InvalidContent("Event vote not specified")
     if not str(vote).lstrip('-').isdigit():
         raise InvalidContent("Event vote '{}' is not a valid vote".format(vote))
+
+    event = get_from_id(eventid)
+
+    if event.plan.phase != 1:
+        raise InvalidRequest("Plan '{}' is not in phase 1".format(event.plan.id))
 
     vote = int(vote)
 

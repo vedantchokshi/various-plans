@@ -4,13 +4,10 @@ from back_end.api.api_exceptions import InvalidRequest, ResourceNotFound, Invali
 from back_end.db import db, default_str_len
 
 
-# TODO remove end time
-
 class Plan(db.Model):
     __tablename__ = 'Plans'
     id = db.Column('id', db.Integer, primary_key=True)
     name = db.Column(db.String(default_str_len), nullable=False)
-    phase = db.Column(db.Integer, nullable=False)
     eventVoteCloseTime = db.Column(db.Integer, nullable=False)
     routeVoteCloseTime = db.Column(db.Integer, nullable=False)
     startTime = db.Column(db.Integer, nullable=False)
@@ -18,15 +15,25 @@ class Plan(db.Model):
 
     def __init__(self, name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime):
         self.name = name
-        self.phase = 1
         self.eventVoteCloseTime = eventVoteCloseTime
         self.routeVoteCloseTime = routeVoteCloseTime
         self.startTime = startTime
         self.endTime = endTime
 
     @property
+    def phase(self):
+        now = int(time.time())
+        if now < self.eventVoteCloseTime:
+            return 1
+        if now < self.routeVoteCloseTime:
+            return 2
+        return 3
+
+    @property
     def serialise(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        s['phase'] = self.phase
+        return s
 
 
 def get_from_id(planid):

@@ -59,9 +59,8 @@ def create(planid, name, eventidList):
         if events.get_from_id(eventid).planid != int(planid):
             raise InvalidContent("Event '{}' is not in Plan '{}'".format(eventid, planid))
 
-    # TODO plan phase not needed
-    # if plan.phase != 2:
-    #     raise InvalidRequest("Plan '{}' is not in phase 2".format(planid), 500)
+    if plan.phase != 2:
+        raise InvalidRequest("Plan '{}' is not in phase 2".format(planid))
 
     new_route = Route(name)
 
@@ -79,12 +78,15 @@ def create(planid, name, eventidList):
 
 
 def update(routeid, vote):
-    route = get_from_id(routeid)
-
     if vote is None:
         raise InvalidContent("Route vote not specified")
     if not str(vote).lstrip('-').isdigit():
         raise InvalidContent("Route vote '{}' is not a valid vote".format(vote))
+
+    route = get_from_id(routeid)
+
+    if route.plan.phase != 2:
+        raise InvalidRequest("Plan '{}' is not in phase 2".format(route.plan.id))
 
     vote = int(vote)
 
