@@ -45,7 +45,7 @@ def create(planid, name, eventidList):
         raise InvalidContent('Route name is not specified')
     if eventidList is None or len(eventidList) == 0:
         raise InvalidContent('Route event list must have a non-zero size')
-    if ordered_set(eventidList) != eventidList:
+    if len(set(eventidList)) != len(eventidList):
         raise InvalidContent('Route cannot repeat an event')
 
     # Finding a plan will check the validity of planid
@@ -91,9 +91,3 @@ def vote(routeid, vote):
 
     db.session.commit()
     return route
-
-
-def ordered_set(seq):
-    seen = set()
-    seen_add = seen.add
-    return [x for x in seq if not (x in seen or seen_add(x))]
