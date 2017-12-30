@@ -59,12 +59,16 @@ def update(eventid, vote):
 
     if vote is None:
         raise InvalidContent("Event vote not specified")
+    if not str(vote).lstrip('-').isdigit():
+        raise InvalidContent("Event vote '{}' is not a valid vote".format(vote))
+
+    vote = int(vote)
 
     # TODO change this when we have user authentication
     if vote > 0:
         event.votes += 1
     if vote < 0:
-        event.vote -= 1
+        event.votes -= 1
 
     db.session.commit()
     return event

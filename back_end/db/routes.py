@@ -83,12 +83,16 @@ def update(routeid, vote):
 
     if vote is None:
         raise InvalidContent("Route vote not specified")
+    if not str(vote).lstrip('-').isdigit():
+        raise InvalidContent("Route vote '{}' is not a valid vote".format(vote))
+
+    vote = int(vote)
 
     # TODO change this when we have user authentication
     if vote > 0:
         route.votes += 1
     if vote < 0:
-        route.vote -= 1
+        route.votes -= 1
 
     db.session.commit()
     return route
