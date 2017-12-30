@@ -31,7 +31,7 @@ class Route(db.Model):
     @property
     def serialise(self):
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        s['eventids'] = [re.eventid for re in route_events.get_eventids_from_routeid(self.id).all()]
+        s['eventidList'] = [re.eventid for re in route_events.get_eventids_from_routeid(self.id).all()]
         return s
 
 
@@ -44,18 +44,18 @@ def get_from_id(routeid):
     return event
 
 
-def create(planid, name, eventids):
+def create(planid, name, eventidList):
     if name is None or not name:
         raise InvalidContent('Route name is not specified')
-    if eventids is None or len(eventids) == 0:
+    if eventidList is None or len(eventidList) == 0:
         raise InvalidContent('Route event list must have a non-zero size')
-    if ordered_set(eventids) != eventids:
+    if ordered_set(eventidList) != eventidList:
         raise InvalidContent('Route cannot repeat an event')
 
     # Finding a plan will check the validity of planid
     plan = plans.get_from_id(planid)
 
-    for eventid in eventids:
+    for eventid in eventidList:
         if events.get_from_id(eventid).planid != int(planid):
             raise InvalidContent("Event '{}' is not in Plan '{}'".format(eventid, planid))
 
@@ -70,7 +70,7 @@ def create(planid, name, eventids):
     # db.session.commit()
 
     # new_route.assign_events(eventids)
-    for i, eventid in enumerate(eventids):
+    for i, eventid in enumerate(eventidList):
         event = events.get_from_id(eventid)
         new_route.events.append(event)
 
