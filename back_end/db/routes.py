@@ -1,9 +1,8 @@
 import events
 import plans
 import route_events
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 from back_end.db import db, default_str_len
-from route_events import RouteEvent
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
 class Route(db.Model):
@@ -20,13 +19,10 @@ class Route(db.Model):
         self.name = name
         self.votes = 0
 
-    def vote(self, vote):
-        self.votes = self.votes + vote
-
-    def assign_events(self, eventids):
-        for i, eventid in enumerate(eventids):
-            # This needs to change as self.id might not
-            db.session.add(RouteEvent(self.id, eventid, i))
+    def assign_events(self, eventidList):
+        for eventid in eventidList:
+            event = events.get_from_id(eventid)
+            self.events.append(event)
 
     @property
     def serialise(self):
@@ -68,10 +64,7 @@ def create(planid, name, eventidList):
 
     # db.session.commit()
 
-    # new_route.assign_events(eventids)
-    for i, eventid in enumerate(eventidList):
-        event = events.get_from_id(eventid)
-        new_route.events.append(event)
+    new_route.assign_events(eventidList)
 
     db.session.commit()
     return new_route

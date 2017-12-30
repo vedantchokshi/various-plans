@@ -1,6 +1,6 @@
 import plans
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 from back_end.db import db, default_str_len
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
 class Event(db.Model):
@@ -17,9 +17,6 @@ class Event(db.Model):
         self.name = name
         self.locationid = locationid
         self.votes = 0
-
-    def vote(self, vote):
-        self.votes = self.votes + vote
 
     @property
     def serialise(self):
