@@ -32,4 +32,4 @@ def create_plan():
     if json is None:
         raise InvalidContent("Empty json not a valid plan object")
     return plans.create(json.get('name'), json.get('eventVoteCloseTime'), json.get('routeVoteCloseTime'),
-                           json.get('startTime'), json.get('endTime')), 201
+                        json.get('endTime')), 201
