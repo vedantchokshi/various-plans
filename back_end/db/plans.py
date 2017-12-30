@@ -1,6 +1,6 @@
 import time
 
-from back_end.api.api_exceptions import InvalidRequest, ResourceNotFound, InvalidContent
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 from back_end.db import db, default_str_len
 
 

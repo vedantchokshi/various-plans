@@ -1,6 +1,6 @@
 from flask import jsonify, make_response
 
-from back_end.api.api_exceptions import BaseApiException
+from back_end.exceptions import BaseApiException
 
 
 def init(app):

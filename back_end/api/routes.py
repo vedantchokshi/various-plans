@@ -1,8 +1,8 @@
 from flask import Blueprint, request
 
 from back_end.api import jsonify_decorator
-from back_end.api.api_exceptions import InvalidContent
-from back_end.db import routes, route_events
+from back_end.exceptions import InvalidContent
+from back_end.db import routes
 
 ROUTES = Blueprint('route', __name__)
 
