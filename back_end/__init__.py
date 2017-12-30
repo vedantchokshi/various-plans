@@ -6,7 +6,7 @@ from back_end.exceptions import BaseApiException
 def init(app):
     import api, db
     db.init(app)
-    api.init(app)
+    api.init(app, '/api')
 
     # Because all api errors build off a base exception class,
     # we can catch and deal with them in the same way

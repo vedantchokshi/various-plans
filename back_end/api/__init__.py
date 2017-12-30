@@ -3,11 +3,11 @@ from functools import wraps
 from flask import jsonify, make_response
 
 
-def init(app):
+def init(app, prefix):
     import plans, events, routes
-    app.register_blueprint(plans.ROUTES, url_prefix='/api/plan')
-    app.register_blueprint(events.ROUTES, url_prefix='/api/event')
-    app.register_blueprint(routes.ROUTES, url_prefix='/api/route')
+    app.register_blueprint(plans.ROUTES, url_prefix='{}/plan'.format(prefix))
+    app.register_blueprint(events.ROUTES, url_prefix='{}/event'.format(prefix))
+    app.register_blueprint(routes.ROUTES, url_prefix='{}/route'.format(prefix))
 
 
 def jsonify_decorator(func):
