@@ -1,45 +1,17 @@
 <html>
-  <head>
-    <title>Varous Plans - Plan {{plan.id}}</title>
+<head>
+    <title>Varous Plans - Plan {{ plan.id }}</title>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
-  </head>
-  <body>
-    <h1>{{plan.name}} ({{plan.id}})</h1>
+</head>
+<body>
+<h1>{{ plan.name }} ({{ plan.id }})</h1>
 
-    {% if plan.phase == 1 %}
-      <div>
-        <h2>Events</h2>
-        {% for event in plan.events %}
-            <p>
-              {{ event.name }} has <b>{{ event.votes }}</b> votes.</p>
-              <form action="{{ url_for('upvote_event', eventid=event.id) }}" method="post">
-                <input type="submit" value="Upvote!" />
-              </form>
-              <form action="{{ url_for('downvote_event', eventid=event.id) }}" method="post">
-                <input type="submit" value="Downvote!" />
-              </form>
+{% if plan.phase == 1 %}
+    <h2>Plan is in phase 1</h2>
+{% elif plan.phase == 2 %}
+    <h2>Plan is in phase 2</h2>
+{% endif %}
 
-        {% endfor %}
-      </div>
-      <a href="{{ url_for('new_event', planid=plan.id) }}">New Event</a><br>
-    {% elif plan.phase == 2 %}
-      <div>
-        <h2>Routes</h2>
-        {% for route in plan.routes %}
-            <p>{{ route.name }} has <b>{{ route.votes }}</b> votes.{{ route.events }}</p>
-            <form action="{{ url_for('upvote_route', routeid=route.id) }}" method="post">
-              <input type="submit" value="Upvote!" />
-            </form>
-            <form action="{{ url_for('downvote_route', routeid=route.id) }}" method="post">
-              <input type="submit" value="Downvote!" />
-            </form>
-        {% endfor %}
-      </div>
-      <a href="{{ url_for('new_route', planid=plan.id) }}">New Route</a><br>
-    {% endif %}
-    <form action="{{ url_for('countvotes', planid=plan.id) }}" method="post">
-      <input type="submit" value="Count the Votes!" />
-    </form>
-    OI OI big ladz 'av made planz
-  </body>
+var_apiLoad = { plan: {{ planJsonStr }}, events: {{ eventJsonStr }}, routes: {{ routeJsonStr }} };
+</body>
 </html>

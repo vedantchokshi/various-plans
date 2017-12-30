@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask, render_template
+from flask import Flask, render_template, json
 
 import back_end as be
 import config
@@ -33,10 +33,17 @@ def index():
 
 
 # [plan view]
-@app.route('/#/<planid>', methods=['GET'])
+@app.route('/<planid>', methods=['GET'])
 def disp_plan(planid):
     plan = be.db.plans.get_from_id(planid)
-    return render_template('plan.html', plan=plan)
+    plan_json = json.dumps(plan.serialise)
+    events_json = json.dumps([i.serialise for i in plan.events])
+    routes_json = json.dumps([i.serialise for i in plan.routes])
+    return render_template('plan.html',
+                           plan=plan,
+                           planJsonStr=plan_json,
+                           eventJsonStr=events_json,
+                           routeJsonStr=routes_json)
 
 
 @app.errorhandler(500)
