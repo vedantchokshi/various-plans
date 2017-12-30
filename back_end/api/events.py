@@ -19,7 +19,7 @@ def vote_event(eventid):
     json = request.get_json()
     if json is None:
         raise InvalidContent("Empty json not a valid event vote object")
-    return events.update(eventid, json.get('vote')), 201
+    return events.vote(eventid, json.get('vote')), 201
 
 
 @ROUTES.route('', methods=['POST'])

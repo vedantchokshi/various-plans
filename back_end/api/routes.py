@@ -19,7 +19,7 @@ def vote_route(routeid):
     json = request.get_json()
     if json is None:
         raise InvalidContent("Empty json not a valid route vote object")
-    return routes.update(routeid, json.get('vote')), 201
+    return routes.vote(routeid, json.get('vote')), 201
 
 
 @ROUTES.route('', methods=['POST'])

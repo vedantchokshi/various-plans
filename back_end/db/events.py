@@ -53,7 +53,7 @@ def create(planid, name, locationid):
     return new_event
 
 
-def update(eventid, vote):
+def vote(eventid, vote):
     if vote is None:
         raise InvalidContent("Event vote not specified")
     if not str(vote).lstrip('-').isdigit():

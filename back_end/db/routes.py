@@ -70,7 +70,7 @@ def create(planid, name, eventidList):
     return new_route
 
 
-def update(routeid, vote):
+def vote(routeid, vote):
     if vote is None:
         raise InvalidContent("Route vote not specified")
     if not str(vote).lstrip('-').isdigit():
