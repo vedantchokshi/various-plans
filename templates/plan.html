@@ -10,6 +10,8 @@
     <h2>Plan is in phase 1</h2>
 {% elif plan.phase == 2 %}
     <h2>Plan is in phase 2</h2>
+{% elif plan.phase == 3 %}
+    <h2>Plan is in phase 3</h2>
 {% endif %}
 
 var_apiLoad = { plan: {{ planJsonStr }}, events: {{ eventJsonStr }}, routes: {{ routeJsonStr }} };
