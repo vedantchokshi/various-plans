@@ -47,6 +47,7 @@ def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, endTime=None)
     if name is None or not name:
         # name is not specified in json or is the empty string
         raise InvalidContent("Plan name not specified")
+    # TODO split number check with different error
     if eventVoteCloseTime is None or not str(eventVoteCloseTime).isdigit():
         raise InvalidContent("Plan eventVoteCloseTime not specified")
     if routeVoteCloseTime is None or not str(routeVoteCloseTime).isdigit():
