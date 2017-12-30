@@ -60,13 +60,12 @@ CLOUDSQL_CONNECTION_NAME = 'various-plans:europe-west1:library'
 #     user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
 #     database=CLOUDSQL_DATABASE)
 
-LOCAL_SQLALCHEMY_DATABASE_URI =  'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
+LOCAL_SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
 
 # When running on App Engine a unix socket is used to connect to the cloudsql
 # instance.
 LIVE_SQLALCHEMY_DATABASE_URI = (
-    'mysql+pymysql://{user}:{password}@localhost/{database}'
-    '?unix_socket=/cloudsql/{connection_name}').format(
+    'mysql+pymysql://{user}:{password}@/{database}?unix_socket=/cloudsql/{connection_name}').format(
     user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
     database=CLOUDSQL_DATABASE, connection_name=CLOUDSQL_CONNECTION_NAME)
 
