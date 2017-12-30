@@ -1,5 +1,5 @@
 import plans
-from back_end.db import db, default_str_len
+from back_end.db import db, default_str_len, plans
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
@@ -11,10 +11,11 @@ class Event(db.Model):
     locationid = db.Column(db.String(default_str_len), nullable=False)
     votes = db.Column(db.Integer, default=0, nullable=False)
 
-    plan = db.relationship('Plan', backref=db.backref('events', lazy=True))
+    plan = db.relationship('Plan', backref=db.backref('events_all', lazy=True))
 
     _plan_filtered = db.relationship("Plan", primaryjoin="and_(Plan.id==Event.planid, Event.votes>0)",
      backref=db.backref("events_filtered", lazy=True))
+
 
     def __init__(self, name, locationid):
         self.name = name
@@ -25,6 +26,7 @@ class Event(db.Model):
     def serialise(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+plans.Plan.events = property(lambda self: self.events_filtered if self.phase>1 else self.events)
 
 def get_from_id(eventid):
     if not str(eventid).isdigit():
