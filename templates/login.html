@@ -30,8 +30,8 @@ Please login
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/login');
         xhr.setRequestHeader('Content-Type', 'application/json');
-        var data = JSON.stringify({"token": id_token});
-        xhr.send(data);
+        xhr.setRequestHeader('vp-token', id_token);
+        xhr.send();
     };
 </script>
 
@@ -49,6 +49,30 @@ Please login
             console.log('Family Name2: ' + profile.getFamilyName());
             console.log('Image URL2: ' + profile.getImageUrl());
             console.log('Email2: ' + profile.getEmail());
+            
+            /*
+             * OR DO THIS
+             * var auth2 = gapi.auth2.init();
+             * var id_token = auth2.currentUser.get().getAuthResponse().id_token
+             */
+            var id_token = gapi.auth2.init().currentUser.get().getAuthResponse().id_token;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/token');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('vp-token', id_token);
+            xhr.send();
+
+            // /*
+            //  * OR DO THIS
+            //  * var auth2 = gapi.auth2.init();
+            //  * var id_token = auth2.currentUser.get().getAuthResponse().id_token
+            //  */
+            //  var id_token = gapi.auth2.init().currentUser.get().getAuthResponse().id_token;
+            // var xhr = new XMLHttpRequest();
+            // xhr.open('GET', '/');
+            // //xhr.setRequestHeader('Content-Type', 'application/json');
+            // xhr.setRequestHeader('vp-token', id_token);
+            // xhr.send();
         }
     }
 </script>
