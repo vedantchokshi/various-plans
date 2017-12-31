@@ -14,3 +14,7 @@ handlers:
 - url: /.*
   script: main.app
   # [END handlers]
+
+libraries:
+- name: ssl
+  version: latest
