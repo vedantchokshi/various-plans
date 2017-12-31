@@ -28,18 +28,21 @@ def reset():
 
 # [homepage]
 @app.route('/', methods=['GET'])
-@app.route('/index', methods=['GET'])
 def index():
     return render_template('index.html')
+
 
 # [homepage]
 @app.route('/login', methods=['GET'])
 def login():
     return render_template('login.html')
+
+
 # [homepage]
 @app.route('/logout', methods=['GET'])
 def logout():
     return render_template('logout.html')
+
 
 # [plan view]
 @app.route('/<planid>', methods=['GET'])
