@@ -1,0 +1,27 @@
+<html>
+<head>
+    <title>Varous Plans</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com">
+</head>
+<body>
+<h1>Various Plans</h1>
+
+Please login
+
+<div class="g-signin2" data-onsuccess="onSignIn" hidden="true"></div>
+
+<a href="#" onclick="signOut();">Sign out</a>
+<script>
+  function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
+</script>
+
+</body>
+</html>
+

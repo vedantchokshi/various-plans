@@ -1,0 +1,59 @@
+<html>
+<head>
+    <title>Varous Plans</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <meta name="google-signin-client_id" content="952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+<h1>Various Plans</h1>
+
+Please login
+
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+<script>
+    function onSignIn(googleUser) {
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail());
+
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log("ID Token: " + id_token);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/login');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        var data = JSON.stringify({"token": id_token});
+        xhr.send(data);
+    };
+</script>
+
+<input id="clickMe" type="button" value="clickme" onclick="doFunction();" />
+<script>
+    function doFunction() {
+        // var auth2 = gapi.auth2.getAuthInstance();
+        // auth2 is initialized with gapi.auth2.init() and a user is signed in.
+        var auth2 = gapi.auth2.init();
+        if (auth2.isSignedIn.get()) {
+            var profile = auth2.currentUser.get().getBasicProfile();
+            console.log('ID2: ' + profile.getId());
+            console.log('Full Name2: ' + profile.getName());
+            console.log('Given Name2: ' + profile.getGivenName());
+            console.log('Family Name2: ' + profile.getFamilyName());
+            console.log('Image URL2: ' + profile.getImageUrl());
+            console.log('Email2: ' + profile.getEmail());
+        }
+    }
+</script>
+ 
+
+</body>
+</html>
+
