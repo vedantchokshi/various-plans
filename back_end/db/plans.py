@@ -12,6 +12,8 @@ class Plan(db.Model):
     routeVoteCloseTime = db.Column(db.Integer, nullable=False)
     startTime = db.Column(db.Integer, nullable=False)
     endTime = db.Column(db.Integer, nullable=False)
+    join_link = db.Column(db.String(default_str_len), nullable=False)
+    ownerid = db.Column(db.String(default_str_len), nullable=False)
 
     def __init__(self, name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime):
         self.name = name
@@ -79,10 +81,3 @@ def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, endTime=None)
     db.session.commit()
     return new_plan
 
-
-# TODO remove as phase isn't needed
-def countvotes(planid):
-    plan = get_from_id(planid)
-    plan.phase = plan.phase + 1
-    db.session.commit()
-    return plan

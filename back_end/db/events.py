@@ -11,7 +11,6 @@ class Event(db.Model):
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
     name = db.Column(db.String(default_str_len), nullable=False)
     locationid = db.Column(db.String(default_str_len), nullable=False)
-    votes = db.Column(db.Integer, default=0, nullable=False)
 
     plan = db.relationship('Plan', backref=db.backref('events_all', lazy='dynamic'))
 
@@ -50,26 +49,3 @@ def create(planid, name, locationid):
     plan.events.append(new_event)
     db.session.commit()
     return new_event
-
-
-def vote(eventid, vote):
-    if vote is None:
-        raise InvalidContent("Event vote not specified")
-    if not str(vote).lstrip('-').isdigit():
-        raise InvalidContent("Event vote '{}' is not a valid vote".format(vote))
-
-    event = get_from_id(eventid)
-
-    if event.plan.phase != 1:
-        raise InvalidRequest("Plan '{}' is not in phase 1".format(event.plan.id))
-
-    vote = int(vote)
-
-    # TODO change this when we have user authentication
-    if vote > 0:
-        event.votes += 1
-    if vote < 0:
-        event.votes -= 1
-
-    db.session.commit()
-    return event

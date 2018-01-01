@@ -10,10 +10,9 @@ class Route(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     name = db.Column(db.String(default_str_len), nullable=False)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
-    votes = db.Column(db.Integer, nullable=False, default=0)
 
     plan = db.relationship('Plan', backref=db.backref('routes_all', lazy='dynamic'))
-    events = db.relationship('Event', secondary='route_event')
+    events = db.relationship('Event', secondary='Route_Event')
 
     def __init__(self, name):
         self.name = name
@@ -73,26 +72,3 @@ def create(planid, name, eventidList):
 
     db.session.commit()
     return new_route
-
-
-def vote(routeid, vote):
-    if vote is None:
-        raise InvalidContent("Route vote not specified")
-    if not str(vote).lstrip('-').isdigit():
-        raise InvalidContent("Route vote '{}' is not a valid vote".format(vote))
-
-    route = get_from_id(routeid)
-
-    if route.plan.phase != 2:
-        raise InvalidRequest("Plan '{}' is not in phase 2".format(route.plan.id))
-
-    vote = int(vote)
-
-    # TODO change this when we have user authentication
-    if vote > 0:
-        route.votes += 1
-    if vote < 0:
-        route.votes -= 1
-
-    db.session.commit()
-    return route

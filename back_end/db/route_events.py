@@ -2,7 +2,7 @@ from back_end.db import db
 
 
 class RouteEvent(db.Model):
-    __tablename__ = 'route_event'
+    __tablename__ = 'Route_Event'
     routeid = db.Column(db.Integer, db.ForeignKey('Routes.id'), primary_key=True)
     eventid = db.Column(db.Integer, db.ForeignKey('Events.id'))
     index = db.Column(db.Integer, primary_key=True, autoincrement=True)
