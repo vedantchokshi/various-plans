@@ -1,7 +1,8 @@
 import time
 
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
 from back_end.db import db, default_str_len
+from back_end.db import authenticate_user_plan
 
 
 class Plan(db.Model):
@@ -38,12 +39,14 @@ class Plan(db.Model):
         return s
 
 
-def get_from_id(planid):
+def get_from_id(planid, userid):
     # TODO change when planid is alphanumeric hash
     if planid is None:
         raise InvalidRequest('Plan id not specified')
     if not str(planid).isdigit():
         raise InvalidRequest('Plan id \'{}\' is not a valid id'.format(planid))
+    if not authenticate_user_plan(planid, userid):
+        raise Unauthorized('Access Denied')
     plan = Plan.query.get(planid)
     if plan is None:
         raise ResourceNotFound('Plan not found for id \'{}\''.format(planid))
@@ -52,7 +55,7 @@ def get_from_id(planid):
 
 # If keys are not in json, function will be given None, therefore needs to cope with such value
 # Nones here are in order to use default values
-def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, endTime=None):
+def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, endTime=None, userid):
     if name is None or not name:
         # name is not specified in json or is the empty string
         raise InvalidContent("Plan name not specified")
@@ -67,6 +70,10 @@ def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, endTime=None)
         raise InvalidContent("Plan endTime not specified")
 
     startTime = int(time.time())
+
+    # AUTHTODO - Generate a hash ( import os; import binascii, planhash=binascii.hexlify(os.urandom(16)) )
+    # store hash in the the plan table (plan.joinid) and we MUST send the hash back to the client.
+    # AUTHTODO - assign the userid as the plan.owner of the plan in the plan table.
 
     new_plan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
 

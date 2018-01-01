@@ -1,5 +1,6 @@
-from back_end.db import db, default_str_len, plans, events, route_events
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
+from back_end.db import db, default_str_len, plans, events, route_events, authenticate_user_plan
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
+
 
 plans.Plan.routes = property(
     lambda self: self.routes_all.order_by(Route.votes.desc())[0:1] if self.phase > 2 else self.routes_all)
@@ -30,16 +31,18 @@ class Route(db.Model):
         return s
 
 
-def get_from_id(routeid):
+def get_from_id(routeid, userid):
     if not str(routeid).isdigit():
         raise InvalidRequest("Route id '{}' is not a valid id".format(routeid))
+    if not authenticate_user(routeid, userid):
+        raise Unauthorized('Access Denied')
     event = Route.query.get(routeid)
     if event is None:
         raise ResourceNotFound("Route not found for id '{}'".format(routeid))
     return event
 
 
-def create(planid, name, eventidList):
+def create(planid, name, eventidList, userid):
     if name is None or not name:
         raise InvalidContent('Route name is not specified')
     if eventidList is None:
@@ -48,6 +51,9 @@ def create(planid, name, eventidList):
         raise InvalidContent('Route eventidList must have a non-zero size')
     if len(set(eventidList)) != len(eventidList):
         raise InvalidContent('Route eventidList cannot repeat an event')
+
+    if not authenticate_user_plan(planid, userid):
+        raise Unauthorized('Access Denied')
 
     # Finding a plan will check the validity of planid
     plan = plans.get_from_id(planid)
@@ -72,3 +78,9 @@ def create(planid, name, eventidList):
 
     db.session.commit()
     return new_route
+
+
+def authenticate_user(routeid, userid):
+    # AUTHTODO - get planid with routeid from route table.
+    # AUTHTODO - call authenticate_user_plan(planid, userid) with the retrieved planid
+    return True

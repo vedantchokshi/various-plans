@@ -1,5 +1,6 @@
-from back_end.db import db, default_str_len, plans
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
+from back_end.db import db, default_str_len, plans, authenticate_user_plan
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
+
 
 plans.Plan.events = property(
     lambda self: self.events_all.filter(Event.votes > 0) if self.phase > 1 else self.events_all)
@@ -24,20 +25,25 @@ class Event(db.Model):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-def get_from_id(eventid):
+def get_from_id(eventid, userid):
     if not str(eventid).isdigit():
         raise InvalidRequest("Event id '{}' is not a valid id".format(eventid))
+    if not authenticate_user(eventid, userid):
+        raise Unauthorized('Access Denied')
     event = Event.query.get(eventid)
     if event is None:
         raise ResourceNotFound("Event not found for id '{}'".format(eventid))
     return event
 
 
-def create(planid, name, locationid):
+def create(planid, name, locationid, userid):
     if name is None or not name:
         raise InvalidContent('Event name is not specified')
     if locationid is None or not locationid:
         raise InvalidContent('Event locationid is not specified')
+
+    if not authenticate_user_plan(planid, userid):
+        raise Unauthorized('Access Denied')
 
     plan = plans.get_from_id(planid)
 
@@ -49,3 +55,9 @@ def create(planid, name, locationid):
     plan.events.append(new_event)
     db.session.commit()
     return new_event
+
+
+def authenticate_user(eventid, userid):
+    # AUTHTODO - get planid with eventid from event table.
+    # AUTHTODO - call authenticate_user_plan(planid, userid) with the retrieved planid
+    return True

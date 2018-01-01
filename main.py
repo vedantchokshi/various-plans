@@ -32,21 +32,45 @@ def index():
     return render_template('index.html')
 
 
-# [homepage]
+# [login page]
 @app.route('/login', methods=['GET'])
 def login():
     return render_template('login.html')
 
 
-# [homepage]
-@app.route('/logout', methods=['GET'])
-def logout():
-    return render_template('logout.html')
-
-
 # [plan view]
 @app.route('/<planid>', methods=['GET'])
 def disp_plan(planid):
+    token = request.headers.get('vp-token')
+    if token is None:
+        return render_template('login.html')
+    # AUTHTODO - get the objects from db from userplan table where user did is userid = get_userid_from_token(token)
+    # Then check that one of those objects has a planid of planids, return unauthorised if user does not belong to plan.
+    plan = be.db.plans.get_from_id(planid)
+    plan_json = json.dumps(plan.serialise)
+    events_json = json.dumps([i.serialise for i in plan.events])
+    routes_json = json.dumps([i.serialise for i in plan.routes])
+    return render_template('plan.html',
+                           plan=plan,
+                           planJsonStr=plan_json,
+                           eventJsonStr=events_json,
+                           routeJsonStr=routes_json)
+
+
+# [join plan page]
+@app.route('/join/<planhash>', methods=['GET'])
+def join_plan(planhash):
+    token = request.headers.get('vp-token')
+    if token is None:
+        return render_template('login.html')
+
+    # AUTHTODO (slightly less important) - check if the user already belongs to the plan and if they do take them to plan page straight away.
+
+    # AUTHTODO - Check that there is plan with the hash provided (<planhash> = plan.joinid in plan table) and get its id (create variable "planid"),
+    # add to userplan table with userid = get_userid_from_token(token) and the planid retrieved.
+    
+    # Now take the user to their plans page    
+    # This is repeated code from disp_plan - may be better to redirect if it does not cause problems with token, something like "return redirect("http://localhost:8080/planid", code=302)"
     plan = be.db.plans.get_from_id(planid)
     plan_json = json.dumps(plan.serialise)
     events_json = json.dumps([i.serialise for i in plan.events])
@@ -64,6 +88,19 @@ def server_error(e):
     logging.exception('An error occurred during a request.')
     return 'An internal error occurred.', 500
 
+
+# REMOVE FUNCTIONS BELOW
+
+# [homepage]
+@app.route('/loginT', methods=['GET'])
+def login():
+    return render_template('loginT.html')
+
+
+# [homepage]
+@app.route('/logoutT', methods=['GET'])
+def logout():
+    return render_template('logout.html')
 
 # [new plan]
 @app.route('/plan/new', methods=['POST', 'GET'])

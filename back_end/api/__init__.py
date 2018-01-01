@@ -1,10 +1,10 @@
 from functools import wraps
 
-from flask import jsonify, make_response, request
+from flask import render_template, jsonify, make_response, request
 from google.auth.transport import requests
 from google.oauth2 import id_token
 
-from back_end.exceptions import Unauthorized
+from back_end.exceptions import Unauthorized # AUTHTODO - think this can go
 
 
 def init(app, prefix):
@@ -12,6 +12,7 @@ def init(app, prefix):
     app.register_blueprint(plans.ROUTES, url_prefix='{}/plan'.format(prefix))
     app.register_blueprint(events.ROUTES, url_prefix='{}/event'.format(prefix))
     app.register_blueprint(routes.ROUTES, url_prefix='{}/route'.format(prefix))
+    # AUTHTODO - Get rid of this and token.py
     app.register_blueprint(token.ROUTES, url_prefix='{}/token'.format(prefix))
 
 
@@ -44,7 +45,8 @@ def token_decorator(func):
             userid = get_userid_from_token(token)
             kwargs['userid'] = userid
             return func(*args, **kwargs)
-        raise Unauthorized('No token in request header')
+        #raise Unauthorized('No token in request header')
+        return render_template('login.html')
 
     return wrapper
 
