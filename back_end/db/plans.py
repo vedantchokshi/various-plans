@@ -1,8 +1,8 @@
 import time
 
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
-from back_end.db import db, default_str_len
 from back_end.db import authenticate_user_plan
+from back_end.db import db, default_str_len
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
 
 
 class Plan(db.Model):
@@ -55,7 +55,7 @@ def get_from_id(planid, userid):
 
 # If keys are not in json, function will be given None, therefore needs to cope with such value
 # Nones here are in order to use default values
-def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, endTime=None, userid):
+def create(name, eventVoteCloseTime, routeVoteCloseTime, endTime, userid):
     if name is None or not name:
         # name is not specified in json or is the empty string
         raise InvalidContent("Plan name not specified")
@@ -87,4 +87,3 @@ def create(name, eventVoteCloseTime=None, routeVoteCloseTime=None, endTime=None,
     db.session.add(new_plan)
     db.session.commit()
     return new_plan
-
