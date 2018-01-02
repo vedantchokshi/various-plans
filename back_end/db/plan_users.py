@@ -9,5 +9,5 @@ class PlanUser(db.Model):
     plan = db.relationship('Plan', backref=db.backref('users', lazy=True))
 
     def __init__(self, planid, userid):
-        self.palnid = planid
+        self.planid = planid
         self.userid = userid
