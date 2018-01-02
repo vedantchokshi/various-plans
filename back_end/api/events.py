@@ -21,18 +21,7 @@ def vote_event(eventid, userid):
     json = request.get_json()
     if json is None:
         raise InvalidContent("Empty json not a valid event vote object")
-
-    # AUTHTODO -  I dont know how voting fully works with the method called in /db but I have some logic that can be used below
-
-    # var existingVote = # AUTHTODO - get users current vote from usereventvotes.vote
-    # var newVote = json.get('vote') # or get this in the logic method thats using it not from the json
-    # var changeToVote = newVote - existingVote
-    # AUTHTODO - change the vote (lets call it v) of the event with id of eventid to v+changeToVote (this works for all cases)
-    # AUTHTODO - set the users vote on this event (usereventvote.vote) to newVote
-    # AUTHTODO - Add the current users vote on the event/route to the json { result: [ {id: int, planid: string, name: string, locationid: string, votes: int, userVoteState: -1 or 0 or 1} ] }
-
-    # You may want to pass userid in here and do all the logic in events.vote - but i dont understand
-    return events.vote(eventid, userid, json.get('vote')), 201  # Add userid parameter here and in the method defintion
+    return events.vote(eventid, userid, json.get('vote')), 201
 
 
 @ROUTES.route('', methods=['POST'])
