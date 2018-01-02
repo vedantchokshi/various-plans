@@ -3,12 +3,16 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 from back_end.db import db, default_str_len
 
 events.Event.vote = lambda self, userid, vote: _set_event_vote(self.id, userid, vote)
+# AUTHTODO - Add the current users vote on the event/route to the json
+# userVoteState: -1 or 0 or 1
 
 routes.Route.vote = lambda self, userid, vote: _set_route_vote(self.id, userid, vote)
+# AUTHTODO - Add the current users vote on the event/route to the json
+# userVoteState: -1 or 0 or 1
 
-events.Event.vote_count = property(lambda self: sum(e.vote for e in EventVote.query.filter_by(eventid=self.id)))
+events.Event.votes = property(lambda self: sum(e.vote for e in EventVote.query.filter_by(eventid=self.id)))
 
-routes.Route.vote_count = property(lambda self: sum(r.vote for r in RouteVote.query.filter_by(routeid=self.id)))
+routes.Route.votes = property(lambda self: sum(r.vote for r in RouteVote.query.filter_by(routeid=self.id)))
 
 
 class EventVote(db.Model):
@@ -49,6 +53,9 @@ class RouteVote(db.Model):
         return s
 
 
+# TODO - validate arguments
+# TODO - throw errors not None?
+
 def get_event_votes(userid):
     try:
         return EventVote.query.filter_by(userid=userid)
@@ -66,7 +73,7 @@ def get_route_votes(userid):
 def _set_event_vote(eventid, userid, vote):
     try:
         ev = EventVote.query.filter_by(eventid=int(eventid), userid=userid)
-        if not ev:
+        if ev is None:
             ev = EventVote(eventid, userid, vote)
             db.session.add(ev)
         else:
@@ -80,7 +87,7 @@ def _set_event_vote(eventid, userid, vote):
 def _set_route_vote(routeid, userid, vote):
     try:
         rv = RouteVote.query.filter_by(routeid=int(routeid), userid=userid)
-        if not rv:
+        if rv is None:
             rv = RouteVote(routeid, userid, vote)
             db.session.add(rv)
         else:
