@@ -4,6 +4,8 @@ from flask import Flask, render_template, json, request, redirect, url_for
 
 import back_end as be
 import config
+from back_end.api import get_userid_from_token
+from back_end.exceptions import ResourceNotFound
 from back_end.forms import PlanForm, EventForm, RouteForm
 
 app = Flask(__name__)
@@ -31,7 +33,8 @@ def reset():
 def index():
     return render_template('index.html')
 
-# TOREMOVE
+
+# TODO remove
 # [login page]
 @app.route('/login', methods=['GET'])
 def login():
@@ -44,9 +47,8 @@ def disp_plan(planid):
     token = request.headers.get('vp-token')
     if token is None:
         return render_template('index.html')
-    # AUTHTODO - get the objects from db from userplan table where user did is userid = get_userid_from_token(token)
-    # Then check that one of those objects has a planid of planids, return unauthorised if user does not belong to plan.
-    plan = be.db.plans.get_from_id(planid)
+    userid = get_userid_from_token(token)
+    plan = be.db.plans.get_from_id(planid, userid)
     plan_json = json.dumps(plan.serialise)
     events_json = json.dumps([i.serialise for i in plan.events])
     routes_json = json.dumps([i.serialise for i in plan.routes])
@@ -57,35 +59,13 @@ def disp_plan(planid):
                            routeJsonStr=routes_json)
 
 
-# [join plan page]
-@app.route('/join/<planhash>', methods=['GET'])
-def join_plan(planhash):
-    token = request.headers.get('vp-token')
-    if token is None:
-        return render_template('index.html')
 
-    # AUTHTODO (slightly less important) - check if the user already belongs to the plan and if they do take them to plan page straight away.
-
-    # AUTHTODO - Check that there is plan with the hash provided (<planhash> = plan.joinid in plan table) and get its id (create variable "planid"),
-    # add to userplan table with userid = get_userid_from_token(token) and the planid retrieved.
-    
-    # Now take the user to their plans page    
-    # This is repeated code from disp_plan - may be better to redirect if it does not cause problems with token, something like "return redirect("http://localhost:8080/planid", code=302)"
-    plan = be.db.plans.get_from_id(planid)
-    plan_json = json.dumps(plan.serialise)
-    events_json = json.dumps([i.serialise for i in plan.events])
-    routes_json = json.dumps([i.serialise for i in plan.routes])
-    return render_template('plan.html',
-                           plan=plan,
-                           planJsonStr=plan_json,
-                           eventJsonStr=events_json,
-                           routeJsonStr=routes_json)
 
 
 @app.errorhandler(500)
 def server_error(e):
-    # Log the error and stacktrace.
-    logging.exception('An error occurred during a request.')
+    # Log the error and stacktrace
+    logging.exception('An error occurred during a request.\n{}'.format(e))
     return 'An internal error occurred.', 500
 
 
@@ -100,7 +80,8 @@ def login():
 # [homepage]
 @app.route('/logoutT', methods=['GET'])
 def logout():
-    return render_template('logout.html')
+    return render_template('logoutT.html')
+
 
 # [new plan]
 @app.route('/plan/new', methods=['POST', 'GET'])
