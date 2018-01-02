@@ -1,7 +1,6 @@
 from back_end.db import db, default_str_len, plans, events, route_events, authenticate_user_plan
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
 
-
 plans.Plan.routes = property(
     lambda self: self.routes_all.order_by(Route.votes.desc())[0:1] if self.phase > 2 else self.routes_all)
 
@@ -84,3 +83,7 @@ def authenticate_user(routeid, userid):
     # AUTHTODO - get planid with routeid from route table.
     # AUTHTODO - call authenticate_user_plan(planid, userid) with the retrieved planid
     return True
+
+
+def vote(routeid, userid, vote):
+    return get_from_id(routeid, userid).vote(userid, vote)
