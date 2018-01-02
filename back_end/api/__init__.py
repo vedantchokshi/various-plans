@@ -3,8 +3,7 @@ from functools import wraps
 from flask import render_template, jsonify, make_response, request
 from google.auth.transport import requests
 from google.oauth2 import id_token
-
-from back_end.exceptions import Unauthorized # AUTHTODO - think this can go
+from back_end.exceptions import Unauthorized
 
 
 def init(app, prefix):
@@ -45,8 +44,7 @@ def token_decorator(func):
             userid = get_userid_from_token(token)
             kwargs['userid'] = userid
             return func(*args, **kwargs)
-        #raise Unauthorized('No token in request header')
-        return render_template('login.html')
+        raise Unauthorized('No token in request header')
 
     return wrapper
 

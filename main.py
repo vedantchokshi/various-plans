@@ -31,7 +31,7 @@ def reset():
 def index():
     return render_template('index.html')
 
-
+# TOREMOVE
 # [login page]
 @app.route('/login', methods=['GET'])
 def login():
@@ -43,7 +43,7 @@ def login():
 def disp_plan(planid):
     token = request.headers.get('vp-token')
     if token is None:
-        return render_template('login.html')
+        return render_template('index.html')
     # AUTHTODO - get the objects from db from userplan table where user did is userid = get_userid_from_token(token)
     # Then check that one of those objects has a planid of planids, return unauthorised if user does not belong to plan.
     plan = be.db.plans.get_from_id(planid)
@@ -62,7 +62,7 @@ def disp_plan(planid):
 def join_plan(planhash):
     token = request.headers.get('vp-token')
     if token is None:
-        return render_template('login.html')
+        return render_template('index.html')
 
     # AUTHTODO (slightly less important) - check if the user already belongs to the plan and if they do take them to plan page straight away.
 
