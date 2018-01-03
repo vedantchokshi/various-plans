@@ -11,6 +11,7 @@ class Event(db.Model):
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
     name = db.Column(db.String(default_str_len), nullable=False)
     locationid = db.Column(db.String(default_str_len), nullable=False)
+    votes = db.Column(db.Integer, nullable=False)
 
     plan = db.relationship('Plan', backref=db.backref('events_all', lazy='dynamic'))
 

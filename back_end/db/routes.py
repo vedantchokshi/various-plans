@@ -23,7 +23,8 @@ class Route(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     name = db.Column(db.String(default_str_len), nullable=False)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
-    
+    votes = db.Column(db.Integer, nullable=False)
+
     plan = db.relationship('Plan', backref=db.backref('routes_all', lazy='dynamic'))
     events = db.relationship('Event', secondary='Route_Event')
 

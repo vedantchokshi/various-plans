@@ -5,10 +5,10 @@ events.Event.vote = lambda self, userid, vote: _set_event_vote(self.id, userid, 
 
 routes.Route.vote = lambda self, userid, vote: _set_route_vote(self.id, userid, vote)
 
-events.Event.votes = property(lambda self: sum(e.vote for e in self.all_votes))
+# events.Event.votes = property(lambda self: sum(e.vote for e in self.all_votes))
 events.Event.get_vote = lambda self, userid: get_event_vote(self.id, userid)
 
-routes.Route.votes = property(lambda self: sum(r.vote for r in self.all_votes))
+# routes.Route.votes = property(lambda self: sum(r.vote for r in self.all_votes))
 routes.Route.get_vote = lambda self, userid: get_route_vote(self.id, userid)
 
 
@@ -68,22 +68,28 @@ def get_route_vote(routeid, userid):
 
 
 def _set_event_vote(eventid, userid, vote):
+    e = events.get_from_id(eventid, userid)
     ev = EventVote.query.get((eventid, userid))
     if ev is None:
         ev = EventVote(eventid, userid, vote)
         db.session.add(ev)
     else:
+        e.votes -= ev.vote
         ev.vote = vote
+    e.votes += ev.vote
 
     db.session.commit()
 
 
 def _set_route_vote(routeid, userid, vote):
+    r = routes.get_from_id(routeid, userid)
     rv = RouteVote.query.get((routeid, userid))
     if rv is None:
         rv = RouteVote(routeid, userid, vote)
         db.session.add(rv)
     else:
+        r.votes -= rv.vote
         rv.vote = vote
+    r.votes += rv.vote
 
     db.session.commit()
