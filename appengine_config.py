@@ -18,21 +18,26 @@ import os
 
 # [START vendor]
 from google.appengine.ext import vendor
-from google.appengine.tools.devappserver2.python.runtime import sandbox
-
-# Add any libraries installed in the "lib" folder.
-
-sandbox._WHITE_LIST_C_MODULES += ['_ssl', '_socket']
-
-runtime_path = os.path.realpath(inspect.getsourcefile(inspect))
-runtime_dir = os.path.dirname(runtime_path)
-
-# Patch and reload the socket module implementation.
-system_socket = os.path.join(runtime_dir, 'socket.py')
-imp.load_source('socket', system_socket)
-
-# Patch and reload the ssl module implementation.
-system_ssl = os.path.join(runtime_dir, 'ssl.py')
-imp.load_source('ssl', system_ssl)
 
 vendor.add('lib')
+
+if os.environ.get('GAE_ENV'):
+    print('GAE instance! (appengine config)')
+else:
+    print('Not GAE instance (appengine config)')
+    from google.appengine.tools.devappserver2.python.runtime import sandbox
+
+    # Add any libraries installed in the "lib" folder.
+
+    sandbox._WHITE_LIST_C_MODULES += ['_ssl', '_socket']
+
+    runtime_path = os.path.realpath(inspect.getsourcefile(inspect))
+    runtime_dir = os.path.dirname(runtime_path)
+
+    # Patch and reload the socket module implementation.
+    system_socket = os.path.join(runtime_dir, 'socket.py')
+    imp.load_source('socket', system_socket)
+
+    # Patch and reload the ssl module implementation.
+    system_ssl = os.path.join(runtime_dir, 'ssl.py')
+    imp.load_source('ssl', system_ssl)

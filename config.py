@@ -55,12 +55,12 @@ CLOUDSQL_CONNECTION_NAME = 'various-plans:europe-west1:library'
 # change the 3306 to a different port number.
 
 # Alternatively, you could use a local MySQL instance for testing.
-# LOCAL_SQLALCHEMY_DATABASE_URI = (
-#     'mysql+pymysql://{user}:{password}@127.0.0.1:3306/{database}').format(
-#     user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
-#     database=CLOUDSQL_DATABASE)
+LOCAL_SQLALCHEMY_DATABASE_URI = (
+    'mysql+pymysql://{user}:{password}@127.0.0.1:3306/{database}').format(
+    user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
+    database=CLOUDSQL_DATABASE)
 
-LOCAL_SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
+# LOCAL_SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
 
 # When running on App Engine a unix socket is used to connect to the cloudsql
 # instance.
@@ -69,7 +69,7 @@ LIVE_SQLALCHEMY_DATABASE_URI = (
     user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
     database=CLOUDSQL_DATABASE, connection_name=CLOUDSQL_CONNECTION_NAME)
 
-if os.environ.get('GAE_INSTANCE'):
+if os.environ.get('GAE_ENV'):
     SQLALCHEMY_DATABASE_URI = LIVE_SQLALCHEMY_DATABASE_URI
 else:
     SQLALCHEMY_DATABASE_URI = LOCAL_SQLALCHEMY_DATABASE_URI
