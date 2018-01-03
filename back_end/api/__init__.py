@@ -11,7 +11,7 @@ def init(app, prefix):
     app.register_blueprint(plans.ROUTES, url_prefix='{}/plan'.format(prefix))
     app.register_blueprint(events.ROUTES, url_prefix='{}/event'.format(prefix))
     app.register_blueprint(routes.ROUTES, url_prefix='{}/route'.format(prefix))
-    # AUTHTODO - Get rid of this and token.py
+    # TODO - Get rid of this and token.py
     app.register_blueprint(token.ROUTES, url_prefix='{}/token'.format(prefix))
 
 
