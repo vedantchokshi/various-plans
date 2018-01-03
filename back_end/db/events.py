@@ -1,5 +1,5 @@
-from back_end.db import db, default_str_len, plans, authenticate_user_plan
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
+from back_end.db import db, default_str_len, plans
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 plans.Plan.events = property(
     lambda self: self.events_all.filter(Event.votes > 0) if self.phase > 1 else self.events_all)
@@ -19,19 +19,23 @@ class Event(db.Model):
         self.locationid = locationid
         self.votes = 0
 
+    def check_user(self, userid):
+        return self.plan.check_user(userid)
+
     @property
     def serialise(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        s['userVoteState'] = getattr(self, 'userVoteState')
+        return s
 
 
 def get_from_id(eventid, userid):
     if not str(eventid).isdigit():
         raise InvalidRequest("Event id '{}' is not a valid id".format(eventid))
-    if not authenticate_user(eventid, userid):
-        raise Unauthorized('Access Denied')
     event = Event.query.get(eventid)
     if event is None:
         raise ResourceNotFound("Event not found for id '{}'".format(eventid))
+    event.userVoteState = event.get_vote(userid)
     return event
 
 
@@ -41,10 +45,7 @@ def create(planid, name, locationid, userid):
     if locationid is None or not locationid:
         raise InvalidContent('Event locationid is not specified')
 
-    if not authenticate_user_plan(planid, userid):
-        raise Unauthorized('Access Denied')
-
-    plan = plans.get_from_id(planid)
+    plan = plans.get_from_id(planid, userid)
 
     if plan.phase != 1:
         raise InvalidRequest("Plan '{}' is not in phase 1".format(planid))
@@ -56,11 +57,10 @@ def create(planid, name, locationid, userid):
     return new_event
 
 
-def authenticate_user(eventid, userid):
-    # AUTHTODO - get planid with eventid from event table.
-    # AUTHTODO - call authenticate_user_plan(planid, userid) with the retrieved planid
-    return True
-
-
 def vote(eventid, userid, vote):
+    if not str(vote).isdigit():
+        raise InvalidContent('Vote is not an integer')
+    vote = int(vote)
+    if vote < -1 or vote > 1:
+        raise InvalidContent('Vote must be -1, 0 or 1')
     return get_from_id(eventid, userid).vote(userid, vote)
