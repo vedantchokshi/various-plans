@@ -34,13 +34,6 @@ def index():
     return render_template('index.html')
 
 
-# TODO remove
-# [login page]
-@app.route('/login', methods=['GET'])
-def login():
-    return render_template('login.html')
-
-
 # [plan view]
 @app.route('/<planid>', methods=['GET'])
 def disp_plan(planid):
