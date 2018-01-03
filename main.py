@@ -10,6 +10,7 @@ from back_end.forms import PlanForm, EventForm, RouteForm
 
 app = Flask(__name__)
 app.config.from_object(config)
+# TODO change when final release
 app.debug = True
 
 be.init(app)
@@ -17,15 +18,12 @@ be.init(app)
 from back_end import db
 from back_end.db import plans, events, routes
 
-
-# DEV reset
-@app.route('/reset', methods=['GET'])
-def reset():
-    if not app.debug:
-        # TODO throw error
-        return 'Nope :)'
-    be.db.reset()
-    return 'Reset!'
+if app.debug:
+    # DEV reset
+    @app.route('/reset', methods=['GET'])
+    def reset():
+        be.db.reset()
+        return 'Reset!'
 
 
 # [homepage]
