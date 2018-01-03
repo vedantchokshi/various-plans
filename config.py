@@ -60,7 +60,7 @@ LOCAL_SQLALCHEMY_DATABASE_URI = (
     user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
     database=CLOUDSQL_DATABASE)
 
-# LOCAL_SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
+MARK_LOCAL_SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://vplans_db:COMP3207Plans@tuddenham.no-ip.org:3306/variousplans'
 
 # When running on App Engine a unix socket is used to connect to the cloudsql
 # instance.
@@ -70,14 +70,8 @@ LIVE_SQLALCHEMY_DATABASE_URI = (
     database=CLOUDSQL_DATABASE, connection_name=CLOUDSQL_CONNECTION_NAME)
 
 if os.environ.get('GAE_ENV'):
-    SQLALCHEMY_DATABASE_URI = LIVE_SQLALCHEMY_DATABASE_URI
+    SQLALCHEMY_DATABASE_URI = MARK_LOCAL_SQLALCHEMY_DATABASE_URI
 else:
     SQLALCHEMY_DATABASE_URI = LOCAL_SQLALCHEMY_DATABASE_URI
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-# Mongo configuration
-# If using mongolab, the connection URI is available from the mongolab control
-# panel. If self-hosting on compute engine, replace the values below.
-MONGO_URI = \
-    'mongodb://user:password@host:27017/database'
