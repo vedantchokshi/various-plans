@@ -7,9 +7,12 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 def get_best_route(self):
     if self.phase > 2:
         r = self.routes_all.order_by(Route.votes.desc())[0]
-        # TODO store winning route somewhere in the case of random selection
-        # r_list = self.routes_all.filter_by(votes=r.votes)
-        # i = random.randint(0, len(r_list))
+        r_list = self.routes_all.filter_by(votes=r.votes)
+        if len(r_list) > 1:
+            i = random.randint(0, len(r_list))
+            r = r_list[i]
+            r.votes += 1
+            db.session.commit()
         return list(r)
     else:
         return self.routes_all
