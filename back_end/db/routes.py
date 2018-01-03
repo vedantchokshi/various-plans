@@ -1,5 +1,5 @@
 from back_end.db import db, default_str_len, plans, events, route_events
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 plans.Plan.routes = property(
     lambda self: self.routes_all.order_by(Route.votes.desc())[0:1] if self.phase > 2 else self.routes_all)
@@ -19,15 +19,14 @@ class Route(db.Model):
         self.votes = 0
         self.userVoteState = None
 
-    def assign_events(self, eventidList, userid):
-        for eventid in eventidList:
-            event = events.get_from_id(eventid, userid)
-            self.events.append(event)
+    @property
+    def eventids(self):
+        return [re.eventid for re in route_events.get_eventids_from_routeid(self.id).all()]
 
     @property
     def serialise(self):
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        s['eventidList'] = [re.eventid for re in route_events.get_eventids_from_routeid(self.id).all()]
+        s['eventidList'] = self.eventids
         s['userVoteState'] = getattr(self, 'userVoteState')
         return s
 
@@ -57,12 +56,19 @@ def create(planid, name, eventidList, userid):
     if plan.phase != 2:
         raise InvalidRequest("Plan '{}' is not in phase 2".format(planid))
 
+    event_list = list()
+
     for eventid in eventidList:
         event = events.get_from_id(eventid, userid)
         if event.planid != plan.planid:
             raise InvalidContent("Event '{}' is not in Plan '{}'".format(event.id, plan.planid))
         if event not in plan.events:
             raise InvalidContent("Event '{}' does not have enough votes".format(event.id))
+        event_list.append(event)
+
+    for route in plan.routes:
+        if eventidList == route.eventids:
+            raise InvalidContent("Event list matches Route '{}'".format(route.id), content={'routeid': route.id})
 
     new_route = Route(name)
 
@@ -70,7 +76,7 @@ def create(planid, name, eventidList, userid):
 
     # db.session.commit()
 
-    new_route.assign_events(eventidList, userid)
+    new_route.events += event_list
 
     db.session.commit()
     return new_route
