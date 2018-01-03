@@ -39,6 +39,7 @@ def index():
 def disp_plan(planid):
     token = request.headers.get('vp-token')
     if token is None:
+        # TODO change this to template with script to redo request with header
         return redirect(url_for('index'))
     try:
         userid = get_userid_from_token(token)
