@@ -14,8 +14,9 @@ app.debug = True
 
 be.init(app)
 
+# Imports must be done after back_end.init(app)
 from back_end import db
-from back_end.db import plans, routes
+from back_end.db import plans
 
 if app.debug:
     # DEV reset

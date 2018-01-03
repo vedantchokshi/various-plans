@@ -4,7 +4,8 @@ from back_end.exceptions import BaseApiException
 
 
 def init(app):
-    import api, db
+    import api
+    import db
     db.init(app)
     api.init(app, '/api')
 

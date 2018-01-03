@@ -58,14 +58,14 @@ def get_from_id(routeid, userid):
     return route
 
 
-def create(planid, name, eventidList, userid):
+def create(planid, name, eventid_list, userid):
     if name is None or not name:
         raise InvalidContent('Route name is not specified')
-    if eventidList is None:
+    if eventid_list is None:
         raise InvalidContent('Route eventidList is not specified')
-    if len(eventidList) == 0:
+    if len(eventid_list) == 0:
         raise InvalidContent('Route eventidList must have a non-zero size')
-    if len(set(eventidList)) != len(eventidList):
+    if len(set(eventid_list)) != len(eventid_list):
         raise InvalidContent('Route eventidList cannot repeat an event')
 
     plan = plans.get_from_id(planid, userid)
@@ -75,7 +75,7 @@ def create(planid, name, eventidList, userid):
 
     event_list = list()
 
-    for eventid in eventidList:
+    for eventid in eventid_list:
         event = db_events.get_from_id(eventid, userid)
         if event.planid != plan.planid:
             raise InvalidContent("Event '{}' is not in Plan '{}'".format(event.id, plan.planid))
@@ -84,7 +84,7 @@ def create(planid, name, eventidList, userid):
         event_list.append(event)
 
     for route in plan.routes:
-        if eventidList == route.eventids:
+        if eventid_list == route.eventids:
             raise InvalidContent("Event list matches Route '{}'".format(route.id), content={'routeid': route.id})
 
     new_route = Route(name)

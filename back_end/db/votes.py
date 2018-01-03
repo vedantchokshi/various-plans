@@ -50,8 +50,8 @@ class RouteVote(db.Model):
         return s
 
 
-# TODO - validate arguments
-# TODO - throw errors not None?
+# TODO validate arguments
+# TODO throw errors not None?
 
 def get_event_vote(eventid, userid):
     ev = EventVote.query.get((eventid, userid))

@@ -18,12 +18,12 @@ class Plan(db.Model):
     joinid = db.Column(db.String(default_str_len), nullable=False)
     ownerid = db.Column(db.String(default_str_len), nullable=False)
 
-    def __init__(self, name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime, ownerid):
+    def __init__(self, name, event_vote_close_time, route_vote_close_time, start_time, end_time, ownerid):
         self.name = name
-        self.eventVoteCloseTime = eventVoteCloseTime
-        self.routeVoteCloseTime = routeVoteCloseTime
-        self.startTime = startTime
-        self.endTime = endTime
+        self.eventVoteCloseTime = event_vote_close_time
+        self.routeVoteCloseTime = route_vote_close_time
+        self.startTime = start_time
+        self.endTime = end_time
         self.ownerid = ownerid
         self.users.append(PlanUser(self.id, ownerid))
         self.joinid = binascii.hexlify(os.urandom(16))
@@ -48,7 +48,6 @@ class Plan(db.Model):
 
 
 def get_from_id(planid, userid):
-    # TODO change when planid is alphanumeric hash
     if planid is None:
         raise InvalidRequest('Plan id not specified')
     if not str(planid).isdigit():
@@ -61,32 +60,23 @@ def get_from_id(planid, userid):
     return plan
 
 
-# If keys are not in json, function will be given None, therefore needs to cope with such value
-# Nones here are in order to use default values
-def create(name, eventVoteCloseTime, routeVoteCloseTime, endTime, userid):
+def create(name, event_vote_close_time, route_vote_close_time, end_time, userid):
     if name is None or not name:
         # name is not specified in json or is the empty string
         raise InvalidContent("Plan name not specified")
     # TODO split number check with different error
-    if eventVoteCloseTime is None or not str(eventVoteCloseTime).isdigit():
+    if event_vote_close_time is None or not str(event_vote_close_time).isdigit():
         raise InvalidContent("Plan eventVoteCloseTime not specified")
-    if routeVoteCloseTime is None or not str(routeVoteCloseTime).isdigit():
+    if route_vote_close_time is None or not str(route_vote_close_time).isdigit():
         raise InvalidContent("Plan routeVoteCloseTime not specified")
     # if startTime is None or not str(startTime).isdigit():
     #     raise InvalidContent("Plan startTime not specified")
-    if endTime is None or not str(endTime).isdigit():
+    if end_time is None or not str(end_time).isdigit():
         raise InvalidContent("Plan endTime not specified")
 
     startTime = int(time.time())
 
-    new_plan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime, userid)
-
-    # The following isn't used as pymysql doesn't complain if name = "",
-    #   better to check argument before making plan
-    # try:
-    #     new_plan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
-    # except IntegrityError as e:
-    #     raise InvalidInput, InvalidInput(e.message),
+    new_plan = Plan(name, event_vote_close_time, route_vote_close_time, startTime, end_time, userid)
 
     db.session.add(new_plan)
     db.session.commit()

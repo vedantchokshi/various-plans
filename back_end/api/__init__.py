@@ -8,18 +8,22 @@ from back_end.exceptions import Unauthorized
 
 
 def init(app, prefix):
-    import plans, events, routes, token
+    import plans
+    import events
+    import routes
+    import token
     app.register_blueprint(plans.ROUTES, url_prefix='{}/plan'.format(prefix))
     app.register_blueprint(events.ROUTES, url_prefix='{}/event'.format(prefix))
     app.register_blueprint(routes.ROUTES, url_prefix='{}/route'.format(prefix))
-    # TODO - Get rid of this and token.py
+    # TODO get rid of this and token.py
     app.register_blueprint(token.ROUTES, url_prefix='{}/token'.format(prefix))
 
 
 def get_userid_from_token(token):
     try:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(),
-                                              "952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com")
+                                              "952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com"
+                                              )
 
         if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
             raise ValueError('Wrong issuer.')
