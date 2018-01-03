@@ -1,7 +1,9 @@
+import binascii
+import os
 import time
 
-from back_end.db import authenticate_user_plan
 from back_end.db import db, default_str_len
+from back_end.db.plan_users import PlanUser
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
 
 
@@ -13,15 +15,21 @@ class Plan(db.Model):
     routeVoteCloseTime = db.Column(db.Integer, nullable=False)
     startTime = db.Column(db.Integer, nullable=False)
     endTime = db.Column(db.Integer, nullable=False)
-    join_link = db.Column(db.String(default_str_len), nullable=False)
+    joinid = db.Column(db.String(default_str_len), nullable=False)
     ownerid = db.Column(db.String(default_str_len), nullable=False)
 
-    def __init__(self, name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime):
+    def __init__(self, name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime, ownerid):
         self.name = name
         self.eventVoteCloseTime = eventVoteCloseTime
         self.routeVoteCloseTime = routeVoteCloseTime
         self.startTime = startTime
         self.endTime = endTime
+        self.ownerid = ownerid
+        self.users.append(PlanUser(self.id, ownerid))
+        self.joinid = binascii.hexlify(os.urandom(16))
+
+    def check_user(self, userid):
+        return userid in [u.userid for u in self.users]
 
     @property
     def phase(self):
@@ -44,12 +52,12 @@ def get_from_id(planid, userid):
     if planid is None:
         raise InvalidRequest('Plan id not specified')
     if not str(planid).isdigit():
-        raise InvalidRequest('Plan id \'{}\' is not a valid id'.format(planid))
-    if not authenticate_user_plan(planid, userid):
-        raise Unauthorized('Access Denied')
+        raise InvalidRequest("Plan id '{}' is not a valid id".format(planid))
     plan = Plan.query.get(planid)
     if plan is None:
-        raise ResourceNotFound('Plan not found for id \'{}\''.format(planid))
+        raise ResourceNotFound("Plan not found for id '{}'".format(planid))
+    if not plan.check_user(userid):
+        raise Unauthorized("User not authorized for Plan '{}'".format(planid))
     return plan
 
 
@@ -71,11 +79,7 @@ def create(name, eventVoteCloseTime, routeVoteCloseTime, endTime, userid):
 
     startTime = int(time.time())
 
-    # AUTHTODO - Generate a hash ( import os; import binascii, planhash=binascii.hexlify(os.urandom(16)) )
-    # store hash in the the plan table (plan.joinid) and we MUST send the hash back to the client.
-    # AUTHTODO - assign the userid as the plan.owner of the plan in the plan table.
-
-    new_plan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime)
+    new_plan = Plan(name, eventVoteCloseTime, routeVoteCloseTime, startTime, endTime, userid)
 
     # The following isn't used as pymysql doesn't complain if name = "",
     #   better to check argument before making plan
@@ -87,3 +91,26 @@ def create(name, eventVoteCloseTime, routeVoteCloseTime, endTime, userid):
     db.session.add(new_plan)
     db.session.commit()
     return new_plan
+
+
+def get_events_from_id(planid, userid):
+    events = get_from_id(planid, userid).events
+    for event in events:
+        event.userVoteState = event.get_vote(userid)
+    return events
+
+
+def get_routes_from_id(planid, userid):
+    routes = get_from_id(planid, userid).routes
+    for route in routes:
+        route.userVoteState = route.get_vote(userid)
+    return routes
+
+
+def add_user(joinid, userid):
+    plans = Plan.query.filter_by(joinid=joinid)
+    if len(plans) < 1:
+        raise ResourceNotFound("Cannot find Plan for joinid '{}'".format(joinid))
+    plan = plans[0]
+    plan.users.append(PlanUser(plan.id, userid))
+    return plan
