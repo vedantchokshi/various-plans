@@ -11,3 +11,8 @@ class PlanUser(db.Model):
     def __init__(self, planid, userid):
         self.planid = planid
         self.userid = userid
+
+
+def get_plans(userid):
+    plans = PlanUser.query.filterby(userid=userid)
+    return [p.plan for p in plans]
