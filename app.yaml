@@ -2,18 +2,14 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
-# [START handlers]
 handlers:
 - url: /static
   static_dir: static
-
 - url: /favicon\.ico
   static_files: static/res/favicon.ico
   upload: static/res/favicon\.ico
-
 - url: /.*
   script: main.app
-  # [END handlers]
 
 libraries:
 - name: ssl
