@@ -1,8 +1,9 @@
 from functools import wraps
 
-from flask import render_template, jsonify, make_response, request
+from flask import jsonify, make_response, request
 from google.auth.transport import requests
 from google.oauth2 import id_token
+
 from back_end.exceptions import Unauthorized
 
 
