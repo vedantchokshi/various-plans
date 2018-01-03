@@ -102,5 +102,5 @@ ENV/
 .idea
 pycharm_env
 cloud_sql_proxy
-sql.sh
+*.sh
 **/.DS_Store
