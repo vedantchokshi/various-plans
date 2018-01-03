@@ -16,7 +16,7 @@ class BaseApiException(Exception):
         rv['message'] = self.message
         rv['status_code'] = self.status_code
         if self.content is not None:
-            for key, value in self.content.items:
+            for key, value in self.content.items():
                 rv[key] = value
         return rv
 
