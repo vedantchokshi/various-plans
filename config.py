@@ -65,12 +65,12 @@ MARK_LOCAL_SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://vplans_db:COMP3207Plans@tu
 # When running on App Engine a unix socket is used to connect to the cloudsql
 # instance.
 LIVE_SQLALCHEMY_DATABASE_URI = (
-    'mysql+pymysql://{user}:{password}@/{database}?unix_socket=/cloudsql/{connection_name}').format(
+    'mysql+mysqldb://{user}:{password}@/{database}?unix_socket=/cloudsql/{connection_name}').format(
     user=CLOUDSQL_USER, password=CLOUDSQL_PASSWORD,
     database=CLOUDSQL_DATABASE, connection_name=CLOUDSQL_CONNECTION_NAME)
 
 if os.environ.get('GAE_ENV'):
-    SQLALCHEMY_DATABASE_URI = MARK_LOCAL_SQLALCHEMY_DATABASE_URI
+    SQLALCHEMY_DATABASE_URI = LIVE_SQLALCHEMY_DATABASE_URI
 else:
     SQLALCHEMY_DATABASE_URI = LOCAL_SQLALCHEMY_DATABASE_URI
 
