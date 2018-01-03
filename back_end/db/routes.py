@@ -7,9 +7,10 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 def get_best_route(self):
     if self.phase > 2:
         r = self.routes_all.order_by(Route.votes.desc())[0]
-        r_list = self.routes_all.filter_by(votes=r.votes)
-        i = random.randint(0, len(r_list))
-        return list(r_list[i])
+        # TODO store winning route somewhere in the case of random selection
+        # r_list = self.routes_all.filter_by(votes=r.votes)
+        # i = random.randint(0, len(r_list))
+        return list(r)
     else:
         return self.routes_all
 
@@ -22,7 +23,7 @@ class Route(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     name = db.Column(db.String(default_str_len), nullable=False)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
-
+    
     plan = db.relationship('Plan', backref=db.backref('routes_all', lazy='dynamic'))
     events = db.relationship('Event', secondary='Route_Event')
 
