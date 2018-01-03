@@ -1,8 +1,20 @@
-from back_end.db import db, default_str_len, plans, events, route_events
+import random
+
+from back_end.db import db, default_str_len, plans, events as db_events, route_events
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
-plans.Plan.routes = property(
-    lambda self: self.routes_all.order_by(Route.votes.desc())[0:1] if self.phase > 2 else self.routes_all)
+
+def get_best_route(self):
+    if self.phase > 2:
+        r = self.routes_all.order_by(Route.votes.desc())[0]
+        r_list = self.routes_all.filter_by(votes=r.votes)
+        i = random.randint(0, len(r_list))
+        return list(r_list[i])
+    else:
+        return self.routes_all
+
+
+plans.Plan.routes = property(get_best_route)
 
 
 class Route(db.Model):
@@ -59,7 +71,7 @@ def create(planid, name, eventidList, userid):
     event_list = list()
 
     for eventid in eventidList:
-        event = events.get_from_id(eventid, userid)
+        event = db_events.get_from_id(eventid, userid)
         if event.planid != plan.planid:
             raise InvalidContent("Event '{}' is not in Plan '{}'".format(event.id, plan.planid))
         if event not in plan.events:
