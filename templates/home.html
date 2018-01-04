@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="static/assets/css/jquery-ui.structure.min.css">
     <link rel="stylesheet" href="static/assets/css/jquery-ui.theme.min.css">
     <link rel="stylesheet" href="static/assets/css/styles.css">
-    <link rel="stylesheet" href="static/assets/css/jui-timepicker-addon.css">
 </head>
 
 <body>
@@ -22,23 +21,25 @@
                     <h3 class="modal-title">Create a Plan</h3>
                 </div>
                 <div class="modal-body">
+                    <form>
                         <div class="row">
-                            <div class="col-md-12"><input class="form-control underlineTextBox" type="text" placeholder="Name of Plan" id="planTextBox"></div>
+                            <div class="col-md-12"><input class="form-control" type="text" placeholder="Name of Plan" id="planTextBox"></div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 modalLabel"><label>Locations Close Time</label></div>
-                            <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Location Vote Close Date" id="locationVoteCloseText" disabled></div>
+                            <div class="col-md-12 modalCol"></div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 modalLabel"><label>Routes Close Time</label></div>
-                            <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Route Vote Close Date" id="routeVoteCloseText" disabled></div>
+                            <div class="col-md-12 modalCol"></div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 modalLabel"><label>Plan Close Time</label></div>
-                            <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Plan Vote Close Date" id="planVoteCloseText" disabled></div>
+                            <div class="col-md-12 modalCol"></div>
                         </div>
+                    </form>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" id="create-plan" type="button">CREATE</button></div>
+                <div class="modal-footer"><button class="btn btn-primary" type="button">CREATE</button></div>
             </div>
         </div>
     </div>
@@ -53,15 +54,15 @@
                     <hr>
                     <p>Your Plans</p>
                 </div>
-                <div class="modal-footer"><input type="text" placeholder="Enter Join Code" id="joinCode"><button class="btn btn-default" type="button">Add </button></div>
+                <div class="modal-footer"><input type="text" placeholder="Enter Join Code" id="join-code"><button class="btn btn-default" type="button">Add </button></div>
             </div>
         </div>
     </div>
     <div class="container" id="intro-container">
-        <div id="intro"><img src="static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png" id="logo">
+        <div id="intro"><img src="assets/img/Screen Shot 2017-12-19 at 20.13.38.png" id="logo">
             <h2 style="font-size:32px;"><strong>Various</strong> Plans</h2>
             <p>Collaboratively suggest locations and create routes to plan your perfect event.</p><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#create-plan-modal"><strong>CREATE A PLAN</strong></button><button class="btn btn-primary"
-                type="button" id="join-plan" data-toggle="modal" data-target="#join-plan-modal"><strong>Join Exisitng PLAN</strong></button></div>
+                type="button" id="joinButton" data-toggle="modal" data-target="#join-plan-modal"><strong>Join Exisitng PLAN</strong></button></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -69,7 +70,6 @@
     <script src="static/assets/js/classes.js"></script>
     <script src="static/assets/js/dummy-server.js"></script>
     <script src="static/assets/js/jquery-ui.min.js"></script>
-    <script src="static/assets/js/jui-timepicker-addon.js"></script>
     <script src="static/assets/js/PhotoGallery.js"></script>
     <script src="static/assets/js/various-plans.js"></script>
 </body>

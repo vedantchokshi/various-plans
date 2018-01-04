@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merged</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="static/assets/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="static/assets/css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="static/assets/css/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="static/assets/css/styles.css">
+</head>
+
+<body class="backgroundFeatures">
+    <div class="page-header" id="header">
+        <h1 id="navBar"><img src="static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png" style="width:50px;border-radius:10px;margin-top:7px;margin-left:4px;"><small style="color:rgb(255,255,255);"> Various Plans</small><span id="countdown-timer"> </span></h1>
+    </div>
+    <div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 col-xs-8" id="col1"><input type="text" placeholder="Search Location" id="map-search">
+                    <div id="map"></div>
+                </div>
+                <div class="col-md-6" id="col2">
+                    <div id="sidebar-menu" class="sidebar-menu">
+                        <h1 class="menu-heading">Decide Places </h1>
+                        <hr class="menu-rule">
+                        <div id="places-list" class="menu-content"></div>
+                    </div>
+                    <div id="sidebar-sub1" class="sidebar-menu">
+                        <div class="prev-menu-button"></div>
+                        <h1 class="menu-heading"> </h1>
+                        <hr class="menu-rule">
+                        <div class="menu-content"></div>
+                    </div>
+                    <div id="sidebar-sub2" class="sidebar-menu">
+                        <div class="prev-menu-button"></div>
+                        <h1 class="menu-heading"> </h1>
+                        <hr class="menu-rule">
+                        <div class="menu-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modalPlace">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:rgb(151,194,86);"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" style="color:rgb(255,255,255);">Add New Place </h4>
+                </div>
+                <div class="modal-body"><span id="place-details"> </span>
+                    <div class="row">
+                        <div class="col-md-12"><label>Event Name</label><input type="text" id="event-name"><span class="error-message"> </span></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-default" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button" id="add-place">Add </button></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modalRoute">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:rgb(151,194,86);"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" style="color:rgb(255,255,255);font-size:27px;">Create Route</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12"><label>Route Name</label><input type="text" id="route-name"><span class="error-message"> </span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="width:50%;">
+                            <h1 style="font-size:24px;">Events </h1>
+                            <ul class="route-sortable available-event-list"></ul>
+                        </div>
+                        <div class="col-md-12" style="width:50%;">
+                            <h1 style="font-size:24px;">Route</h1>
+                            <ul class="route-sortable route-event-list"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-default" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button" id="add-route" style="background-color:#337ab7;">Add </button></div>
+            </div>
+        </div>
+    </div>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOArxJo-qSYvIVy-r13e57RxHnCgAwEBA&callback=initMap&libraries=places"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="static/assets/js/api.js"></script>
+    <script src="static/assets/js/classes.js"></script>
+    <script src="static/assets/js/dummy-server.js"></script>
+    <script src="static/assets/js/jquery-ui.min.js"></script>
+    <script src="static/assets/js/PhotoGallery.js"></script>
+    <script src="static/assets/js/various-plans.js"></script>
+</body>
+
+</html>
