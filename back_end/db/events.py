@@ -26,7 +26,7 @@ class Event(db.Model):
     @property
     def serialise(self):
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        s['userVoteState'] = getattr(self, 'userVoteState')
+        s['userVoteState'] = getattr(self, 'userVoteState', False)
         return s
 
 

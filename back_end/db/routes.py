@@ -44,7 +44,7 @@ class Route(db.Model):
     def serialise(self):
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         s['eventidList'] = self.eventids
-        s['userVoteState'] = getattr(self, 'userVoteState')
+        s['userVoteState'] = getattr(self, 'userVoteState', False)
         return s
 
 
