@@ -77,7 +77,7 @@ def create(planid, name, eventid_list, userid):
 
     for eventid in eventid_list:
         event = db_events.get_from_id(eventid, userid)
-        if event.planid != plan.planid:
+        if event.planid != plan.id:
             raise InvalidContent("Event '{}' is not in Plan '{}'".format(event.id, plan.planid))
         if event not in plan.events:
             raise InvalidContent("Event '{}' does not have enough votes".format(event.id))
