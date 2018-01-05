@@ -2,7 +2,7 @@ from back_end.db import db, default_str_len, plans
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 plans.Plan.events = property(
-    lambda self: self.events_all.filter(Event.votes > 0) if self.phase > 1 else self.events_all)
+    lambda self: self.events_all.filter(Event.votes > 0) if self.phase > 1 else self.events_all.all())
 
 
 class Event(db.Model):
