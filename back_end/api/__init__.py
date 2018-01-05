@@ -44,12 +44,12 @@ def get_userid_from_token(token):
 def token_decorator(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        token = request.headers.get('vp-token')
+        token = request.cookies.get('vp-token')
         if token is not None:
             userid = get_userid_from_token(token)
             kwargs['userid'] = userid
             return func(*args, **kwargs)
-        raise Unauthorized('No token in request header')
+        raise Unauthorized('No token in cookies')
 
     return wrapper
 

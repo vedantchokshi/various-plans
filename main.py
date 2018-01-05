@@ -35,7 +35,7 @@ def index():
 # [plan view]
 @app.route('/<planid>', methods=['GET'])
 def disp_plan(planid):
-    token = request.headers.get('vp-token')
+    token = request.cookies.get('vp-token')
     if token is None:
         # TODO change this to template with script to redo request with header
         return redirect(url_for('index'))
