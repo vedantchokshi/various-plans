@@ -5,10 +5,10 @@ events.Event.vote = lambda self, userid, vote: _set_event_vote(self.id, userid, 
 
 routes.Route.vote = lambda self, userid, vote: _set_route_vote(self.id, userid, vote)
 
-events.Event.votes = property(lambda self: sum(e.vote for e in self.all_votes))
+events.Event.votes = property(lambda self: sum(e.vote for e in self.all_votes.all()))
 events.Event.get_vote = lambda self, userid: get_event_vote(self.id, userid)
 
-routes.Route.votes = property(lambda self: sum(r.vote for r in self.all_votes))
+routes.Route.votes = property(lambda self: sum(r.vote for r in self.all_votes.all()))
 routes.Route.get_vote = lambda self, userid: get_route_vote(self.id, userid)
 
 
