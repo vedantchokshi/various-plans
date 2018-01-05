@@ -100,9 +100,13 @@ def create(planid, name, eventid_list, userid):
 
 
 def vote(routeid, userid, vote):
-    if not str(vote).isdigit():
+    try:
+        vote = int(vote)
+    except ValueError :
         raise InvalidContent('Vote is not an integer')
-    vote = int(vote)
-    if vote < -1 or vote > 1:
+
+    if not (vote >= -1 or vote <= 1):
         raise InvalidContent('Vote must be -1, 0 or 1')
-    return get_from_id(routeid, userid).vote(userid, vote)
+    r = get_from_id(routeid, userid)
+    r.vote(userid, vote)
+    return r
