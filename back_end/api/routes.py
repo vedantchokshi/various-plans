@@ -38,4 +38,4 @@ def create_route(userid):
     json = request.get_json()
     if json is None:
         raise InvalidContent("Empty json not a valid route object")
-    return routes.create(json.get('planid'), json.get('name'), json.get('eventids'), userid), 201
+    return routes.create(json.get('planid'), json.get('name'), json.get('eventidList'), userid), 201
