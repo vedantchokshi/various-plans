@@ -1,5 +1,5 @@
 from back_end.db import db, default_str_len, plans, events as db_events
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, BaseApiException
 
 
 def get_best_route(self):
@@ -12,6 +12,8 @@ def get_best_route(self):
 
 def sort_routes(route_list):
     def sorter(a, b):
+        if not isinstance(a, Route) or not isinstance(b, Route):
+            raise BaseApiException('Routes list does not contain route objects', 500)
         if a.votes != b.votes:
             # Highest total votes
             return cmp(b.votes, a.votes)
