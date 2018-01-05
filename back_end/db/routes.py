@@ -1,5 +1,4 @@
 import random
-
 from back_end.db import db, default_str_len, plans, events as db_events, route_events
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
@@ -37,7 +36,7 @@ class Route(db.Model):
 
     @property
     def eventids(self):
-        return [re.eventid for re in route_events.get_eventids_from_routeid(self.id).all()]
+        return [re.id for re in self.events]
 
     @property
     def serialise(self):
