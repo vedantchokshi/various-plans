@@ -3,7 +3,7 @@ import random
 from back_end.db import db, default_str_len, plans, events as db_events, route_events
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
-
+# TODO redo
 def get_best_route(self):
     if self.phase > 2:
         r = self.routes_all.order_by(Route.votes.desc())[0]
@@ -26,14 +26,13 @@ class Route(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     name = db.Column(db.String(default_str_len), nullable=False)
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
-    votes = db.Column(db.Integer, nullable=False)
+    # votes = db.Column(db.Integer, nullable=False)
 
     plan = db.relationship('Plan', backref=db.backref('routes_all', lazy='dynamic'))
     events = db.relationship('Event', secondary='Route_Event')
 
     def __init__(self, name):
         self.name = name
-        self.votes = 0
         self.userVoteState = None
 
     @property
@@ -44,6 +43,7 @@ class Route(db.Model):
     def serialise(self):
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         s['eventidList'] = self.eventids
+        s['votes'] = self.votes
         s['userVoteState'] = getattr(self, 'userVoteState', False)
         return s
 

@@ -11,14 +11,13 @@ class Event(db.Model):
     planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
     name = db.Column(db.String(default_str_len), nullable=False)
     locationid = db.Column(db.String(default_str_len), nullable=False)
-    votes = db.Column(db.Integer, nullable=False)
+    # votes = db.Column(db.Integer, nullable=False)
 
     plan = db.relationship('Plan', backref=db.backref('events_all', lazy='dynamic'))
 
     def __init__(self, name, locationid):
         self.name = name
         self.locationid = locationid
-        self.votes = 0
 
     def check_user(self, userid):
         return self.plan.check_user(userid)
@@ -26,6 +25,7 @@ class Event(db.Model):
     @property
     def serialise(self):
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        s['votes'] = self.votes
         s['userVoteState'] = getattr(self, 'userVoteState', False)
         return s
 
