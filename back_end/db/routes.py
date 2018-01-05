@@ -24,7 +24,7 @@ def sort_routes(route_list):
             return cmp(b_event_average, a_event_average)
         if len(a.events) != len(b.events):
             # Highest number of events
-            return cmp(b.events, a.events)
+            return cmp(len(b.events), len(a.events))
         a_downvotes = reduce(lambda x, y: x + (1 if y.vote < 1 else 0), a.all_votes)
         b_downvotes = reduce(lambda x, y: x + (1 if y.vote < 1 else 0), b.all_votes)
         if a_downvotes != b_downvotes:

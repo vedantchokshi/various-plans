@@ -2,7 +2,7 @@ from back_end.db import db, default_str_len, plans
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 plans.Plan.events = property(
-    lambda self: [x for x in self.events_all.all() if x.votes>0]  if self.phase > 1 else self.events_all.all())
+    lambda self: [x for x in self.events_all.all() if x.votes > 0] if self.phase > 1 else self.events_all.all())
 
 
 class Event(db.Model):
@@ -61,7 +61,7 @@ def create(planid, name, locationid, userid):
 def vote(eventid, userid, vote):
     try:
         vote = int(vote)
-    except ValueError :
+    except ValueError:
         raise InvalidContent('Vote is not an integer')
 
     if not (vote >= -1 or vote <= 1):
