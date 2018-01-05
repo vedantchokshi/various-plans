@@ -65,7 +65,7 @@ var api = {
         //Creates new route on server
         create: function(name, planId, eventList) {
             var json = {name: name, planid: planId, eventidList: eventList};
-            return api.ajax("/api/route/", "POST", json);
+            return api.ajax("/api/route", "POST", json);
         },
         //Upvote the route of the given id
         upvote: function(id){

@@ -22,14 +22,14 @@ var localSession = {
      * 1: Voting on /Adding Routes
      * 2: Displaying final Route
      */
-    lastCheckedPhase: 0,
+    lastCheckedPhase: 1,
     getPhase: function() {
         var currTime = Math.floor((new Date()).getTime() / 1000);
         if(currTime > this.plan.routeVoteCloseTime)
-            return 2;
+            return 3;
         if(currTime > this.plan.eventVoteCloseTime)
-            return 1;
-        return 0;
+            return 2;
+        return 1;
     },
     timeToPhaseEnd: function() {
         var currTime = Math.floor((new Date()).getTime() / 1000);
@@ -39,9 +39,9 @@ var localSession = {
             return this.plan.routeVoteCloseTime - currTime;
         return -1;
     },
-    enterPhase1: function() {
-        this.lastCheckedPhase = 1;
-        console.log("Entered Phase 1");
+    enterPhase2: function() {
+        this.lastCheckedPhase = 2;
+        console.log("Entered Phase 2");
         //Update UI
         $("#sidebar-menu").find(".menu-heading").html("Decide Routes"); //Change Heading
         $("#sidebar-menu").find(".menu-content").empty(); //Clear voting controls for events
@@ -72,9 +72,9 @@ var localSession = {
         });
         //TODO: what if no one has submitted anything?
     },
-    enterPhase2: function() {
-        this.lastCheckedPhase = 2;
-        console.log("Entered Phase 2");
+    enterPhase3: function() {
+        this.lastCheckedPhase = 3;
+        console.log("Entered Phase 3");
         //Clear UI
         $("#map-search").css("display", "none"); //Search no longer needed
         $("#modalPlace").modal("hide"); //Hide place modal if open
@@ -95,7 +95,7 @@ var localSession = {
         this.routes = [];
 
         //Add new events to map, but not sidebar
-        //In phase /api/plan/<id>/events returns only the events in the winning route
+        //In phase 3 /api/plan/<id>/events returns only the events in the winning route
         updateEvents(false, true).then(function() {
             fitEventsOnMap(localSession.events);
 
@@ -140,15 +140,19 @@ var localSession = {
         this.lastCheckedPhase = this.plan.phase;
 
         switch(this.getPhase()) {
-            case 0:
-                //Reposition map
-                fitEventsOnMap(localSession.events);
-                break;
             case 1:
-                this.enterPhase1();
+                //Add new events and reposition map
+                updateEvents(false, true).then(function() {
+                    fitEventsOnMap(localSession.events);
+                }, function(error_obj) {
+
+                });
                 break;
             case 2:
                 this.enterPhase2();
+                break;
+            case 3:
+                this.enterPhase3();
                 break;
         }
     },
@@ -216,7 +220,7 @@ var localSession = {
                 });
 
                 marker.addListener('mouseover', function() {
-                    if(localSession.getPhase() === 0) {
+                    if(localSession.getPhase() === 1) {
                         var markerIco = this.getIcon();
                         markerIco.scaledSize = new google.maps.Size(41, 41);
                         markerIco.anchor = new google.maps.Point(markerIco.anchor.x+8,markerIco.anchor.y+8);
@@ -225,7 +229,7 @@ var localSession = {
                 });
 
                 marker.addListener('mouseout', function() {
-                    if(localSession.getPhase() === 0) {
+                    if(localSession.getPhase() === 1) {
                         var markerIco = this.getIcon();
                         markerIco.scaledSize = new google.maps.Size(25, 25);
                         markerIco.anchor = new google.maps.Point(markerIco.anchor.x-8, markerIco.anchor.y-8);
@@ -234,7 +238,7 @@ var localSession = {
                 });
 
                 marker.addListener('click', function() {
-                    if(localSession.getPhase() === 0) {
+                    if(localSession.getPhase() === 1) {
                         placesService.getDetails({placeId: this.getPlace().placeId}, function(place, status) {
                             if (status === google.maps.places.PlacesServiceStatus.OK) {
                                 $("#modalPlace").data("place", place).modal('show');
@@ -499,29 +503,29 @@ function pollServer() {
     //Update countdown timer
     var timeRemaining = localSession.timeToPhaseEnd();
     if(timeRemaining > -1) {
-        $("#countdown-timer").html("Voting ends in " + millisToReadable(timeRemaining));
+        $("#countdown-timer").html("Voting ends in " + millisToReadable(timeRemaining*1000));
     } else {
         $("#countdown-timer").html("");
     }
 
-    if(phase == 0) {
+    if(phase == 1) {
         //Event voting phase, update events
         updateEvents(true, true).then(null, function(error_obj) {
           console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
         });
-    } else if(phase == 1) {
+    } else if(phase == 2) {
         //Route voting phase
-        if(localSession.lastCheckedPhase != 1) {
-            localSession.enterPhase1();
+        if(localSession.lastCheckedPhase != 2) {
+            localSession.enterPhase2();
         }
         //Update Routes
         updateRoutes(true, true).then(null, function(error_obj) {
           console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
         });
-    } else if (phase == 2) {
+    } else if (phase == 3) {
         //Final route phase
-        if(localSession.lastCheckedPhase != 2) {
-            localSession.enterPhase2();
+        if(localSession.lastCheckedPhase != 3) {
+            localSession.enterPhase3();
         }
         //additional updates go here
     }
