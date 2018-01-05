@@ -1,20 +1,35 @@
-import random
-from back_end.db import db, default_str_len, plans, events as db_events, route_events
+from back_end.db import db, default_str_len, plans, events as db_events
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
-# TODO redo
+
 def get_best_route(self):
     if self.phase > 2:
-        r = self.routes_all.order_by(Route.votes.desc())[0]
-        r_list = self.routes_all.filter_by(votes=r.votes).all()
-        if len(r_list) > 1:
-            i = random.randint(0, len(r_list))
-            r = r_list[i]
-            r.votes += 1
-            db.session.commit()
+        r = sort_routes(self.routes_all.all())[-1]
         return list(r)
     else:
         return self.routes_all.all()
+
+
+def sort_routes(route_list):
+    def sorter(a, b):
+        if a.votes != b.votes:
+            # Highest total votes
+            return cmp(b.votes, a.votes)
+        a_event_average = sum([e.votes for e in a.events], 0.0) / len(a.events)
+        b_event_average = sum([e.votes for e in b.events], 0.0) / len(b.events)
+        if a_event_average != b_event_average:
+            # Highest average event total votes
+            return cmp(b_event_average, a_event_average)
+        if len(a.events) != len(b.events):
+            # Highest number of events
+            return cmp(b.events, a.events)
+        a_downvotes = reduce(lambda x, y: x + (1 if y.vote < 1 else 0), a.all_votes)
+        b_downvotes = reduce(lambda x, y: x + (1 if y.vote < 1 else 0), b.all_votes)
+        if a_downvotes != b_downvotes:
+            # Least down-voted route
+            return cmp(a_downvotes, b_downvotes)
+
+    return sorted(route_list, cmp=sorter)
 
 
 plans.Plan.routes = property(get_best_route)
@@ -101,7 +116,7 @@ def create(planid, name, eventid_list, userid):
 def vote(routeid, userid, vote):
     try:
         vote = int(vote)
-    except ValueError :
+    except ValueError:
         raise InvalidContent('Vote is not an integer')
 
     if not (vote >= -1 or vote <= 1):
