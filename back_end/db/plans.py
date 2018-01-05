@@ -6,6 +6,9 @@ from back_end.db import db, default_str_len
 from back_end.db.plan_users import PlanUser
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
 
+# length needs to be even, otherwise will be rounded down
+joinid_length = 8
+
 
 class Plan(db.Model):
     __tablename__ = 'Plans'
@@ -26,7 +29,7 @@ class Plan(db.Model):
         self.endTime = end_time
         self.ownerid = ownerid
         self.users.append(PlanUser(self.id, ownerid))
-        self.joinid = binascii.hexlify(os.urandom(16))
+        self.joinid = binascii.hexlify(os.urandom(joinid_length / 2))
 
     def check_user(self, userid):
         return userid in [u.userid for u in self.users]
