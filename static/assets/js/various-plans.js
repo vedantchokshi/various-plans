@@ -1,23 +1,12 @@
-$(document).ready(function() {
-  //Runs when page first properly loads
-  $( ".datepicker" ).datetimepicker({
-     minDate: 0,
-	   timeFormat: 'HH:mm z',
-     showOn: "button",
-     buttonImage: "../static/assets/img/calendar.svg",
-     buttonImageOnly: true,
-     buttonText: "Select date"
-  });
+function updateVPToken(){
+  var authResponse = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
+  document.cookie = "vp-token=" + authResponse.id_token + "; expires=" + new Date(authResponse.expires_at).toGMTString() + "; path=/";
+}
 
-  $("#create-plan").click(function() {
-    //TODO: Feedback for empty fields
-    var name = $("#planTextBox").val();
-    var eventVC = $("#locationVoteCloseText").datetimepicker("getDate").getTime();
-    var routeVC = $("#routeVoteCloseText").datetimepicker("getDate").getTime();
-    var plan = api.plan.create(name, eventVC, routeVC);
-    console.log(plan);
-  });
-});
+function redirectWithFreshToken(path) {
+  updateVPToken();
+  window.location = path;
+}
 
 var localSession = {
     //The events and routes that the client browser is tracking
@@ -35,7 +24,7 @@ var localSession = {
      */
     lastCheckedPhase: 0,
     getPhase: function() {
-        var currTime = (new Date()).getTime();
+        var currTime = Math.floor((new Date()).getTime() / 1000);
         if(currTime > this.plan.routeVoteCloseTime)
             return 2;
         if(currTime > this.plan.eventVoteCloseTime)
@@ -43,7 +32,7 @@ var localSession = {
         return 0;
     },
     timeToPhaseEnd: function() {
-        var currTime = (new Date()).getTime();
+        var currTime = Math.floor((new Date()).getTime() / 1000);
         if(currTime <= this.plan.eventVoteCloseTime)
             return this.plan.eventVoteCloseTime - currTime;
         if(currTime <= this.plan.routeVoteCloseTime)
@@ -70,7 +59,7 @@ var localSession = {
         this.events = [];
 
         //Add new events to map, but not sidebar
-        Promise.all(updateEvents(false, true)).then(function() {
+        updateEvents(false, true).then(function() {
             fitEventsOnMap(localSession.events);
 
             $("<button>", {"id": "add-route-button", "class": "btn btn-default", "type": "button", text: "Add Route"})
@@ -78,6 +67,8 @@ var localSession = {
                 .click(function() {
                     $("#modalRoute").modal("show");
                 });
+        }, function(error_obj) {
+          //Api Load Events Error
         });
         //TODO: what if no one has submitted anything?
     },
@@ -105,10 +96,10 @@ var localSession = {
 
         //Add new events to map, but not sidebar
         //In phase /api/plan/<id>/events returns only the events in the winning route
-        Promise.all(updateEvents(false, true)).then(function() {
+        updateEvents(false, true).then(function() {
             fitEventsOnMap(localSession.events);
 
-            Promise.all(updateRoutes(false, true)).then(function(routes) {
+            updateRoutes(false, true).then(function(routes) {
                 fitEventsOnMap(localSession.events);
                 //In phase 3, /api/plan/<id>/routes returns singleton containing winning routes
                 var route = routes[0];
@@ -124,7 +115,11 @@ var localSession = {
                 route.getIncludedEvents().forEach(function(route) {
                     route.displayUI($("#sidebar-menu").find(".menu-content"), false);
                 });
+            }, function(error_obj) {
+              //Api Load Routes Error
             });
+        }, function(error_obj) {
+            //Api Load Events Error
         });
         //TODO: what if no one has submitted anything?
     },
@@ -141,17 +136,13 @@ var localSession = {
     },
     initSessionVars: function(){
         //Poll server for initial plan information
-        //TODO: Update to read from templated variable
-        this.plan = api.plan.get(this.plan.id);
-        this.lastCheckedPhase = this.getPhase();
+        this.plan = _apiLoad.plan;
+        this.lastCheckedPhase = this.plan.phase;
 
         switch(this.getPhase()) {
             case 0:
-                //Once all events are updated, then reposition map
-                //If no promises were added (no new events) then this is called immediately
-                Promise.all(updateEvents(true, true)).then(function(){
-                    fitEventsOnMap(localSession.events);
-                });
+                //Reposition map
+                fitEventsOnMap(localSession.events);
                 break;
             case 1:
                 this.enterPhase1();
@@ -279,16 +270,16 @@ var localSession = {
                 } else if(inputName.length >= 100) {
                     $("#modalPlace").find(".error-message").html("Name too long.");
                     $("#modalPlace").find(".error-message").hide().fadeIn();
-                } else {
+                  } else {
                     //Remove the markers for the other search results
                     removeMarkersFromMap(localSession.searchmarkers);
                     localSession.searchmarkers = [];
-
+                    console.log(inputName + " : " + localSession.plan.id + " : " + place.place_id);
                     //Notify server of event creation
-                    var response = api.event.create(inputName, localSession.plan.id, place.place_id);
-
-                    //Create event from server response
-                    Event.EventFactory(response, place).then(function(event) {
+                    api.event.create(inputName, localSession.plan.id, place.place_id).then(function(response) {
+                      console.log(response);
+                      //Create event from server response
+                      Event.EventFactory(response, place).then(function(event) {
                         //Track event in session
                         localSession.events[event.id] = event;
                         //Render event
@@ -296,11 +287,13 @@ var localSession = {
                         //Reposition map
                         fitEventsOnMap(localSession.events);
                         modal.modal('hide');
-                    }, function() {
+                      }, function() {
                         //TODO: Better Error mesage
                         alert("Couldn't add event.");
-                    });
-                }
+                      });
+                    },
+                    function(error_obj) {});
+                  }
             });
         });
 
@@ -335,21 +328,22 @@ var localSession = {
             } else if(eventList.length === 0){
                 $("#modalRoute").find(".error-message").html("Please add events to the route.");
                 $("#modalRoute").find(".error-message").hide().fadeIn();
-            } else {
-                var response = api.route.create($("#modalRoute").find("#route-name").val(), localSession.plan.id, eventList);
+              } else {
+                api.route.create($("#modalRoute").find("#route-name").val(), localSession.plan.id, eventList).then(function(response) {
 
-                //Prevent polling duplicating the object
-                localSession.routes[response.id] = "pending";
+                  //Prevent polling duplicating the object
+                  localSession.routes[response.id] = "pending";
 
-                //Create event from server response
-                Route.RouteFactory(response).then(function(route) {
+                  //Create event from server response
+                  Route.RouteFactory(response).then(function(route) {
                     //Track event in session
                     localSession.routes[route.id] = route;
                     route.display();
                     //TODO: Reposition map
                     $("#modalRoute").modal('hide');
-                });
-            }
+                  });
+                }, function(obj_error) {});
+              }
         });
     }
 };
@@ -512,14 +506,18 @@ function pollServer() {
 
     if(phase == 0) {
         //Event voting phase, update events
-        updateEvents(true, true);
+        updateEvents(true, true).then(null, function(error_obj) {
+          console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+        });
     } else if(phase == 1) {
         //Route voting phase
         if(localSession.lastCheckedPhase != 1) {
             localSession.enterPhase1();
         }
         //Update Routes
-        updateRoutes(true, true);
+        updateRoutes(true, true).then(null, function(error_obj) {
+          console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+        });
     } else if (phase == 2) {
         //Final route phase
         if(localSession.lastCheckedPhase != 2) {
@@ -532,75 +530,89 @@ function pollServer() {
 //Update the events tracked locally by polling backend API
 //Optionally display new events in map and sidebar
 function updateEvents(displayNewEvents, displayOnMap) {
-    var serverEvents = api.plan.getEvents(localSession.plan.id);
-    var eventPromises = [];
-    serverEvents.forEach(function(e) {
+  return new Promise(function(updateEventsSuccess, updateEventsError) {
+    api.plan.getEvents(localSession.plan.id).then(function(eventsResponse){
+      var serverEvents = eventsResponse.results;
+      var eventPromises = [];
+      serverEvents.forEach(function(e) {
         var localEvent = localSession.events[e.id];
         //If event is new to client
         if(localEvent === undefined) {
-            //Lock array element to prevent multiple async calls to this function creating duplicate objects
-            localSession.events[e.id] = "pending";
-            //Create new object
-            var promise = Event.EventFactory(e, null);
-            eventPromises.push(promise);
-            promise.then(function(event) {
-                //Add to event list
-                localSession.events[event.id] = event;
-                if(displayNewEvents) {
-                    //Display event
-                    event.displayUI($("#sidebar-menu .menu-content"), true);
-                }
-                if(displayOnMap) {
-                    //Display event
-                    event.displayOnMap();
-                }
-            });
+          //Lock array element to prevent multiple async calls to this function creating duplicate objects
+          localSession.events[e.id] = "pending";
+          //Create new object
+          var promise = Event.EventFactory(e, null);
+          eventPromises.push(promise);
+          promise.then(function(event) {
+            //Add to event list
+            localSession.events[event.id] = event;
+            if(displayNewEvents) {
+              //Display event
+              event.displayUI($("#sidebar-menu .menu-content"), true);
+            }
+            if(displayOnMap) {
+              //Display event
+              event.displayOnMap();
+            }
+          });
         } else if(localEvent === "pending") {
-            //Do nothing, it is being handled by other call
+          //Do nothing, it is being handled by other call
         } else {
-            //Otherwise update event object as it exists
-            Object.assign(localEvent, e);
-            //Refresh UI
-            localEvent.refreshUI();
+          //Otherwise update event object as it exists
+          Object.assign(localEvent, e);
+          //Refresh UI
+          localEvent.refreshUI();
         }
+      });
+      Promise.all(eventPromises).then(updateEventsSuccess);
+    },
+    function(error_obj){
+      updateEventsError(error_obj);
     });
-    return eventPromises;
+  });
 }
 
 //Update the routes tracked locally by polling backend API
 //Optionally display new routes in map and sidebar
 function updateRoutes(displayNewRoutes, displayOnMap) {
-    var serverRoutes = api.plan.getRoutes(localSession.plan.id);
-    var routePromises = [];
-    serverRoutes.forEach(function(r) {
+  return new Promise(function(updateRoutesSuccess, updateRoutesError) {
+    api.plan.getRoutes(localSession.plan.id).then(function(routesResponse){
+      var serverRoutes = routesResponse.results;
+      var routePromises = [];
+      serverRoutes.forEach(function(r) {
         var localRoute = localSession.routes[r.id];
         //If route is new to client
         if(localRoute === undefined) {
-            //Lock array element to prevent multiple async calls to this function creating duplicate objects
-            localSession.routes[r.id] = "pending";
-            //Create new object
-            var promise = Route.RouteFactory(r);
-            routePromises.push(promise);
-            promise.then(function(route) {
-                //Add to event list
-                localSession.routes[route.id] = route;
-                if(displayNewRoutes) {
-                    //Display event
-                    route.displayUI($("#sidebar-menu #route-list"), true);
-                }
-                if(displayOnMap) {
-                    //Display event
-                    route.displayOnMap();
-                }
-            });
+          //Lock array element to prevent multiple async calls to this function creating duplicate objects
+          localSession.routes[r.id] = "pending";
+          //Create new object
+          var promise = Route.RouteFactory(r);
+          routePromises.push(promise);
+          promise.then(function(route) {
+            //Add to event list
+            localSession.routes[route.id] = route;
+            if(displayNewRoutes) {
+              //Display event
+              route.displayUI($("#sidebar-menu #route-list"), true);
+            }
+            if(displayOnMap) {
+              //Display event
+              route.displayOnMap();
+            }
+          });
         } else if(localRoute === "pending") {
-            //Do nothing, it is being handled by other call
+          //Do nothing, it is being handled by other call
         } else {
-            //Otherwise update event object as it exists
-            Object.assign(localRoute, r);
-            //Refresh UI
-            localRoute.refreshUI();
+          //Otherwise update event object as it exists
+          Object.assign(localRoute, r);
+          //Refresh UI
+          localRoute.refreshUI();
         }
+      });
+      Promise.all(routePromises).then(updateRoutesSuccess);
+    },
+    function(error_obj){
+      updateRoutesError(error_obj);
     });
-    return routePromises;
+  });
 }

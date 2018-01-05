@@ -47,7 +47,7 @@ def disp_plan(planid):
         routes_json = json.dumps([i.serialise for i in plan.routes])
     except BaseApiException:
         return redirect(url_for('index'))
-    return render_template('plan.html',
+    return render_template('main.html',
                            plan=plan,
                            planJsonStr=plan_json,
                            eventJsonStr=events_json,

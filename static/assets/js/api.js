@@ -1,100 +1,101 @@
 //Static object for interacting with backend API
 var api = {
+    //Calls to /api/user
+    user: {
+      //Gets a list of plans for the user identified by the Google API token in the cookie header of this request
+      plans: function() {
+          return api.ajax("/api/user/plans", "GET");
+      }
+    },
     //Calls to /api/plan/*
     plan: {
         //Gets a plan by its ID
         get: function(id) {
-            //TODO: replace with AJAX call
-            var plan = dummyServer.planGET(id);
-            return plan;
+            return api.ajax("/api/plan/" + id, "GET");
         },
         //Creates a new plan on the server
-        create: function(name, locationVoteCloseTime, routeVoteCloseTime) {
-            var json = {name: name, locationVoteCloseTime: locationVoteCloseTime, routeVoteCloseTime: routeVoteCloseTime};
-            //TODO: replace with AJAX call
-            var planResponse = dummyServer.planPOST(json);
-            return planResponse;
+        create: function(name, eventVoteCloseTime, routeVoteCloseTime, endTime) {
+            var json = {name: name, eventVoteCloseTime: eventVoteCloseTime, routeVoteCloseTime: routeVoteCloseTime, endTime: endTime};
+            return api.ajax("/api/plan", "POST", json);
         },
         //Gets all events associated with a plan of a certain ID
         //(Server only returns positive voted plans after events voting is complete)
         getEvents: function(planId) {
-            //TODO: replace with AJAX call
-            var response = dummyServer.eventGETplanid(planId, 0);
-            return response.result;
+            return api.ajax("/api/plan/" + planId + "/events", "GET");
         },
         //Gets all routes associated with a plan of a certain ID
         getRoutes: function(planId) {
-            //TODO: replace with AJAX call
-            var response = dummyServer.routeGETplanid(planId, 0);
-            return response.result;
+            return api.ajax("/api/plan/" + planId + "/routes", "GET");
+        },
+        //Adds the user identified by the Google API token in the cookie header of this request to the plan identified by joinId
+        join: function(joinId) {
+            return api.ajax("/api/plan/join/" + joinId, "GET");
         }
     },
     //Calls to /api/event/*
     event: {
         //Gets an event by its unique ID
         get: function(id) {
-            //TODO: replace with AJAX call
-            var event = dummyServer.eventGETid(id, 0);
-            return event;
+            return api.ajax("/api/event/" + id, "GET");
         },
         //Creates a new event on the server
         create: function(name, planId, locationId) {
             var json = {name: name, planid: planId, locationid: locationId};
-            //TODO: replace with AJAX call
-            var eventResponse = dummyServer.eventPOST(json, 0);
-            return eventResponse;
+            return api.ajax("/api/event", "POST", json);
         },
         //Upvote the event of the given id
         upvote: function(id){
-            var json = {vote: 1};
-            //TODO: replace with AJAX call
-            dummyServer.eventPATCH(json, id, 0);
+            return api.ajax("/api/event/" + id + "/vote", "POST", {vote: 1});
         },
         //Downvote the event of the given id
         downvote: function(id) {
-            var json = {vote: -1};
-            //TODO: replace with AJAX call
-            dummyServer.eventPATCH(json, id, 0);
+            return api.ajax("/api/event/" + id + "/vote", "POST", {vote: -1});
         },
         //Reset the vote on the event of the given id
         resetvote: function(id) {
-            var json = {vote: 0};
-            //TODO: replace with AJAX call
-            dummyServer.eventPATCH(json, id, 0);
+            return api.ajax("/api/event/" + id + "/vote", "POST", {vote: 0});
         }
     },
     //Calls to /api/route/*
     route: {
         //Gets a route from its unique ID
         get: function(id) {
-            //TODO: replace with AJAX call
-            var route = dummyServer.routeGETid(id, 0);
-            return route;
+            return api.ajax("/api/route/" + id, "GET");
         },
         //Creates new route on server
         create: function(name, planId, eventList) {
             var json = {name: name, planid: planId, eventidList: eventList};
-            //TODO: replace with AJAX call
-            var routeResponse = dummyServer.routePOST(json, 0);
-            return routeResponse;
+            return api.ajax("/api/route/", "POST", json);
         },
         //Upvote the route of the given id
         upvote: function(id){
-            var json = {vote: 1};
-            //TODO: replace with AJAX call
-            dummyServer.routePATCH(json, id, 0);
+            return api.ajax("/api/route/" + id + "/vote", "POST", {vote: 1});
         },
         //Downvote the route of the given id
         downvote: function(id) {
-            var json = {vote: -1};
-            //TODO: replace with AJAX call
-            dummyServer.routePATCH(json, id, 0);
+            return api.ajax("/api/route/" + id + "/vote", "POST", {vote: -1});
         },
         //Reset the vote on the route of the given id
         resetvote: function(id) {
-            var json = {vote: 0};
-            //TODO: replace with AJAX call
-            dummyServer.routePATCH(json, id, 0);
+            return api.ajax("/api/route/" + id + "/vote", "POST", {vote: 0});
         }
+    },
+
+    ajax: function(url, method, json) {
+      if(json === undefined || json === null)
+        json = {};
+      return new Promise(function(success, error) {
+        $.ajax({
+          url: url,
+          method: method,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          data: JSON.stringify(json),
+          success: success,
+          error: function(response) {
+            error(response.responseJSON);
+          }
+        });
+      });
     }
 };

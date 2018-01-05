@@ -5,6 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Merged</title>
+    <meta name="google-signin-client_id" content="952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js?onload=initGapiSignin" async defer></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="static/assets/css/jquery-ui.min.css">
@@ -35,7 +38,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 modalLabel"><label>Plan Close Time</label></div>
-                            <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Plan Vote Close Date" id="planVoteCloseText" disabled></div>
+                            <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Plan Vote Close Date" id="planCloseText" disabled></div>
                         </div>
                 </div>
                 <div class="modal-footer"><button class="btn btn-primary" id="create-plan" type="button">CREATE</button></div>
@@ -60,17 +63,25 @@
     <div class="container" id="intro-container">
         <div id="intro"><img src="static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png" id="logo">
             <h2 style="font-size:32px;"><strong>Various</strong> Plans</h2>
-            <p>Collaboratively suggest locations and create routes to plan your perfect event.</p><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#create-plan-modal"><strong>CREATE A PLAN</strong></button><button class="btn btn-primary"
-                type="button" id="join-plan" data-toggle="modal" data-target="#join-plan-modal"><strong>Join Exisitng PLAN</strong></button></div>
+            <p>Collaboratively suggest locations and create routes to plan your perfect event.</p>
+
+            <div class="g-signin2" data-onsuccess="onGSignIn" style="margin: 0 auto; display:none"></div>
+
+            <div id="button-wrapper" style="display: none">
+              <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#create-plan-modal"><strong>CREATE A PLAN</strong></button>
+              <button class="btn btn-primary" type="button" id="join-plan" data-toggle="modal" data-target="#join-plan-modal"><strong>Join Exisitng PLAN</strong></button>
+            </div>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="static/assets/js/api.js"></script>
     <script src="static/assets/js/classes.js"></script>
-    <script src="static/assets/js/dummy-server.js"></script>
+    <script src="static/assets/js/googleLogIn.js"></script>
+    <script src="static/assets/js/homeload.js"></script>
+    <script src="static/assets/js/various-plans.js"></script>
     <script src="static/assets/js/jquery-ui.min.js"></script>
     <script src="static/assets/js/jui-timepicker-addon.js"></script>
-    <script src="static/assets/js/PhotoGallery.js"></script>
     <script src="static/assets/js/various-plans.js"></script>
 </body>
 
