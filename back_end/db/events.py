@@ -53,7 +53,7 @@ def create(planid, name, locationid, userid):
 
     new_event = Event(name, locationid)
 
-    plan.events.append(new_event)
+    plan.events_all.append(new_event)
     db.session.commit()
     return new_event
 

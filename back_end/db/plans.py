@@ -101,9 +101,10 @@ def get_routes_from_id(planid, userid):
 
 
 def add_user(joinid, userid):
-    plans = Plan.query.filter_by(joinid=joinid)
+    plans = Plan.query.filter_by(joinid=joinid).all()
     if (len(plans) < 1) or None :
         raise ResourceNotFound("Cannot find Plan for joinid '{}'".format(joinid))
     plan = plans[0]
     plan.users.append(PlanUser(plan.id, userid))
+    db.session.commit()
     return plan

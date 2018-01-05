@@ -89,7 +89,7 @@ def create(planid, name, eventid_list, userid):
 
     new_route = Route(name)
 
-    plan.routes.append(new_route)
+    plan.routes_all.append(new_route)
 
     # db.session.commit()
 
