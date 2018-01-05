@@ -15,7 +15,7 @@ def get_best_route(self):
             db.session.commit()
         return list(r)
     else:
-        return self.routes_all
+        return self.routes_all.all()
 
 
 plans.Plan.routes = property(get_best_route)
