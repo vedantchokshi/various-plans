@@ -77,6 +77,7 @@ def _set_event_vote(eventid, userid, vote):
         ev.vote = vote
 
     db.session.commit()
+    e.userVoteState = e.get_vote(userid)
     return e
 
 
@@ -90,4 +91,5 @@ def _set_route_vote(routeid, userid, vote):
         rv.vote = vote
 
     db.session.commit()
+    r.userVoteState = r.get_vote(userid)
     return r
