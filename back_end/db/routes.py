@@ -5,7 +5,7 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 def get_best_route(self):
     if self.phase > 2:
         r = sort_routes(self.routes_all.all())[-1]
-        return list(r)
+        return [r]
     else:
         return self.routes_all.all()
 
