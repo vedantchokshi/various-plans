@@ -1,3 +1,4 @@
+import time
 from functools import wraps
 
 from flask import jsonify, make_response, request
@@ -6,13 +7,17 @@ from google.oauth2 import id_token
 
 from back_end.exceptions import Unauthorized
 
+debug = False
+
 
 def init(app, prefix):
+    global debug
     import plans
     import events
     import routes
     import users
     import token
+    debug = app.debug
     app.register_blueprint(plans.ROUTES, url_prefix='{}/plan'.format(prefix))
     app.register_blueprint(events.ROUTES, url_prefix='{}/event'.format(prefix))
     app.register_blueprint(routes.ROUTES, url_prefix='{}/route'.format(prefix))
@@ -59,12 +64,18 @@ def token_decorator(func):
 def jsonify_decorator(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
+        timestamp = time.time()
         json = kwargs.pop('json', True)
         obj, status_code = func(*args, **kwargs)
         if json:
             if isinstance(obj, list):
-                return make_response(jsonify(results=[i.serialise for i in obj]), status_code)
-            return make_response(jsonify(obj.serialise), status_code)
+                d = dict()
+                d['results'] = [i.serialise for i in obj]
+                obj = d
+            else:
+                obj = obj.serialise
+            obj['timestamp'] = timestamp
+            return make_response(jsonify(obj), status_code)
         return obj
 
     return wrapper

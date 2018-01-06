@@ -2,17 +2,19 @@ from back_end.db import db, default_str_len, plans, events as db_events
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, BaseApiException
 
 
-def get_routes(self):
-    if self.phase <= 2:
-        rs = self.routes_all.all()
-        return sort_routes(rs) if len(rs) > 0 else []
-    if self.phase >= 3:
-        r = self.routes_all.all()
-        if len(r) > 0:
-            r = sort_routes(r)[-1]
+def get_routes(plan):
+    rs = plan.routes_all.all()
+    if len(rs) > 0:
+        # Sort routes based on our criteria
+        rs = sort_routes(rs)
+        if plan.phase < 3:
+            # Phases 1 and 2 require no filtering of routes
+            return rs
+        # Phases 3 and 4 require finding the winning route
+        r = rs[0]
+        if r.votes > 0:
             return [r]
-        else:
-            return []
+    return []
 
 
 def sort_routes(route_list):
@@ -35,6 +37,7 @@ def sort_routes(route_list):
         if a_downvotes != b_downvotes:
             # Least down-voted route
             return cmp(a_downvotes, b_downvotes)
+        # Order of creation
         return cmp(a.id, b.id)
 
     return sorted(route_list, cmp=sorter)
