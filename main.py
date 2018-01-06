@@ -42,8 +42,8 @@ def disp_plan(planid):
     try:
         userid = get_userid_from_token(token)
         plan = be.db.plans.get_from_id(planid, userid)
-        if plan.phase == 4:
-            raise InvalidRequest("Plan has ended")
+        # if plan.phase == 4:
+        #     raise InvalidRequest("Plan has ended")
         plan_json = json.dumps(plan.serialise)
         events_json = json.dumps([i.serialise for i in plan.events])
         routes_json = json.dumps([i.serialise for i in plan.routes])
