@@ -2,86 +2,110 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Various Plans</title>
-    <meta name="google-signin-client_id" content="952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <title>Home - Various Plans</title>
+  <meta name="google-signin-client_id" content="952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="static/assets/css/jquery-ui.min.css">
-    <link rel="stylesheet" href="static/assets/css/jquery-ui.structure.min.css">
-    <link rel="stylesheet" href="static/assets/css/jquery-ui.theme.min.css">
-    <link rel="stylesheet" href="static/assets/css/styles.css">
-    <link rel="stylesheet" href="static/assets/css/jui-timepicker-addon.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+  <link rel="stylesheet" href="static/assets/css/buttons.css">
+  <link rel="stylesheet" href="static/assets/css/jquery-ui.min.css">
+  <link rel="stylesheet" href="static/assets/css/jquery-ui.structure.min.css">
+  <link rel="stylesheet" href="static/assets/css/jquery-ui.theme.min.css">
+  <link rel="stylesheet" href="static/assets/css/drop-down.css">
+  <link rel="stylesheet" href="static/assets/css/individual-elements.css">
+  <link rel="stylesheet" href="static/assets/css/modal.css">
+  <link rel="stylesheet" href="static/assets/css/styles.css">
+  <link rel="stylesheet" href="static/assets/css/jui-timepicker-addon.css">
 </head>
 
 <body>
-    <div class="modal fade" role="dialog" tabindex="-1" id="create-plan-modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    <h3 class="modal-title">Create a Plan</h3>
-                </div>
-                <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-12"><input class="form-control underlineTextBox" type="text" placeholder="Name of Plan" id="planTextBox"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 modalLabel"><label>Locations Close Time</label></div>
-                            <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Location Vote Close Date" id="locationVoteCloseText" disabled></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 modalLabel"><label>Routes Close Time</label></div>
-                            <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Route Vote Close Date" id="routeVoteCloseText" disabled></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 modalLabel"><label>Plan Close Time</label></div>
-                            <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Plan Vote Close Date" id="planCloseText" disabled></div>
-                        </div>
-                </div>
-                <div class="modal-footer"><button class="btn btn-primary" id="create-plan" type="button">CREATE</button></div>
-            </div>
-        </div>
+  <h1 id="home-navbar" class="page-header">
+    <div class="btn-group" role="group"><a class="btn btn-link link-buttons" role="button"><strong>Help</strong><i class="glyphicon glyphicon-question-sign"></i></a>
+      <div class="dropdown btn-group" id="user-info-button" style="display:none" role="group"><button class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" id="name"><i class="glyphicon glyphicon-user"></i></button>
+        <ul class="dropdown-menu dropdown-menu-right"
+        role="menu">
+        <li role="presentation"><a id="email"></a></li>
+        <li role="presentation"><a id="sign-out">Sign Out</a></li>
+      </ul>
     </div>
-    <div class="modal fade" role="dialog" tabindex="-1" id="join-plan-modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    <h3 class="modal-title">Your Plans</h3>
-                </div>
-                <div class="modal-body">
-                    <ul></ul>
-                    <hr>
-                    <p id="plan-list-header">Your Plans</p>
-                </div>
-                <div class="modal-footer"><input type="text" placeholder="Enter Join Code" id="join-code"><button class="btn btn-default" id="join-plan-add" type="button">Add </button></div>
-            </div>
-        </div>
+  </div>
+</h1>
+<div class="container" id="intro-container">
+  <div id="intro"><img src="static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png" id="logo">
+    <h2 style="font-size:32px;"><strong>Various</strong> Plans</h2>
+    <p>Collaboratively suggest locations and create routes to plan your perfect event.</p>
+
+    <div class="g-signin2" style="margin: 0 auto; display:none"></div>
+
+    <button class="btn btn-default" type="button" style="display:none" id="signin-button">
+      <div style="width:18px;height:18px;" class="abcRioButtonSvgImageWithFallback abcRioButtonIconImage abcRioButtonIconImage18">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="abcRioButtonSvg"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
+      </div>
+      <strong>Sign In</strong>
+    </button>
+
+    <div id="button-wrapper" style="display: none">
+      <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#create-plan-modal" style="min-width:266.65px;"><strong>Create A Plan</strong></button>
+      <button class="btn btn-default" type="button" id="join-button" data-toggle="modal" data-target="#join-plan-modal"><strong>View Or Join An Exisitng Plan</strong></button>
     </div>
-    <div class="container" id="intro-container">
-        <div id="intro"><img src="static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png" id="logo">
-            <h2 style="font-size:32px;"><strong>Various</strong> Plans</h2>
-            <p>Collaboratively suggest locations and create routes to plan your perfect event.</p>
-
-            <div class="g-signin2" style="margin: 0 auto; display:none"></div>
-
-            <div id="button-wrapper" style="display: none">
-              <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#create-plan-modal"><strong>CREATE A PLAN</strong></button>
-              <button class="btn btn-primary" type="button" id="join-plan" data-toggle="modal" data-target="#join-plan-modal"><strong>Join Exisitng PLAN</strong></button>
-            </div>
+  </div>
+</div>
+<div class="modal fade" role="dialog" tabindex="-1" id="create-plan-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h3 class="modal-title">Create a Plan</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12"><input class="form-control underlineTextBox" type="text" placeholder="Name of Plan" id="planTextBox"></div>
         </div>
+        <div class="row">
+          <div class="col-md-12 modalLabel"><label>Locations Close Time</label></div>
+          <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Location Vote Close Date" id="locationVoteCloseText" disabled></div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 modalLabel"><label>Routes Close Time</label></div>
+          <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Route Vote Close Date" id="routeVoteCloseText" disabled></div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 modalLabel"><label>Plan Close Time</label></div>
+          <div class="col-md-12 modalCol"><input class="form-control underlineTextBox datepicker" type="text" placeholder="Plan Vote Close Date" id="planCloseText" disabled></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-primary" id="create-plan" type="button">CREATE</button></div>
     </div>
+  </div>
+</div>
+<div class="modal fade" role="dialog" tabindex="-1" id="join-plan-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h3 class="modal-title">Your Plans</h3>
+      </div>
+      <div class="modal-body">
+        <ul></ul>
+        <hr>
+        <p id="plan-list-header">Your Plans</p>
+      </div>
+      <div class="modal-footer"><input type="text" placeholder="Enter Join Code" id="join-code"><button class="btn btn-default" id="join-plan-add" type="button">Add </button></div>
+    </div>
+  </div>
+</div>
 
-    <script src="https://apis.google.com/js/platform.js?onload=initGapiSignin" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="static/assets/js/api.js"></script>
-    <script src="static/assets/js/classes.js"></script>
-    <script src="static/assets/js/googleLogIn.js"></script>
-    <script src="static/assets/js/homeload.js"></script>
-    <script src="static/assets/js/jquery-ui.min.js"></script>
-    <script src="static/assets/js/jui-timepicker-addon.js"></script>
+<script src="https://apis.google.com/js/platform.js?onload=initGapiSignin" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="static/assets/js/api.js"></script>
+<script src="static/assets/js/classes.js"></script>
+<script src="static/assets/js/googleLogIn.js"></script>
+<script src="static/assets/js/homeload.js"></script>
+<script src="static/assets/js/jquery-ui.min.js"></script>
+<script src="static/assets/js/jui-timepicker-addon.js"></script>
 </body>
 
 </html>

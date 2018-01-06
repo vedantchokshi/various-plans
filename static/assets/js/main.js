@@ -20,8 +20,16 @@ function gapiLoaded() {
     }
 }
 
+function signedIn() {
+  //Show profile in navbar
+  var userProfile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
+  $("#name").html("<strong>" + userProfile.getName() + "</strong><i class=\"glyphicon glyphicon-user\"></i>");
+  $("#email").html(userProfile.getEmail());
+}
+
 googleLoginListeners.onNotSignedIn.push(redirectToMain);
 googleLoginListeners.onSignOut.push(redirectToMain);
+googleLoginListeners.onSignIn.push(signedIn);
 googleLoginListeners.onLoad.push(gapiLoaded);
 
 //Reposition map to show all given events
@@ -148,8 +156,8 @@ function openMenu(level) {
 }
 
 //POLLING
-function millisToReadable(millis){
-    var days, hours, mins, secs, readable;
+function updateTimeDiv(millis){
+    var days, hours, mins, secs;
     secs = Math.floor(millis / 1000);
     mins = Math.floor(secs / 60);
     secs = secs % 60;
@@ -157,11 +165,11 @@ function millisToReadable(millis){
     mins = mins % 60;
     days = Math.floor(hours / 24);
     hours = hours % 24;
-    readable = "";
-    readable += days > 0 ? days + "d " : "";
-    readable += hours > 0 ? hours + "h " : "";
-    readable += mins > 0 ? mins + "m " : "";
-    return readable + secs + "s";
+
+    $("#time-div").find(".number-seconds").html(secs);
+    $("#time-div").find(".number-minutes").html(mins);
+    $("#time-div").find(".number-hours").html(hours);
+    $("#time-div").find(".number-days").html(days);
 }
 
 function pollServer() {
@@ -173,9 +181,9 @@ function pollServer() {
     //Update countdown timer
     var timeRemaining = localSession.timeToPhaseEnd();
     if(timeRemaining > -1) {
-        $("#countdown-timer").html("Voting ends in " + millisToReadable(timeRemaining*1000));
+        updateTimeDiv(timeRemaining*1000);
     } else {
-        $("#countdown-timer").html("");
+        $("#time-div").css("display", "none");
     }
 
     if(phase == 1) {
@@ -256,6 +264,13 @@ function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
   });
 }
 
+function copyToClipboard(string) {
+  var dummy = $("<input>", {"value" : string}).appendTo($(document.body));
+  dummy.select();
+  document.execCommand("Copy");
+  document.body.removeChild(dummy[0]);
+}
+
 //Local Session object
 var localSession = {
     //The events and routes that the client browser is tracking
@@ -292,10 +307,11 @@ var localSession = {
         this.lastCheckedPhase = 2;
         console.log("Entered Phase 2");
         //Update UI
+        $("#time-div-title").html("Route Voting Ends In"); //Change Countdown Timer Heading
         $("#sidebar-menu").find(".menu-heading").html("Decide Routes"); //Change Heading
         $("#sidebar-menu").find(".menu-content").empty(); //Clear voting controls for events
         $("#map-search").css("display", "none"); //Search no longer needed
-        $("#modalPlace").modal("hide"); //Hide place modal if open
+        $("#modal-place").modal("hide"); //Hide place modal if open
         removeMarkersFromMap(this.searchmarkers); //Clear any search markers from map
         localSession.searchmarkers = [];
 
@@ -311,10 +327,10 @@ var localSession = {
         updateEventOrRoute(false, true, true).then(function() {
             fitEventsOnMap(localSession.events);
 
-            $("<button>", {"id": "add-route-button", "class": "btn btn-default", "type": "button", text: "Add Route"})
+            $("<button>", {"id": "add-route-button", "class": "btn btn-primary", "type": "button", text: "Add Route"})
                 .appendTo($("#sidebar-menu").find(".menu-content"))
                 .click(function() {
-                    $("#modalRoute").modal("show");
+                    $("#modal-route").modal("show");
                 });
         }, function(error_obj) {
           //Api Load Events Error
@@ -326,8 +342,8 @@ var localSession = {
         console.log("Entered Phase 3");
         //Clear UI
         $("#map-search").css("display", "none"); //Search no longer needed
-        $("#modalPlace").modal("hide"); //Hide place modal if open
-        $("#modalRoute").modal("hide"); //Hide route modal if open
+        $("#modal-place").modal("hide"); //Hide place modal if open
+        $("#modal-route").modal("hide"); //Hide route modal if open
         removeMarkersFromMap(this.searchmarkers); //Clear any search markers from map
         localSession.searchmarkers = [];
 
@@ -490,7 +506,7 @@ var localSession = {
                     if(localSession.getPhase() === 1) {
                         placesService.getDetails({placeId: this.getPlace().placeId}, function(place, status) {
                             if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                $("#modalPlace").data("place", place).modal('show');
+                                $("#modal-place").data("place", place).modal('show');
                             }
                         });
                     }
@@ -509,20 +525,29 @@ var localSession = {
         });
     },
     initUI: function() {
-        $("#modalPlace").on('show.bs.modal', function (event) {
+        $("#sign-out").click(function() {
+          gapi.auth2.getAuthInstance().signOut();
+        });
+
+        $("#join-id-button").click(function() {
+          copyToClipboard(localSession.plan.joinid);
+          alert("Join ID copied to clipboard.");
+        });
+
+        $("#modal-place").on('show.bs.modal', function (event) {
             var modal = $(this);
             modal.find(".error-message").hide();
             modal.find("#event-name").val("");
             var place = modal.data("place");
             modal.find("#place-details").html("Suggest " + place.name + " as an event?");
             modal.find("#add-place").off("click").click(function() {
-                var inputName = $("#modalPlace").find("#event-name").val();
+                var inputName = $("#modal-place").find("#event-name").val();
                 if(inputName.length === 0) {
-                    $("#modalPlace").find(".error-message").html("Please enter a name.");
-                    $("#modalPlace").find(".error-message").hide().fadeIn();
+                    $("#modal-place").find(".error-message").html("Please enter a name.");
+                    $("#modal-place").find(".error-message").hide().fadeIn();
                 } else if(inputName.length >= 100) {
-                    $("#modalPlace").find(".error-message").html("Name too long.");
-                    $("#modalPlace").find(".error-message").hide().fadeIn();
+                    $("#modal-place").find(".error-message").html("Name too long.");
+                    $("#modal-place").find(".error-message").hide().fadeIn();
                   } else {
                     //Remove the markers for the other search results
                     removeMarkersFromMap(localSession.searchmarkers);
@@ -552,37 +577,37 @@ var localSession = {
 
         $(".route-sortable").sortable({connectWith: ".route-sortable", scroll: false}).css("cursor", "pointer");
 
-        $("#modalRoute").on('show.bs.modal', function (event) {
+        $("#modal-route").on('show.bs.modal', function (event) {
             $(this).find(".error-message").hide();
             $(this).find("#route-name").val("");
             //Clear lists
-            $("#modalRoute").find(".route-sortable").empty();
+            $("#modal-route").find(".route-sortable").empty();
             //Repopulate list with available events
             localSession.events.forEach(function(event) {
-                $("<li>", { text: event.name, "class": "ui-state-default" }).data("event-id", event.id).appendTo($("#modalRoute").find(".available-event-list"));
+                $("<li>", { text: event.name, "class": "ui-state-default" }).data("event-id", event.id).appendTo($("#modal-route").find(".available-event-list"));
             });
         });
 
-        $("#modalRoute").find("#add-route").click(function() {
-            var inputName = $("#modalRoute").find("#route-name").val();
+        $("#modal-route").find("#add-route").click(function() {
+            var inputName = $("#modal-route").find("#route-name").val();
 
-            var routeEvents = $("#modalRoute").find(".route-event-list").find("li");
+            var routeEvents = $("#modal-route").find(".route-event-list").find("li");
             var eventList = [];
             for(var i = 0; i < routeEvents.length; i++) {
                 eventList.push($(routeEvents[i]).data("event-id"));
             }
 
             if(inputName.length === 0) {
-                $("#modalRoute").find(".error-message").html("Please enter a name.");
-                $("#modalRoute").find(".error-message").hide().fadeIn();
+                $("#modal-route").find(".error-message").html("Please enter a name.");
+                $("#modal-route").find(".error-message").hide().fadeIn();
             } else if(inputName.length >= 100) {
-                $("#modalRoute").find(".error-message").html("Name too long.");
-                $("#modalRoute").find(".error-message").hide().fadeIn();
+                $("#modal-route").find(".error-message").html("Name too long.");
+                $("#modal-route").find(".error-message").hide().fadeIn();
             } else if(eventList.length === 0){
-                $("#modalRoute").find(".error-message").html("Please add events to the route.");
-                $("#modalRoute").find(".error-message").hide().fadeIn();
+                $("#modal-route").find(".error-message").html("Please add events to the route.");
+                $("#modal-route").find(".error-message").hide().fadeIn();
               } else {
-                api.route.create($("#modalRoute").find("#route-name").val(), localSession.plan.id, eventList).then(function(response) {
+                api.route.create($("#modal-route").find("#route-name").val(), localSession.plan.id, eventList).then(function(response) {
 
                   //Prevent polling duplicating the object
                   localSession.routes[response.id] = "pending";
@@ -593,7 +618,7 @@ var localSession = {
                     localSession.routes[route.id] = route;
                     route.display();
                     //TODO: Reposition map
-                    $("#modalRoute").modal('hide');
+                    $("#modal-route").modal('hide');
                   });
                 }, function(error_obj) {
                   console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);

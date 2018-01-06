@@ -1,0 +1,182 @@
+.btn-primary, .btn-default {
+  margin:6px;
+  border:none;
+  opacity:0.9;
+  text-transform:uppercase;
+  font-weight:bold;
+  font-size:13px;
+  letter-spacing:0.4px;
+  line-height:1;
+}
+
+.btn-link {
+  border:none;
+  opacity:0.9;
+  font-size:13px;
+  letter-spacing:0.4px;
+}
+
+.btn-primary, .btn-primary:active, .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open > .dropdown-toggle.btn-primary.focus, .open > .dropdown-toggle.btn-primary:focus, .open > .dropdown-toggle.btn-primary:hover {
+  border:none;
+  border-radius:6px;
+  padding:14px 24px;
+  background:rgb(151,194,86);
+  transition:background-color 0.25s;
+  outline:none!important;
+}
+
+.btn-primary:focus, .btn-primary:hover {
+  background-color:rgb(151,194,86);
+  opacity:1;
+}
+
+.btn-default, .btn-default:active, .btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open > .dropdown-toggle.btn-default.focus, .open > .dropdown-toggle.btn-default:focus, .open > .dropdown-toggle.btn-default:hover {
+  border:none;
+  border-radius:6px;
+  padding:14px 24px;
+  background:rgb(237,237,237);
+  transition:background-color 0.25s;
+  outline:none!important;
+}
+
+.btn-default:focus, .btn-default:hover {
+  background-color:rgb(237,237,237);
+  opacity:1;
+}
+
+.btn-group.navBarButton {
+  float:right;
+  background-color:rgba(0,0,0,0);
+  color:rgb(255,255,255);
+}
+
+.btn-link, .btn-link:active, .btn-link.active.focus, .btn-link.active:focus, .btn-link.active:hover, .btn-link:active.focus, .btn-link:active:focus, .btn-link:active:hover, .open > .dropdown-toggle.btn-link.focus, .open > .dropdown-toggle.btn-link:focus, .open > .dropdown-toggle.btn-link:hover {
+  border:none;
+  border-radius:6px;
+  padding:8px 15px;
+  transition:background-color 0.25s;
+  outline:none!important;
+  color:rgb(255,255,255);
+}
+
+.btn-link:focus, .btn-link:hover {
+  color:rgb(151,194,86);
+  opacity:1;
+  text-decoration:none;
+}
+
+.count-down.col-lg-3.col-md-3.col-sm-3.col-xs-3 {
+  text-align:center;
+  margin-bottom:10px;
+  border-right:1px solid;
+}
+
+.photo-gallery-next {
+  cursor:pointer;
+  width:10.5px;
+  height:21px;
+  background-image:url("../../assets/img/vp-icons.svg");
+  background-position:-53px -22px;
+  display:inline-block;
+}
+
+.photo-gallery-prev {
+  cursor:pointer;
+  width:10.5px;
+  height:21px;
+  background-image:url("../../assets/img/vp-icons.svg");
+  background-position:-53px 0px;
+  display:inline-block;
+}
+
+.photo-gallery-next:hover {
+  background-position:-53px -66px;
+}
+
+.photo-gallery-prev:hover {
+  background-position:-53px -44px;
+}
+
+.vote-entry {
+  display:block;
+  cursor:pointer;
+  padding:12px 0px 12px 24px;
+  padding-top:12px;
+  padding-bottom:12px;
+  border-width:1px 0px 1px 0px;
+  border-style:solid;
+  border-top-color:#404040;
+  border-bottom-color:#303030;
+}
+
+.vote-entry.highlight {
+  background-color:rgba(255,255,255,0.1);
+}
+
+.vote-down {
+  width:21px;
+  height:10.5px;
+  background-image:url(../../assets/img/vp-icons.svg);
+  background-position:-31px 0px;
+}
+
+.vote-down.selected {
+  background-position:-31px -62px;
+}
+
+.vote-down:hover {
+  background-position:-31px -31px;
+}
+
+.vote-up {
+  width:21px;
+  height:10.5px;
+  background-image:url(../../assets/img/vp-icons.svg);
+  background-position:-31px -11px;
+}
+
+.vote-up:hover {
+  background-position:-31px -42px;
+}
+
+.vote-up.selected {
+  background-position:-31px -73px;
+}
+
+.btn-group, .btn-group-vertical {
+  float:right;
+}
+
+.prev-menu-button {
+  background-image:url(../../assets/img/vp-icons.svg);
+  width:30px;
+  height:30px;
+  display:inline-block;
+  float:left;
+  cursor:pointer;
+  margin-right:10px;
+  margin-top: 20px;
+}
+
+.prev-menu-button:hover {
+  background-position:0px -31px;
+}
+
+@media (max-width: 767px) {
+  #help, #plan-id {
+    margin-left:0px;
+    padding:8px 5px;
+  }
+}
+
+#nav-buttons {
+  margin-top:2.75px;
+}
+
+#display-row {
+  height:90vh;
+}
+
+#map {
+  height:100%;
+}

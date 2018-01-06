@@ -1,0 +1,24 @@
+.countdown-header {
+  margin:10px 0 10px;
+}
+
+.countdown-header > * {
+  margin:10px 0 0;
+}
+
+.big-countdown .number-days, .big-countdown .number-hours, .big-countdown .number-minutes, .big-countdown .number-seconds {
+  font-size:18px !important;
+  display:block;
+  line-height:1;
+}
+
+.big-countdown .txt-countdown {
+  font-size:13px;
+  display:block;
+  line-height:1;
+}
+
+#seconds {
+  border-right:none;
+}
+

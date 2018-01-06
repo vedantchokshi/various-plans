@@ -4,50 +4,86 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <title>{{ plan.name }} - Various Plans</title>
     <meta name="google-signin-client_id" content="952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="static/assets/css/buttons.css">
+    <link rel="stylesheet" href="static/assets/css/column-queries.css">
+    <link rel="stylesheet" href="static/assets/css/count-down.css">
     <link rel="stylesheet" href="static/assets/css/jquery-ui.min.css">
     <link rel="stylesheet" href="static/assets/css/jquery-ui.structure.min.css">
     <link rel="stylesheet" href="static/assets/css/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="static/assets/css/drop-down.css">
+    <link rel="stylesheet" href="static/assets/css/individual-elements.css">
+    <link rel="stylesheet" href="static/assets/css/map.css">
+    <link rel="stylesheet" href="static/assets/css/modal.css">
     <link rel="stylesheet" href="static/assets/css/styles.css">
 </head>
 
-<body class="backgroundFeatures">
+<body class="background-features">
     <div class="page-header" id="header">
-        <h1 id="navBar"><img src="static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png" style="width:50px;border-radius:10px;margin-top:7px;margin-left:4px;"><small style="color:rgb(255,255,255);"> Various Plans</small><span id="countdown-timer"> </span></h1>
+        <h2 id="navbar"><img src="static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png" id="navbar-logo"><small id="heading-title"> <strong>Various</strong> Plans</small>
+          <div class="btn-group" role="group" id="nav-buttons">
+            <a class="btn btn-link link-buttons" role="button" id="help">
+              <strong>Help</strong><i class="glyphicon glyphicon-question-sign"></i>
+            </a>
+            <a class="btn btn-link link-buttons" role="button" id="join-id-button">
+              <strong>Join ID: {{ plan.joinid }}</strong><i class="glyphicon glyphicon-copy"></i>
+            </a>
+            <div class="dropdown btn-group" role="group" id="info-dropdown"><button class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" id="name"></button>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+              <li role="presentation"><a id="email"></a></li>
+              <li role="presentation"><a id="sign-out">Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+        </h2>
     </div>
     <div>
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6 col-xs-8" id="col1"><input type="text" placeholder="Search Location" id="map-search">
-                    <div id="map"></div>
-                </div>
-                <div class="col-md-6" id="col2">
-                    <div id="sidebar-menu" class="sidebar-menu">
-                        <h1 class="menu-heading">Decide Places </h1>
-                        <hr class="menu-rule">
-                        <div id="places-list" class="menu-content"></div>
-                    </div>
-                    <div id="sidebar-sub1" class="sidebar-menu">
-                        <div class="prev-menu-button"></div>
-                        <h1 class="menu-heading"> </h1>
-                        <hr class="menu-rule">
-                        <div class="menu-content"></div>
-                    </div>
-                    <div id="sidebar-sub2" class="sidebar-menu">
-                        <div class="prev-menu-button"></div>
-                        <h1 class="menu-heading"> </h1>
-                        <hr class="menu-rule">
-                        <div class="menu-content"></div>
-                    </div>
-                </div>
+            <div class="row" id="display-row">
+              <div class="col-lg-9 col-md-8 col-sm-7 col-xs-12" id="col1"><input type="text" placeholder="Search Location" id="map-search">
+                  <div id="map"></div>
+              </div>
+              <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12" id="col2">
+                  <div id="time-div">
+                      <div class="row big-countdown center-block" data-countdown="02/27/2020 02:51:00">
+                          <div class="countdown-header">
+                              <h4 class="text-center" id="time-div-title">Event Voting Ends In</h4>
+                          </div>
+                          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 count-down"><span class="number-days">00</span><span class="txt-countdown">days </span></div>
+                          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 count-down"><span class="number-hours">00</span><span class="txt-countdown">hours </span></div>
+                          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 count-down"><span class="number-minutes">00</span><span class="txt-countdown">minutes</span></div>
+                          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 count-down" id="seconds"><span class="number-seconds">00</span><span class="txt-countdown">seconds</span></div>
+                      </div>
+                  </div>
+                  <div id="places-div">
+                      <div id="sidebar-menu" class="sidebar-menu">
+                          <h3 class="text-center menu-heading">Decide Places </h3>
+                          <div id="places-list" class="menu-content"></div>
+                      </div>
+                      <div id="sidebar-sub1" class="sidebar-menu">
+                          <div class="prev-menu-button"></div>
+                          <h3 class="text-center menu-heading"> </h3>
+                          <hr class="menu-rule">
+                          <div class="menu-content"></div>
+                      </div>
+                      <div id="sidebar-sub2" class="sidebar-menu">
+                          <div class="prev-menu-button"></div>
+                          <h3 class="text-center menu-heading"> </h3>
+                          <hr class="menu-rule">
+                          <div class="menu-content"></div>
+                      </div>
+                  </div>
+              </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" role="dialog" tabindex="-1" id="modalPlace">
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-place">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:rgb(151,194,86);"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -58,32 +94,33 @@
                         <div class="col-md-12"><label>Event Name</label><input type="text" id="event-name"><span class="error-message"> </span></div>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-default" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button" id="add-place">Add </button></div>
+                <div class="modal-footer"><button class="btn btn-primary" type="button" id="add-place">Add </button></div>
             </div>
         </div>
     </div>
-    <div class="modal fade" role="dialog" tabindex="-1" id="modalRoute">
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-route">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:rgb(151,194,86);"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                     <h4 class="modal-title" style="color:rgb(255,255,255);font-size:27px;">Create Route</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12"><label>Route Name</label><input type="text" id="route-name"><span class="error-message"> </span></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12" style="width:50%;">
-                            <h1 style="font-size:24px;">Events </h1>
-                            <ul class="route-sortable available-event-list"></ul>
-                        </div>
-                        <div class="col-md-12" style="width:50%;">
-                            <h1 style="font-size:24px;">Route</h1>
-                            <ul class="route-sortable route-event-list"></ul>
-                        </div>
-                    </div>
+                  <div class="row">
+                      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"><label>Route Name</label></div>
+                      <div class="col-lg-9 col-lg-pull-1 col-md-9 col-md-pull-1 col-sm-9 col-sm-pull-1 col-xs-9 col-xs-pull-1"><input type="text" id="route-name" class="modal-textfield"><span class="error-message"> </span></div>
+                  </div>
+                  <div class="row">
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                          <h1 style="font-size:24px;">Events </h1>
+                          <ul class="route-sortable available-event-list"></ul>
+                      </div>
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                          <h1 style="font-size:24px;">Route</h1>
+                          <ul class="route-sortable route-event-list"></ul>
+                      </div>
+                  </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-default" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button" id="add-route" style="background-color:#337ab7;">Add </button></div>
+                <div class="modal-footer"><button class="btn btn-primary" type="button" id="add-route" style="background-color:#337ab7;">Add </button></div>
             </div>
         </div>
     </div>

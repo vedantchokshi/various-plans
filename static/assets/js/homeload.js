@@ -21,6 +21,11 @@ class PlanEntry {
 
 //Runs when page first properly loads
 $(document).ready(function() {
+
+  $("#sign-out").click(function() {
+    gapi.auth2.getAuthInstance().signOut();
+  });
+
   //Add datepickers to create modal
   $( ".datepicker" ).datetimepicker({
      minDate: 0,
@@ -63,28 +68,40 @@ $(document).ready(function() {
 
 googleLoginListeners.onLoad.push(function() {
   //Center Google Login Button
-  $(".abcRioButton").css("margin", "auto");
+  $("#signin-button").click(function() {
+    gapi.auth2.getAuthInstance().signIn({
+      ux_mode: "popup",
+      prompt: "select_account"
+    });
+  });
 });
 
 googleLoginListeners.onNotSignedIn.push(function() {
   //Show Google API Sign In Button
-  $(".g-signin2").fadeIn();
+  $("#signin-button").fadeIn();
 });
 
 googleLoginListeners.onSignIn.push(function() {
   //Show button controls
-  $(".g-signin2").fadeOut(400, function() {
+  $("#signin-button").fadeOut(400, function() {
     $("#button-wrapper").fadeIn();
     api.updateVPToken();
     displayUsersPlans();
   });
+
+  //Show profile in navbar
+  var userProfile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
+  $("#name").html("<strong>" + userProfile.getName() + "</strong><i class=\"glyphicon glyphicon-user\"></i>");
+  $("#email").html(userProfile.getEmail());
+  $("#user-info-button").fadeIn();
 });
 
 googleLoginListeners.onSignOut.push(function() {
   //Hide button controls
   $("#button-wrapper").fadeOut(400, function() {
-    $(".g-signin2").fadeIn();
+    $("#signin-button").fadeIn();
   });
+  $("#user-info-button").fadeOut();
 });
 
 function displayUsersPlans() {

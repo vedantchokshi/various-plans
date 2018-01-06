@@ -47,34 +47,40 @@ class Votable {
         this.dom = new VoteEntry(this.name, this.votes);
     }
 
-    upvote() {
+  upvote() {
+    var votePromise;
     if(this.userVoteState === 1) {
-      this.userVoteState = 0;
       //Remove upvote
-      Votable.callApi(this.constructor.name).resetvote(this.id);
-      this.votes--;
+      votePromise = Votable.callApi(this.constructor.name).resetvote(this.id);
     } else {
-      //Up by 2 if state is -1, up by one if neutral
-      this.votes += (1 - this.userVoteState);
-      this.userVoteState = 1;
-      Votable.callApi(this.constructor.name).upvote(this.id);
+      votePromise = Votable.callApi(this.constructor.name).upvote(this.id);
     }
-    this.refreshUI();
+    var self = this;
+    votePromise.then(function(result) {
+      self.votes = result.votes;
+      self.userVoteState = result.userVoteState;
+      self.refreshUI();
+    }, function(error_obj) {
+      console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+    });
   }
 
   downvote() {
+    var votePromise;
     if(this.userVoteState === -1) {
-      this.userVoteState = 0;
       //Remove downvote
-      Votable.callApi(this.constructor.name).resetvote(this.id);
-      this.votes++;
+      votePromise = Votable.callApi(this.constructor.name).resetvote(this.id);
     } else {
-      //Down by 2 if upvoted, down by 1  if neutral
-      this.votes -= (1 + this.userVoteState);
-      this.userVoteState = -1;
-      Votable.callApi(this.constructor.name).downvote(this.id);
+      votePromise = Votable.callApi(this.constructor.name).downvote(this.id);
     }
-    this.refreshUI();
+    var self = this;
+    votePromise.then(function(result) {
+      self.votes = result.votes;
+      self.userVoteState = result.userVoteState;
+      self.refreshUI();
+    }, function(error_obj) {
+      console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+    });
   }
 
   select() {}

@@ -1,0 +1,27 @@
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  background-image:none !important;
+  color:rgb(255,255,255);
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  background-color:rgb(151,194,86);
+}
+
+.dropdown-menu > li > #email:hover, .dropdown-menu > li > #email:focus {
+  cursor:default;
+  background-color:initial;
+}
+
+.dropdown-menu > li > a {
+  color:rgb(255,255,255);
+}
+
+.open > .dropdown-menu {
+  background-color:rgba(0,0,0,0.93);
+  margin:0px 12px;
+}
+
+.glyphicon {
+  margin-left:6px;
+}
+

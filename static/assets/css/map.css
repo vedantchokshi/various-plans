@@ -1,0 +1,28 @@
+@media (max-width: 767px) {
+  #map-search {
+    max-width:50px;
+  }
+}
+
+@media (max-width: 991px) {
+  #map-search {
+    width:300px;
+  }
+}
+
+@media (min-width: 1200px) {
+  #map-search {
+    width:450px;
+  }
+}
+
+@media (max-width: 1199px) {
+  #map-search {
+    width:450px;
+  }
+}
+
+#map-search:focus {
+  border-color:rgb(151,194,86);
+}
+

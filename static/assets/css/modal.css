@@ -1,0 +1,78 @@
+.modal {
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  z-index:1050;
+  display:none;
+  overflow:hidden;
+  outline:0;
+  color:rgb(79,79,79);
+}
+
+.modal-header {
+  background-color:rgb(151,194,86);
+  padding:10px;
+  border:1px solid rgb(247,255,236);
+  color:white;
+  border-radius:5px 5px 0px 0px;
+}
+
+.modal-textfield {
+  border-top:none;
+  border-left:none;
+  border-right:none;
+  margin-right:10px;
+}
+
+/*.ui-state-default {
+  box-shadow:0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  margin-top:5px;
+  padding:10px 15px;
+  box-sizing:border-box;
+  border-radius:2px;
+  background-clip:padding-box;
+}*/
+
+.route-sortable {
+  list-style-type:none;
+  min-height:100px;
+  padding-left:0px;
+}
+
+.modal .close {
+  color:rgb(255,255,255);
+  text-shadow:0 1px 0 rgb(255,255,255);
+  opacity:1;
+}
+
+.modal-footer {
+  padding:10px;
+}
+
+#name {
+  padding:8px 15px;
+}
+
+#create-plan-modal .datepicker {
+  display: inline-block;
+  width: 80%;
+  background-color: white;
+}
+
+.ui-datepicker-trigger {
+  width: 30px;
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.modalLabel {
+  width:40%;
+  margin-top:5px;
+}
+
+.modalCol {
+  width:60%;
+  padding:0px;
+}
