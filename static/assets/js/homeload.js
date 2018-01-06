@@ -100,3 +100,8 @@ function displayUsersPlans() {
     //TODO: Handle Join Errors
   });
 }
+
+function redirectWithFreshToken(path) {
+  api.updateVPToken();
+  window.location = path;
+}
