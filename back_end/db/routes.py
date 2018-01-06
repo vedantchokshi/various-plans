@@ -4,7 +4,11 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 def get_best_route(self):
     if self.phase > 2:
-        r = sort_routes(self.routes_all.all())[-1]
+        r = self.routes_all.all()
+        if len(r) > 0:
+            r = sort_routes(r)[-1]
+        else:
+            raise InvalidContent('There are no routes for this plan - no winning route')
         return [r]
     else:
         return self.routes_all.all()
