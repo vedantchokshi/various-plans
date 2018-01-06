@@ -142,7 +142,7 @@ var localSession = {
         switch(this.getPhase()) {
             case 1:
                 //Add new events and reposition map
-                updateEvents(false, true).then(function() {
+                updateEvents(true, true).then(function() {
                     fitEventsOnMap(localSession.events);
                 }, function(error_obj) {
 
@@ -278,10 +278,8 @@ var localSession = {
                     //Remove the markers for the other search results
                     removeMarkersFromMap(localSession.searchmarkers);
                     localSession.searchmarkers = [];
-                    console.log(inputName + " : " + localSession.plan.id + " : " + place.place_id);
                     //Notify server of event creation
                     api.event.create(inputName, localSession.plan.id, place.place_id).then(function(response) {
-                      console.log(response);
                       //Create event from server response
                       Event.EventFactory(response, place).then(function(event) {
                         //Track event in session
@@ -296,7 +294,9 @@ var localSession = {
                         alert("Couldn't add event.");
                       });
                     },
-                    function(error_obj) {});
+                    function(error_obj) {
+                      console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+                    });
                   }
             });
         });
@@ -346,7 +346,9 @@ var localSession = {
                     //TODO: Reposition map
                     $("#modalRoute").modal('hide');
                   });
-                }, function(obj_error) {});
+                }, function(error_obj) {
+                  console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+                });
               }
         });
     }
@@ -364,7 +366,7 @@ function fitEventsOnMap(eventList) {
     eventList.forEach(function(event) {
         //Viewport looks better when the map is fitted to single place with a view port
         //When fitted to multiple points, location looks better
-        if (event.place.geometry.viewport && eventList.length === 1) {
+        if (event.place.geometry.viewport && Object.keys(eventList).length === 1) {
             // Only geocodes have viewport.
             bounds.union(event.place.geometry.viewport);
         } else {

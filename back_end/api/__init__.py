@@ -11,10 +11,12 @@ def init(app, prefix):
     import plans
     import events
     import routes
+    import users
     import token
     app.register_blueprint(plans.ROUTES, url_prefix='{}/plan'.format(prefix))
     app.register_blueprint(events.ROUTES, url_prefix='{}/event'.format(prefix))
     app.register_blueprint(routes.ROUTES, url_prefix='{}/route'.format(prefix))
+    app.register_blueprint(users.ROUTES, url_prefix='{}/user'.format(prefix))
     # TODO get rid of this and token.py
     app.register_blueprint(token.ROUTES, url_prefix='{}/token'.format(prefix))
 

@@ -1,6 +1,8 @@
 var googleLoginListeners = {
-  onSignIn: [],
-  onSignOut: []
+  onLoad: [], //Called when Google Login API is finished loading
+  onNotSignedIn: [], //Called when the user is not already signed in on page load
+  onSignIn: [], //Called when the user signs in or page loads and user is already signed in
+  onSignOut: [] //Called when user signs out
 };
 
 function initGapiSignin() {
@@ -10,15 +12,15 @@ function initGapiSignin() {
   }).then(function(){
     //On Google Auth Load Success:
     var auth2 = gapi.auth2.getAuthInstance();
-    //Center Google Login Button
-    $(".abcRioButton").css("margin", "auto");
+    googleLoginListeners.onLoad.forEach(function(listener) {
+      listener();
+    });
     if(auth2.isSignedIn.get()) {
       onGSignInChange(true);
     } else {
-      //Show Google API Sign In Button
-      $(".g-signin2").fadeIn();
-      //Setup listener for Login/Logout
-      auth2.isSignedIn.listen(onGSignInChange);
+      googleLoginListeners.onNotSignedIn.forEach(function(listener) {
+        listener();
+      });
     }
   }, function(){
     //On Error:
