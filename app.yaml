@@ -10,6 +10,7 @@ handlers:
   upload: static/res/favicon\.ico
 - url: /.*
   script: main.app
+  secure: always
 
 libraries:
 - name: ssl
