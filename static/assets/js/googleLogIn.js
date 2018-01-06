@@ -12,6 +12,8 @@ function initGapiSignin() {
   }).then(function(){
     //On Google Auth Load Success:
     var auth2 = gapi.auth2.getAuthInstance();
+    //Setup listener for Login/Logout
+    auth2.isSignedIn.listen(onGSignInChange);
     googleLoginListeners.onLoad.forEach(function(listener) {
       listener();
     });

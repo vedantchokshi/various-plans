@@ -1,10 +1,5 @@
-function updateVPToken(){
-  var authResponse = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
-  document.cookie = "vp-token=" + authResponse.id_token + "; expires=" + new Date(authResponse.expires_at).toGMTString() + "; path=/";
-}
-
 function redirectWithFreshToken(path) {
-  updateVPToken();
+  api.updateVPToken();
   window.location = path;
 }
 

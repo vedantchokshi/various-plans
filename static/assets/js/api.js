@@ -82,6 +82,9 @@ var api = {
     },
 
     ajax: function(url, method, json) {
+      //Refresh the Google API token in cookie header before sending a request
+      //to make sure backend receives a valid up-to-date token.
+      this.updateVPToken();
       if(json === undefined || json === null)
         json = {};
       return new Promise(function(success, error) {
@@ -97,5 +100,10 @@ var api = {
           }
         });
       });
+    },
+
+    updateVPToken: function() {
+      var authResponse = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
+      document.cookie = "vp-token=" + authResponse.id_token + "; expires=" + new Date(authResponse.expires_at).toGMTString() + "; path=/";
     }
 };

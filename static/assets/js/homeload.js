@@ -69,15 +69,13 @@ googleLoginListeners.onLoad.push(function() {
 googleLoginListeners.onNotSignedIn.push(function() {
   //Show Google API Sign In Button
   $(".g-signin2").fadeIn();
-  //Setup listener for Login/Logout
-  auth2.isSignedIn.listen(onGSignInChange);
 });
 
 googleLoginListeners.onSignIn.push(function() {
   //Show button controls
   $(".g-signin2").fadeOut(400, function() {
     $("#button-wrapper").fadeIn();
-    updateVPToken();
+    api.updateVPToken();
     displayUsersPlans();
   });
 });

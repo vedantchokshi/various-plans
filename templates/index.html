@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Various Plans</title>
     <meta name="google-signin-client_id" content="952476275187-ef3icj10cn4ptsl3ehs3jcg3tdeff0pv.apps.googleusercontent.com">
-    <script src="https://apis.google.com/js/platform.js?onload=initGapiSignin" async defer></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
@@ -65,7 +64,7 @@
             <h2 style="font-size:32px;"><strong>Various</strong> Plans</h2>
             <p>Collaboratively suggest locations and create routes to plan your perfect event.</p>
 
-            <div class="g-signin2" data-onsuccess="onGSignIn" style="margin: 0 auto; display:none"></div>
+            <div class="g-signin2" style="margin: 0 auto; display:none"></div>
 
             <div id="button-wrapper" style="display: none">
               <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#create-plan-modal"><strong>CREATE A PLAN</strong></button>
@@ -73,6 +72,8 @@
             </div>
         </div>
     </div>
+
+    <script src="https://apis.google.com/js/platform.js?onload=initGapiSignin" async defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="static/assets/js/api.js"></script>
