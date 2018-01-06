@@ -1,9 +1,254 @@
 var redirectToMain = function() { window.location = "/"; };
 
+var hasMapsLoaded = false, hasGAPILoaded = false;
+
+function mapsLoaded() {
+    //Called when google maps api has loaded
+    hasMapsLoaded = true;
+    if(hasMapsLoaded && hasGAPILoaded) {
+      //Initialise the local session
+      localSession.initialise();
+    }
+}
+
+function gapiLoaded() {
+    //Called when Google login API has loaded
+    hasGAPILoaded = true;
+    if(hasMapsLoaded && hasGAPILoaded) {
+      //Initialise the local session
+      localSession.initialise();
+    }
+}
+
 googleLoginListeners.onNotSignedIn.push(redirectToMain);
 googleLoginListeners.onSignOut.push(redirectToMain);
+googleLoginListeners.onLoad.push(gapiLoaded);
 
+//Reposition map to show all given events
+function fitEventsOnMap(eventList) {
+    //Show all markers on map
+    var bounds = new google.maps.LatLngBounds();
+    eventList.forEach(function(event) {
+        //Viewport looks better when the map is fitted to single place with a view port
+        //When fitted to multiple points, location looks better
+        if (event.place.geometry.viewport && Object.keys(eventList).length === 1) {
+            // Only geocodes have viewport.
+            bounds.union(event.place.geometry.viewport);
+        } else {
+            bounds.extend(event.place.geometry.location);
+        }
+    });
+    localSession.map.fitBounds(bounds);
+}
 
+function removeMarkersFromMap(markers) {
+    //Remove markers from map
+    markers.forEach(function(marker) {
+        marker.setMap(null);
+    });
+}
+
+function addMarkerToMap(place) {
+    var icon = {
+        url: '../../static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png',
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 20),
+        scaledSize: new google.maps.Size(25, 25)
+    };
+
+    // Create a marker for each place.
+    return new google.maps.Marker({
+        map: localSession.map,
+        icon: icon,
+        title: place.name,
+        animation: google.maps.Animation.DROP,
+        place: {
+            location: place.geometry.location,
+            placeId: place.place_id
+        }
+    });
+}
+
+function isPlaceAdded(placeId) {
+    var placeAdded = false;
+    localSession.events.forEach(function(event) {
+        if(event.place.place_id === placeId) {
+            placeAdded = true;
+            return false; //Break from forEach loop
+        }
+    });
+    return placeAdded;
+}
+
+function displayEventInfo(event) {
+    localSession.sidebarMenuIndex++;
+    var submenu = "#sidebar-sub" + localSession.sidebarMenuIndex;
+    $(submenu).find(".menu-heading").html("Event Info");
+    $(submenu).find(".menu-content").empty();
+    $(submenu).find(".menu-content")
+        .append($("<span>", {text: "Name: " + event.name})).append("<br>")
+        .append($("<span>", {text: "Description: <Add desc pls>"})).append("<br>")
+        .append($("<span>", {text: "Current Votes: " + String(event.votes)})).append("<br>")
+        .append($("<span>", {text: "Venue: " + event.place.name})).append("<br>")
+        .append($("<span>", {text: "Address: " + event.place.formatted_address})).append("<br>");
+
+    //Add photo gallery if there are photos
+    if(event.place.photos !== undefined && event.place.photos.length > 0) {
+        new PhotoGallery(event.place.photos, Math.floor($(submenu).width() * 0.8)).render($(submenu).find(".menu-content"));
+    }
+
+    $(submenu).find(".prev-menu-button").off("click").click(function() {
+        localSession.sidebarMenuIndex--;
+        event.marker.setAnimation(null); //Stop Bouncing
+        openMenu(localSession.sidebarMenuIndex);
+        fitEventsOnMap(localSession.events);
+    });
+    openMenu(localSession.sidebarMenuIndex);
+}
+
+function displayRouteInfo(route) {
+    localSession.sidebarMenuIndex++;
+    var submenu = "#sidebar-sub" + localSession.sidebarMenuIndex;
+    $(submenu).find(".menu-heading").html("Route Info");
+    $(submenu).find(".menu-content").empty();
+    $(submenu).find(".menu-content")
+        .append($("<span>", {text: "Name: " + route.name})).append("<br>")
+        .append($("<span>", {text: "Description: <Add desc pls>"})).append("<br>")
+        .append($("<span>", {text: "Current Votes: " + String(route.votes)})).append("<br>")
+        .append($("<span>", {text: "Stops"})).append("<br>");
+
+    //Add each event to info page
+    route.getIncludedEvents().forEach(function(route) {
+        route.displayUI($(submenu).find(".menu-content"), false);
+    });
+
+    //Give back button functionality
+    $(submenu).find(".prev-menu-button").off("click").click(function() {
+        localSession.sidebarMenuIndex--;
+        openMenu(localSession.sidebarMenuIndex);
+        //Make all route lines and markers visible again
+        localSession.routes.forEach(function(route) {
+            route.setVisibleOnMap(true);
+        });
+        localSession.events.forEach(function(event) {
+            event.setVisibleOnMap(true);
+        });
+        fitEventsOnMap(localSession.events);
+    });
+    openMenu(localSession.sidebarMenuIndex);
+}
+
+//Moves menus to given level - 0 is base menu
+function openMenu(level) {
+    $(".sidebar-menu").animate({ left: "-" + ($(".sidebar-menu").width() * level) });
+}
+
+//POLLING
+function millisToReadable(millis){
+    var days, hours, mins, secs, readable;
+    secs = Math.floor(millis / 1000);
+    mins = Math.floor(secs / 60);
+    secs = secs % 60;
+    hours = Math.floor(mins / 60);
+    mins = mins % 60;
+    days = Math.floor(hours / 24);
+    hours = hours % 24;
+    readable = "";
+    readable += days > 0 ? days + "d " : "";
+    readable += hours > 0 ? hours + "h " : "";
+    readable += mins > 0 ? mins + "m " : "";
+    return readable + secs + "s";
+}
+
+function pollServer() {
+    //console.log("Polling Server...");
+    //Get current phase that session is in
+    var phase = localSession.getPhase();
+    //console.log("Currently in phase " + phase);
+
+    //Update countdown timer
+    var timeRemaining = localSession.timeToPhaseEnd();
+    if(timeRemaining > -1) {
+        $("#countdown-timer").html("Voting ends in " + millisToReadable(timeRemaining*1000));
+    } else {
+        $("#countdown-timer").html("");
+    }
+
+    if(phase == 1) {
+        //Event voting phase, update events
+        updateEventOrRoute(true, true, true).then(null, function(error_obj) {
+          console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+        });
+    } else if(phase == 2) {
+        //Route voting phase
+        if(localSession.lastCheckedPhase != 2) {
+            localSession.enterPhase2();
+        }
+        //Update Routes
+        updateEventOrRoute(true, true, false).then(null, function(error_obj) {
+          console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+        });
+    } else if (phase == 3) {
+        //Final route phase
+        if(localSession.lastCheckedPhase != 3) {
+            localSession.enterPhase3();
+        }
+        //additional updates go here
+    }
+}
+
+//Updates the events or routes tracked locally by polling backend API
+//Optionally display new events or routes in map and sidebar
+function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
+  var apiCall = isEvents ? api.plan.getEvents : api.plan.getRoutes;
+  var localList = isEvents ? localSession.events : localSession.routes;
+  var EntryFactory = isEvents ? Event.EventFactory : Route.RouteFactory;
+  var sideBarContainer = isEvents ? "#sidebar-menu .menu-content" : "#sidebar-menu #route-list";
+
+  return new Promise(function(updateSuccess, updateError) {
+    apiCall(localSession.plan.id).then(function(response){
+      var serverResponse = response.results;
+      var promises = [];
+      serverResponse.forEach(function(r) {
+        var localResult = localList[r.id];
+        //If entry is new to client
+        if(localResult === undefined) {
+          //Lock array element to prevent multiple async calls to this function creating duplicate objects
+          localList[r.id] = "pending";
+          //Create new object
+          var promise = EntryFactory(r, null);
+          promises.push(promise);
+          promise.then(function(entry) {
+            //Add to event list
+            localList[entry.id] = entry;
+            if(displayNewEntries) {
+              //Display entry with vote controls
+              entry.displayUI($(sideBarContainer), true);
+            }
+            if(displayOnMap) {
+              //Display event
+              entry.displayOnMap();
+            }
+          });
+        } else if(localResult === "pending") {
+          //Do nothing, it is being handled by other call
+        } else {
+          //Otherwise update event object as it exists
+          Object.assign(localResult, r);
+          //Refresh UI
+          localResult.refreshUI();
+        }
+      });
+      Promise.all(promises).then(updateSuccess);
+    },
+    function(error_obj){
+      updateError(error_obj);
+    });
+  });
+}
+
+//Local Session object
 var localSession = {
     //The events and routes that the client browser is tracking
     events: [],
@@ -349,232 +594,3 @@ var localSession = {
         });
     }
 };
-
-function initMap() {
-    //Initialise the local session
-    localSession.initialise();
-}
-
-//Reposition map to show all given events
-function fitEventsOnMap(eventList) {
-    //Show all markers on map
-    var bounds = new google.maps.LatLngBounds();
-    eventList.forEach(function(event) {
-        //Viewport looks better when the map is fitted to single place with a view port
-        //When fitted to multiple points, location looks better
-        if (event.place.geometry.viewport && Object.keys(eventList).length === 1) {
-            // Only geocodes have viewport.
-            bounds.union(event.place.geometry.viewport);
-        } else {
-            bounds.extend(event.place.geometry.location);
-        }
-    });
-    localSession.map.fitBounds(bounds);
-}
-
-function removeMarkersFromMap(markers) {
-    //Remove markers from map
-    markers.forEach(function(marker) {
-        marker.setMap(null);
-    });
-}
-
-function addMarkerToMap(place) {
-    var icon = {
-        url: '../../static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png',
-        size: new google.maps.Size(71, 71),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(17, 20),
-        scaledSize: new google.maps.Size(25, 25)
-    };
-
-    // Create a marker for each place.
-    return new google.maps.Marker({
-        map: localSession.map,
-        icon: icon,
-        title: place.name,
-        animation: google.maps.Animation.DROP,
-        place: {
-            location: place.geometry.location,
-            placeId: place.place_id
-        }
-    });
-}
-
-function isPlaceAdded(placeId) {
-    var placeAdded = false;
-    localSession.events.forEach(function(event) {
-        if(event.place.place_id === placeId) {
-            placeAdded = true;
-            return false; //Break from forEach loop
-        }
-    });
-    return placeAdded;
-}
-
-function displayEventInfo(event) {
-    localSession.sidebarMenuIndex++;
-    var submenu = "#sidebar-sub" + localSession.sidebarMenuIndex;
-    $(submenu).find(".menu-heading").html("Event Info");
-    $(submenu).find(".menu-content").empty();
-    $(submenu).find(".menu-content")
-        .append($("<span>", {text: "Name: " + event.name})).append("<br>")
-        .append($("<span>", {text: "Description: <Add desc pls>"})).append("<br>")
-        .append($("<span>", {text: "Current Votes: " + String(event.votes)})).append("<br>")
-        .append($("<span>", {text: "Venue: " + event.place.name})).append("<br>")
-        .append($("<span>", {text: "Address: " + event.place.formatted_address})).append("<br>");
-
-    //Add photo gallery if there are photos
-    if(event.place.photos !== undefined && event.place.photos.length > 0) {
-        new PhotoGallery(event.place.photos, Math.floor($(submenu).width() * 0.8)).render($(submenu).find(".menu-content"));
-    }
-
-    $(submenu).find(".prev-menu-button").off("click").click(function() {
-        localSession.sidebarMenuIndex--;
-        event.marker.setAnimation(null); //Stop Bouncing
-        openMenu(localSession.sidebarMenuIndex);
-        fitEventsOnMap(localSession.events);
-    });
-    openMenu(localSession.sidebarMenuIndex);
-}
-
-function displayRouteInfo(route) {
-    localSession.sidebarMenuIndex++;
-    var submenu = "#sidebar-sub" + localSession.sidebarMenuIndex;
-    $(submenu).find(".menu-heading").html("Route Info");
-    $(submenu).find(".menu-content").empty();
-    $(submenu).find(".menu-content")
-        .append($("<span>", {text: "Name: " + route.name})).append("<br>")
-        .append($("<span>", {text: "Description: <Add desc pls>"})).append("<br>")
-        .append($("<span>", {text: "Current Votes: " + String(route.votes)})).append("<br>")
-        .append($("<span>", {text: "Stops"})).append("<br>");
-
-    //Add each event to info page
-    route.getIncludedEvents().forEach(function(route) {
-        route.displayUI($(submenu).find(".menu-content"), false);
-    });
-
-    //Give back button functionality
-    $(submenu).find(".prev-menu-button").off("click").click(function() {
-        localSession.sidebarMenuIndex--;
-        openMenu(localSession.sidebarMenuIndex);
-        //Make all route lines and markers visible again
-        localSession.routes.forEach(function(route) {
-            route.setVisibleOnMap(true);
-        });
-        localSession.events.forEach(function(event) {
-            event.setVisibleOnMap(true);
-        });
-        fitEventsOnMap(localSession.events);
-    });
-    openMenu(localSession.sidebarMenuIndex);
-}
-
-//Moves menus to given level - 0 is base menu
-function openMenu(level) {
-    $(".sidebar-menu").animate({ left: "-" + ($(".sidebar-menu").width() * level) });
-}
-
-//POLLING
-function millisToReadable(millis){
-    var days, hours, mins, secs, readable;
-    secs = Math.floor(millis / 1000);
-    mins = Math.floor(secs / 60);
-    secs = secs % 60;
-    hours = Math.floor(mins / 60);
-    mins = mins % 60;
-    days = Math.floor(hours / 24);
-    hours = hours % 24;
-    readable = "";
-    readable += days > 0 ? days + "d " : "";
-    readable += hours > 0 ? hours + "h " : "";
-    readable += mins > 0 ? mins + "m " : "";
-    return readable + secs + "s";
-}
-
-function pollServer() {
-    //console.log("Polling Server...");
-    //Get current phase that session is in
-    var phase = localSession.getPhase();
-    //console.log("Currently in phase " + phase);
-
-    //Update countdown timer
-    var timeRemaining = localSession.timeToPhaseEnd();
-    if(timeRemaining > -1) {
-        $("#countdown-timer").html("Voting ends in " + millisToReadable(timeRemaining*1000));
-    } else {
-        $("#countdown-timer").html("");
-    }
-
-    if(phase == 1) {
-        //Event voting phase, update events
-        updateEventOrRoute(true, true, true).then(null, function(error_obj) {
-          console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
-        });
-    } else if(phase == 2) {
-        //Route voting phase
-        if(localSession.lastCheckedPhase != 2) {
-            localSession.enterPhase2();
-        }
-        //Update Routes
-        updateEventOrRoute(true, true, false).then(null, function(error_obj) {
-          console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
-        });
-    } else if (phase == 3) {
-        //Final route phase
-        if(localSession.lastCheckedPhase != 3) {
-            localSession.enterPhase3();
-        }
-        //additional updates go here
-    }
-}
-
-//Updates the events or routes tracked locally by polling backend API
-//Optionally display new events or routes in map and sidebar
-function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
-  var apiCall = isEvents ? api.plan.getEvents : api.plan.getRoutes;
-  var localList = isEvents ? localSession.events : localSession.routes;
-  var EntryFactory = isEvents ? Event.EventFactory : Route.RouteFactory;
-  var sideBarContainer = isEvents ? "#sidebar-menu .menu-content" : "#sidebar-menu #route-list";
-
-  return new Promise(function(updateSuccess, updateError) {
-    apiCall(localSession.plan.id).then(function(response){
-      var serverResponse = response.results;
-      var promises = [];
-      serverResponse.forEach(function(r) {
-        var localResult = localList[r.id];
-        //If entry is new to client
-        if(localResult === undefined) {
-          //Lock array element to prevent multiple async calls to this function creating duplicate objects
-          localList[r.id] = "pending";
-          //Create new object
-          var promise = EntryFactory(r, null);
-          promises.push(promise);
-          promise.then(function(entry) {
-            //Add to event list
-            localList[entry.id] = entry;
-            if(displayNewEntries) {
-              //Display entry with vote controls
-              entry.displayUI($(sideBarContainer), true);
-            }
-            if(displayOnMap) {
-              //Display event
-              entry.displayOnMap();
-            }
-          });
-        } else if(localResult === "pending") {
-          //Do nothing, it is being handled by other call
-        } else {
-          //Otherwise update event object as it exists
-          Object.assign(localResult, r);
-          //Refresh UI
-          localResult.refreshUI();
-        }
-      });
-      Promise.all(promises).then(updateSuccess);
-    },
-    function(error_obj){
-      updateError(error_obj);
-    });
-  });
-}
