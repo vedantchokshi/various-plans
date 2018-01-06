@@ -133,7 +133,7 @@ class Event extends Votable {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             resolve(new Event(apiJSON, _place));
           } else {
-            reject();
+            reject(status);
           }
         });
       } else {
@@ -246,6 +246,8 @@ class Route extends Votable {
       localSession.directionsService.route(request, function(direction, status) {
         if (status === google.maps.DirectionsStatus.OK) {
           resolve(new Route(apiJSON, direction));
+        } else {
+          reject(status);
         }
       });
     });

@@ -29,14 +29,17 @@ function fitEventsOnMap(eventList) {
     //Show all markers on map
     var bounds = new google.maps.LatLngBounds();
     eventList.forEach(function(event) {
+      //Check that event is Event and not placeholder "pending"
+      if(event && event.place) {
         //Viewport looks better when the map is fitted to single place with a view port
         //When fitted to multiple points, location looks better
         if (event.place.geometry.viewport && Object.keys(eventList).length === 1) {
-            // Only geocodes have viewport.
-            bounds.union(event.place.geometry.viewport);
+          // Only geocodes have viewport.
+          bounds.union(event.place.geometry.viewport);
         } else {
-            bounds.extend(event.place.geometry.location);
+          bounds.extend(event.place.geometry.location);
         }
+      }
     });
     localSession.map.fitBounds(bounds);
 }
@@ -230,6 +233,11 @@ function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
               //Display event
               entry.displayOnMap();
             }
+          }, function(error_status) {
+            var eventRoute = isEvents ? "event" : "route";
+            console.error("Error in creating " + eventRoute + ": " + error_status);
+            //Reset local list
+            localList[r.id] = undefined;
           });
         } else if(localResult === "pending") {
           //Do nothing, it is being handled by other call
@@ -240,7 +248,7 @@ function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
           localResult.refreshUI();
         }
       });
-      Promise.all(promises).then(updateSuccess);
+      Promise.all(promises).then(updateSuccess, updateError);
     },
     function(error_obj){
       updateError(error_obj);
@@ -386,7 +394,7 @@ var localSession = {
                 updateEventOrRoute(true, true, true).then(function() {
                     fitEventsOnMap(localSession.events);
                 }, function(error_obj) {
-
+                  console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
                 });
                 break;
             case 2:
@@ -399,8 +407,8 @@ var localSession = {
     },
     initGMaps: function() {
         var map = this.map = new google.maps.Map($("#map")[0], {
-            zoom: 8,
-            center: {lat: -34.397, lng: 150.644}
+            zoom: 6,
+            center: {lat: 54.73413609763893, lng: -3.3233642578125}
         });
         var placesService = this.placesService = new google.maps.places.PlacesService(map);
         this.directionsService = new google.maps.DirectionsService();
