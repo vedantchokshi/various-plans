@@ -2,16 +2,17 @@ from back_end.db import db, default_str_len, plans, events as db_events
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, BaseApiException
 
 
-def get_best_route(self):
-    if self.phase > 2:
+def get_routes(self):
+    if self.phase <= 2:
+        rs = self.routes_all.all()
+        return sort_routes(rs) if len(rs) > 0 else []
+    if self.phase >= 3:
         r = self.routes_all.all()
         if len(r) > 0:
             r = sort_routes(r)[-1]
+            return [r]
         else:
-            raise InvalidContent('There are no routes for this plan - no winning route')
-        return [r]
-    else:
-        return self.routes_all.all()
+            return []
 
 
 def sort_routes(route_list):
@@ -38,7 +39,7 @@ def sort_routes(route_list):
     return sorted(route_list, cmp=sorter)
 
 
-plans.Plan.routes = property(get_best_route)
+plans.Plan.routes = property(get_routes)
 
 
 class Route(db.Model):
