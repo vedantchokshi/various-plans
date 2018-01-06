@@ -12,32 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# [START vendor]
 import imp
 import inspect
 import os
 
-# [START vendor]
 from google.appengine.ext import vendor
 
-vendor.add(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'lib'))
+# Add any libraries installed in the "lib" folder.
+vendor.add('lib')
 
-if os.environ.get('GAE_ENV'):
-    print('GAE instance! (appengine config)')
-else:
-    print('Not GAE instance (appengine config)')
+if not os.environ.get('GAE_ENV'):
+    # Set up SSL for local testing
     from google.appengine.tools.devappserver2.python.runtime import sandbox
-
-    # Add any libraries installed in the "lib" folder.
 
     sandbox._WHITE_LIST_C_MODULES += ['_ssl', '_socket']
 
-    runtime_path = os.path.realpath(inspect.getsourcefile(inspect))
-    runtime_dir = os.path.dirname(runtime_path)
+    RUNTIME_PATH = os.path.realpath(inspect.getsourcefile(inspect))
+    RUNTIME_DIR = os.path.dirname(RUNTIME_PATH)
 
     # Patch and reload the socket module implementation.
-    system_socket = os.path.join(runtime_dir, 'socket.py')
-    imp.load_source('socket', system_socket)
+    SYSTEM_SOCKET = os.path.join(RUNTIME_DIR, 'socket.py')
+    imp.load_source('socket', SYSTEM_SOCKET)
 
     # Patch and reload the ssl module implementation.
-    system_ssl = os.path.join(runtime_dir, 'ssl.py')
-    imp.load_source('ssl', system_ssl)
+    SYSTEM_SSL = os.path.join(RUNTIME_DIR, 'ssl.py')
+    imp.load_source('ssl', SYSTEM_SSL)
+
+# [END vendor]
