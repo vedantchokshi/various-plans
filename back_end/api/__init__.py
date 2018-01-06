@@ -72,8 +72,10 @@ def jsonify_decorator(func):
                 d = dict()
                 d['results'] = [i.serialise for i in obj]
                 obj = d
+            else:
+                obj = obj.serialise
             obj['timestamp'] = timestamp
-            return make_response(jsonify(obj.serialise), status_code)
+            return make_response(jsonify(obj), status_code)
         return obj
 
     return wrapper
