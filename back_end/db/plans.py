@@ -41,7 +41,9 @@ class Plan(db.Model):
             return 1
         if now < self.routeVoteCloseTime:
             return 2
-        return 3
+        if now < self.endTime:
+            return 3
+        return 4
 
     @property
     def serialise(self):
