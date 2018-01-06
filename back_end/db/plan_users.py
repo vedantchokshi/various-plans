@@ -14,5 +14,5 @@ class PlanUser(db.Model):
 
 
 def get_plans(userid):
-    plans = PlanUser.query.filterby(userid=userid)
+    plans = PlanUser.query.filter_by(userid=userid)
     return [p.plan for p in plans]
