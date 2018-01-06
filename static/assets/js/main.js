@@ -55,7 +55,7 @@ var localSession = {
         this.events = [];
 
         //Add new events to map, but not sidebar
-        updateEvents(false, true).then(function() {
+        updateEventOrRoute(false, true, true).then(function() {
             fitEventsOnMap(localSession.events);
 
             $("<button>", {"id": "add-route-button", "class": "btn btn-default", "type": "button", text: "Add Route"})
@@ -92,10 +92,10 @@ var localSession = {
 
         //Add new events to map, but not sidebar
         //In phase 3 /api/plan/<id>/events returns only the events in the winning route
-        updateEvents(false, true).then(function() {
+        updateEventOrRoute(false, true, true).then(function() {
             fitEventsOnMap(localSession.events);
 
-            updateRoutes(false, true).then(function(routes) {
+            updateEventOrRoute(false, true, false).then(function(routes) {
                 fitEventsOnMap(localSession.events);
                 //In phase 3, /api/plan/<id>/routes returns singleton containing winning routes
                 var route = routes[0];
@@ -138,7 +138,7 @@ var localSession = {
         switch(this.getPhase()) {
             case 1:
                 //Add new events and reposition map
-                updateEvents(true, true).then(function() {
+                updateEventOrRoute(true, true, true).then(function() {
                     fitEventsOnMap(localSession.events);
                 }, function(error_obj) {
 
@@ -508,7 +508,7 @@ function pollServer() {
 
     if(phase == 1) {
         //Event voting phase, update events
-        updateEvents(true, true).then(null, function(error_obj) {
+        updateEventOrRoute(true, true, true).then(null, function(error_obj) {
           console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
         });
     } else if(phase == 2) {
@@ -517,7 +517,7 @@ function pollServer() {
             localSession.enterPhase2();
         }
         //Update Routes
-        updateRoutes(true, true).then(null, function(error_obj) {
+        updateEventOrRoute(true, true, false).then(null, function(error_obj) {
           console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
         });
     } else if (phase == 3) {
@@ -529,92 +529,52 @@ function pollServer() {
     }
 }
 
-//Update the events tracked locally by polling backend API
-//Optionally display new events in map and sidebar
-function updateEvents(displayNewEvents, displayOnMap) {
-  return new Promise(function(updateEventsSuccess, updateEventsError) {
-    api.plan.getEvents(localSession.plan.id).then(function(eventsResponse){
-      var serverEvents = eventsResponse.results;
-      var eventPromises = [];
-      serverEvents.forEach(function(e) {
-        var localEvent = localSession.events[e.id];
-        //If event is new to client
-        if(localEvent === undefined) {
-          //Lock array element to prevent multiple async calls to this function creating duplicate objects
-          localSession.events[e.id] = "pending";
-          //Create new object
-          var promise = Event.EventFactory(e, null);
-          eventPromises.push(promise);
-          promise.then(function(event) {
-            //Add to event list
-            localSession.events[event.id] = event;
-            if(displayNewEvents) {
-              //Display event
-              event.displayUI($("#sidebar-menu .menu-content"), true);
-            }
-            if(displayOnMap) {
-              //Display event
-              event.displayOnMap();
-            }
-          });
-        } else if(localEvent === "pending") {
-          //Do nothing, it is being handled by other call
-        } else {
-          //Otherwise update event object as it exists
-          Object.assign(localEvent, e);
-          //Refresh UI
-          localEvent.refreshUI();
-        }
-      });
-      Promise.all(eventPromises).then(updateEventsSuccess);
-    },
-    function(error_obj){
-      updateEventsError(error_obj);
-    });
-  });
-}
+//Updates the events or routes tracked locally by polling backend API
+//Optionally display new events or routes in map and sidebar
+function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
+  var apiCall = isEvents ? api.plan.getEvents : api.plan.getRoutes;
+  var localList = isEvents ? localSession.events : localSession.routes;
+  var EntryFactory = isEvents ? Event.EventFactory : Route.RouteFactory;
+  var sideBarContainer = isEvents ? "#sidebar-menu .menu-content" : "#sidebar-menu #route-list";
 
-//Update the routes tracked locally by polling backend API
-//Optionally display new routes in map and sidebar
-function updateRoutes(displayNewRoutes, displayOnMap) {
-  return new Promise(function(updateRoutesSuccess, updateRoutesError) {
-    api.plan.getRoutes(localSession.plan.id).then(function(routesResponse){
-      var serverRoutes = routesResponse.results;
-      var routePromises = [];
-      serverRoutes.forEach(function(r) {
-        var localRoute = localSession.routes[r.id];
-        //If route is new to client
-        if(localRoute === undefined) {
+  return new Promise(function(updateSuccess, updateError) {
+    apiCall(localSession.plan.id).then(function(response){
+      var serverResponse = response.results;
+      var promises = [];
+      serverResponse.forEach(function(r) {
+        var localResult = localList[r.id];
+        //If entry is new to client
+        if(localResult === undefined) {
           //Lock array element to prevent multiple async calls to this function creating duplicate objects
-          localSession.routes[r.id] = "pending";
+          localList[r.id] = "pending";
           //Create new object
-          var promise = Route.RouteFactory(r);
-          routePromises.push(promise);
-          promise.then(function(route) {
+          var promise = EntryFactory(r, null);
+          promises.push(promise);
+          promise.then(function(entry) {
             //Add to event list
-            localSession.routes[route.id] = route;
-            if(displayNewRoutes) {
-              //Display event
-              route.displayUI($("#sidebar-menu #route-list"), true);
+            localList[entry.id] = entry;
+            if(displayNewEntries) {
+              //Display entry with vote controls
+              entry.displayUI($(sideBarContainer), true);
             }
             if(displayOnMap) {
               //Display event
-              route.displayOnMap();
+              entry.displayOnMap();
             }
           });
-        } else if(localRoute === "pending") {
+        } else if(localResult === "pending") {
           //Do nothing, it is being handled by other call
         } else {
           //Otherwise update event object as it exists
-          Object.assign(localRoute, r);
+          Object.assign(localResult, r);
           //Refresh UI
-          localRoute.refreshUI();
+          localResult.refreshUI();
         }
       });
-      Promise.all(routePromises).then(updateRoutesSuccess);
+      Promise.all(promises).then(updateSuccess);
     },
     function(error_obj){
-      updateRoutesError(error_obj);
+      updateError(error_obj);
     });
   });
 }
