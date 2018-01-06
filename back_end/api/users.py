@@ -10,4 +10,4 @@ ROUTES = Blueprint('user', __name__)
 @jsonify_decorator
 @token_decorator
 def get_plans_from_user(userid):
-    return plan_users.get_plans(userid)
+    return plan_users.get_plans(userid), 200

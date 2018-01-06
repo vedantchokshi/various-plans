@@ -18,7 +18,7 @@ def get_plan(planid, userid):
 @jsonify_decorator
 @token_decorator
 def join_plan(joinid, userid):
-    return plans.add_user(joinid, userid)
+    return plans.add_user(joinid, userid), 200
 
 
 @ROUTES.route('/<planid>/events', methods=['GET'])
