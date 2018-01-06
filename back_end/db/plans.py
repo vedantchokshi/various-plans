@@ -105,6 +105,7 @@ def add_user(joinid, userid):
     if (len(plans) < 1) or None :
         raise ResourceNotFound("Cannot find Plan for joinid '{}'".format(joinid))
     plan = plans[0]
-    plan.users.append(PlanUser(plan.id, userid))
-    db.session.commit()
+    if userid not in [pu.userid for pu in plan.users]:
+        plan.users.append(PlanUser(plan.id, userid))
+        db.session.commit()
     return plan
