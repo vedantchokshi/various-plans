@@ -37,6 +37,7 @@ def sort_routes(route_list):
         if a_downvotes != b_downvotes:
             # Least down-voted route
             return cmp(a_downvotes, b_downvotes)
+        # Order of creation
         return cmp(a.id, b.id)
 
     return sorted(route_list, cmp=sorter)
