@@ -222,7 +222,8 @@ def add_user(joinid, userid):
         raise ResourceNotFound("Invalid Join ID.")
         # raise ResourceNotFound("Cannot find Plan for joinid '{}'".format(joinid))
     plan = plans[0]
-    if userid not in [pu.userid for pu in plan.users]:
-        plan.users.append(PlanUser(plan.id, userid))
-        DB.session.commit()
+    if userid in [pu.userid for pu in plan.users]:
+        raise InvalidRequest("You are already registered to '{}'".format(plan.name))
+    plan.users.append(PlanUser(plan.id, userid))
+    DB.session.commit()
     return plan
