@@ -1,0 +1,63 @@
+.photo-gallery {
+  padding: 10px;
+  /*background-color: rgba(0,0,0,0.4);*/
+  box-shadow: 0 0 20px 0px black inset;
+  -webkit-box-shadow: 0 0 20px 0px black inset;
+  -moz-box-shadow: 0 0 20px 0px black inset;
+  border: 1px solid rgba(100,100,100,0.8);
+  border-color: black rgba(100,100,100,0.5) rgba(100,100,100,0.5) black;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.photo-gallery-next, .photo-gallery-prev {
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+  width: 10%;
+  height: 100%;
+  display: inline-block;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.photo-gallery-next .pg-icon, .photo-gallery-prev .pg-icon {
+  background-image: url(../../assets/img/vp-icons.svg);
+  width: 10.5px;
+  height: 21px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -10.5px;
+  margin-right: -5.25px;
+}
+
+.photo-gallery-next {
+  right: 0px;
+}
+
+.photo-gallery-next .pg-icon {
+  background-position: -53px -22px;
+}
+
+.photo-gallery-next:hover {
+  background-color: rgba(255,255,255, 0.2);
+  background-position:-53px -66px;
+}
+
+.photo-gallery-prev {
+  left: 0px;
+}
+
+.photo-gallery-prev .pg-icon {
+  background-position:-53px 0px;
+}
+
+.photo-gallery-prev:hover {
+  background-position:-53px -44px;
+  background-color: rgba(255,255,255, 0.2);
+}
+
+.photo-gallery-entry {
+  position:relative;
+  margin-right: 24px;
+}

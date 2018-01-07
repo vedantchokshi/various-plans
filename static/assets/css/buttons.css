@@ -71,32 +71,6 @@
   border-right:1px solid;
 }
 
-.photo-gallery-next {
-  cursor:pointer;
-  width:10.5px;
-  height:21px;
-  background-image:url("../../assets/img/vp-icons.svg");
-  background-position:-53px -22px;
-  display:inline-block;
-}
-
-.photo-gallery-prev {
-  cursor:pointer;
-  width:10.5px;
-  height:21px;
-  background-image:url("../../assets/img/vp-icons.svg");
-  background-position:-53px 0px;
-  display:inline-block;
-}
-
-.photo-gallery-next:hover {
-  background-position:-53px -66px;
-}
-
-.photo-gallery-prev:hover {
-  background-position:-53px -44px;
-}
-
 .vote-entry {
   display:block;
   cursor:pointer;
