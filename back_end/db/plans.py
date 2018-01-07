@@ -47,12 +47,13 @@ class Plan(db.Model):
 
     @property
     def phase(self):
-        p = self.timephase
-        if p > 1 and len(self.events) == 0:
-            return 4
-        if p > 2 and len(self.routes) == 0:
-            return 4
-        return p
+        # p = self.timephase
+        # if p > 1 and len(self.events) == 0:
+        #     return 4
+        # if p > 2 and len(self.routes) == 0:
+        #     return 4
+        # return p
+        return self.timephase
 
     @property
     def serialise(self):
