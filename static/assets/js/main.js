@@ -61,7 +61,7 @@ function removeMarkersFromMap(markers) {
 
 function addMarkerToMap(place) {
     var icon = {
-        url: '../../static/assets/img/Screen Shot 2017-12-19 at 20.13.38.png',
+        url: '../../static/assets/img/mappin-small.png',
         size: new google.maps.Size(71, 71),
         origin: new google.maps.Point(0, 0),
         anchor: new google.maps.Point(17, 20),
