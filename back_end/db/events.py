@@ -31,8 +31,8 @@ def sort_events(event_list):
         if a.votes != b.votes:
             # Highest total votes
             return cmp(b.votes, a.votes)
-        a_downvotes = reduce(lambda x, y: x + (1 if y.vote < 1 else 0), a.all_votes.all())
-        b_downvotes = reduce(lambda x, y: x + (1 if y.vote < 1 else 0), b.all_votes.all())
+        a_downvotes = reduce(lambda x, y: x + (1 if y.vote < 1 else 0), a.all_votes.all(), 0)
+        b_downvotes = reduce(lambda x, y: x + (1 if y.vote < 1 else 0), b.all_votes.all(), 0)
         if a_downvotes != b_downvotes:
             # Least down-voted route
             return cmp(a_downvotes, b_downvotes)
