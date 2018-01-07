@@ -23,7 +23,7 @@ function gapiLoaded() {
 function signedIn() {
   //Show profile in navbar
   var userProfile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
-  $("#name").html("<strong>" + userProfile.getName() + "</strong><i class=\"glyphicon glyphicon-user\"></i>");
+  $("#name").html("<strong>" + userProfile.getGivenName() + "</strong><i class=\"glyphicon glyphicon-user\"></i>");
   $("#email").html(userProfile.getEmail());
 }
 

@@ -2,16 +2,14 @@
 class PlanEntry {
 
   constructor(plan){
-    this.entry = $("<div>", {"class" : "plan-entry"});
-    this.name = $("<span>", {"class" : "plan-name", text: plan.name}).appendTo(this.entry);
-    this.startTime = $("<span>", {"class" : "plan-start-time", text: new Date(plan.startTime*1000).toLocaleString()}).appendTo(this.entry);
+    this.entry = $("<a>", {"class" : "plan-entry card-ui", "href": "/" + plan.id});
+    this.name = $("<span>", {"class" : "plan-name"}).html("<strong>" + plan.name + "</strong>").appendTo(this.entry);
+    this.startTime = $("<span>", {"class" : "plan-join-code", text: plan.joinid}).appendTo(this.entry);
     this.endTime = $("<span>", {"class" : "plan-end-time", text: new Date(plan.endTime*1000).toLocaleString()}).appendTo(this.entry);
 
-    this.openButton = $("<button>", {"class" : "plan-open-button", text: "OPEN"})
-      .click(function() {
-        redirectWithFreshToken("/" + plan.id);
-      })
-      .appendTo(this.entry);
+    // this.entry.click(function() {
+    //     redirectWithFreshToken("/" + plan.id);
+    //   });
   }
 
   render(container) {
@@ -58,10 +56,12 @@ $(document).ready(function() {
     var joinId = $("#join-code").val();
     api.plan.join(joinId).then(function(plan) {
       $("#plan-list-header").html("Your Plans");
-      new PlanEntry(plan).render($("#join-plan-modal").find(".modal-body"));
+      new PlanEntry(plan).render($("#join-plan-modal").find("#active-plan-list"));
+      $("#active-plan-list").scrollTop($("#active-plan-list").prop("scrollHeight"));
     },
     function(error_obj){
       //TODO: Handle Join Errors
+      console.error("API ERROR " + error_obj.status + ": " + error_obj.message);
     });
   });
 });
@@ -91,7 +91,7 @@ googleLoginListeners.onSignIn.push(function() {
 
   //Show profile in navbar
   var userProfile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
-  $("#name").html("<strong>" + userProfile.getName() + "</strong><i class=\"glyphicon glyphicon-user\"></i>");
+  $("#name").html("<strong>" + userProfile.getGivenName() + "</strong><i class=\"glyphicon glyphicon-user\"></i>");
   $("#email").html(userProfile.getEmail());
   $("#user-info-button").fadeIn();
 });
@@ -111,7 +111,7 @@ function displayUsersPlans() {
     if(results.results.length === 0)
       $("#plan-list-header").html("You are not currently involved in any active plans.");
     results.results.forEach(function(plan) {
-      new PlanEntry(plan).render($("#join-plan-modal").find(".modal-body"));
+      new PlanEntry(plan).render($("#join-plan-modal").find("#active-plan-list"));
     });
   },
   function(error_obj){
