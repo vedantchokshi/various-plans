@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from back_end.db import db, default_str_len, plans
+from back_end.db import DB, STR_LEN, plans
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
@@ -60,15 +60,15 @@ plans.Plan.events = property(get_events_sql)
 plans.Plan.events_count_positive = property(count_positive_events_sql)
 
 
-class Event(db.Model):
+class Event(DB.Model):
     __tablename__ = 'Events'
-    id = db.Column('id', db.Integer, primary_key=True)
-    planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
-    name = db.Column(db.String(default_str_len), nullable=False)
-    locationid = db.Column(db.String(default_str_len), nullable=False)
+    id = DB.Column('id', DB.Integer, primary_key=True)
+    planid = DB.Column(DB.Integer, DB.ForeignKey('Plans.id'), nullable=False)
+    name = DB.Column(DB.String(STR_LEN), nullable=False)
+    locationid = DB.Column(DB.String(STR_LEN), nullable=False)
     # votes = db.Column(db.Integer, nullable=False)
 
-    plan = db.relationship('Plan', backref=db.backref('events_all', lazy='dynamic'))
+    plan = DB.relationship('Plan', backref=DB.backref('events_all', lazy='dynamic'))
 
     def __init__(self, name, locationid):
         self.name = name
@@ -116,7 +116,7 @@ def create(planid, name, locationid, userid):
     new_event = Event(name, locationid)
 
     plan.events_all.append(new_event)
-    db.session.commit()
+    DB.session.commit()
     return new_event
 
 

@@ -1,11 +1,11 @@
-from back_end.db import db
+from back_end.db import DB
 
 
-class RouteEvent(db.Model):
+class RouteEvent(DB.Model):
     __tablename__ = 'Route_Event'
-    routeid = db.Column(db.Integer, db.ForeignKey('Routes.id'), primary_key=True)
-    eventid = db.Column(db.Integer, db.ForeignKey('Events.id'))
-    index = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    routeid = DB.Column(DB.Integer, DB.ForeignKey('Routes.id'), primary_key=True)
+    eventid = DB.Column(DB.Integer, DB.ForeignKey('Events.id'))
+    index = DB.Column(DB.Integer, primary_key=True, autoincrement=True)
 
     def __init__(self, routeid, eventid, index):
         self.routeid = routeid

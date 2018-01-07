@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from back_end.db import db, default_str_len, plans, events as db_events
+from back_end.db import DB, STR_LEN, plans, events as db_events
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
@@ -60,15 +60,15 @@ plans.Plan.routes = property(get_routes_sql)
 plans.Plan.routes_count_positive = property(count_positive_routes_sql)
 
 
-class Route(db.Model):
+class Route(DB.Model):
     __tablename__ = 'Routes'
-    id = db.Column('id', db.Integer, primary_key=True)
-    name = db.Column(db.String(default_str_len), nullable=False)
-    planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), nullable=False)
+    id = DB.Column('id', DB.Integer, primary_key=True)
+    name = DB.Column(DB.String(STR_LEN), nullable=False)
+    planid = DB.Column(DB.Integer, DB.ForeignKey('Plans.id'), nullable=False)
     # votes = db.Column(db.Integer, nullable=False)
 
-    plan = db.relationship('Plan', backref=db.backref('routes_all', lazy='dynamic'))
-    events = db.relationship('Event', secondary='Route_Event')
+    plan = DB.relationship('Plan', backref=DB.backref('routes_all', lazy='dynamic'))
+    events = DB.relationship('Event', secondary='Route_Event')
 
     def __init__(self, name):
         self.name = name
@@ -146,7 +146,7 @@ def create(planid, name, eventid_list, userid):
 
     new_route.events += event_list
 
-    db.session.commit()
+    DB.session.commit()
     return new_route
 
 
