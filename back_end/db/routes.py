@@ -6,7 +6,7 @@ def get_routes(plan):
     rs = plan.routes_all.all()
     if len(rs) > 0:
         # Sort routes based on our criteria
-        #rs = sort_routes(rs)
+        # rs = sort_routes(rs)
         if plan.timephase < 3:
             # Phases 1 and 2 require no filtering of routes
             return rs

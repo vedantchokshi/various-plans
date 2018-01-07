@@ -6,7 +6,7 @@ def get_events(plan):
     events = plan.events_all.all()
     if len(events) > 0:
         # Sort events based on our criteria
-        #events = sort_events(events)
+        # events = sort_events(events)
         if plan.timephase < 2:
             # Phase 1 requires no filtering of events
             return events
