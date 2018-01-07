@@ -48,10 +48,8 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 def get_events_sql(plan):
     if plan.timephase < 2:
-        events = plan.events_all.all()
-    else:
-        events = plan.events_all.filter(Event.votes > 0).all()
-    return events
+        return plan.events_all.all()
+    return plan.events_all.filter(Event.votes > 0).all()
 
 
 def count_positive_events_sql(plan):
