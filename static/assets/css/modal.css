@@ -80,6 +80,8 @@
   list-style-type:none;
   min-height:100px;
   padding-left:0px;
+  overflow-y: auto;
+  max-height: 50vh;
 }
 
 .modal .close {
