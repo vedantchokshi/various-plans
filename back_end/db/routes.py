@@ -47,7 +47,7 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
 def get_routes_sql(plan):
-    if plan.phase < 3:
+    if plan.timephase < 3:
         return plan.routes_all.all()
     return [plan.routes_all.filter(Route.votes > 0)[0]]
 
