@@ -1,3 +1,6 @@
+"""
+Provides RESTful URLs for Event objects
+"""
 from flask import Blueprint, request
 
 from back_end.api import jsonify_decorator, token_decorator
@@ -11,6 +14,9 @@ ROUTES = Blueprint('event', __name__)
 @jsonify_decorator
 @token_decorator
 def get_event(eventid, userid):
+    """
+    Returns the event in JSON format with the `eventid` provided in URL .
+    """
     return events.get_from_id(eventid, userid), 200
 
 
@@ -18,6 +24,11 @@ def get_event(eventid, userid):
 @jsonify_decorator
 @token_decorator
 def vote_event(eventid, userid):
+    """
+    Updates user's vote on the event specified by `eventid` provided in URL.
+    Vote is extracted in a JSON object received in request.
+    Returns the updated event in JSON format.
+    """
     json = request.get_json()
     if json is None:
         raise InvalidContent("A problem occured when voting on the event.")
@@ -29,6 +40,10 @@ def vote_event(eventid, userid):
 @jsonify_decorator
 @token_decorator
 def create_event(userid):
+    """
+    Creates an event with the properties specified in JSON object recieved in request.
+    Returns the created event in JSON format.
+    """
     json = request.get_json()
     if json is None:
         raise InvalidContent("A problem occured when creating the event.")

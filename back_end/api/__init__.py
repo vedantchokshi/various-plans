@@ -55,7 +55,7 @@ def get_userid_from_token(token):
 def token_decorator(func):
     """
     Get the Google signin token from the request cookie `vp-token` and
-    pass it as the decorated function as the argument `userid`
+    pass it as the decorated function as the argument `userid` for authorisation.
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
