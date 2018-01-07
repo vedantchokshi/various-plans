@@ -20,4 +20,13 @@ def reset():
 
 
 def import_all():
-    import plans, events, routes, route_events, votes, plan_users
+    # pylint: disable-msg=cyclic-import
+    # Imports are safe as they are called inside init and reset functions
+    # pylint: disable-msg=unused-variable
+    # Imports are used by database
+    import plans
+    import events
+    import routes
+    import route_events
+    import votes
+    import plan_users
