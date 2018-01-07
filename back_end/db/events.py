@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 from back_end.db import db, default_str_len, plans
-from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, BaseApiException
+from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
 # def get_events(plan):
