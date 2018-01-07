@@ -1,24 +1,28 @@
 @media (max-width: 1199px) {
   #col2 {
     padding-left:0px;
+    height: 100%;
   }
 }
 
 @media (min-width: 1200px) {
   #col2 {
     padding-left:0px;
+    height: 100%;
   }
 }
 
 @media (max-width: 991px) {
   #col2 {
     padding-left:0px;
+    height: 100%;
   }
 }
 
 @media (max-width: 767px) {
   #col2 {
     padding-left:15px;
+    height: auto;
   }
 }
 
@@ -32,4 +36,3 @@
   overflow-x:hidden;
   white-space:nowrap;
 }
-

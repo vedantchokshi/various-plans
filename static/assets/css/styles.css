@@ -54,6 +54,7 @@ body {
   background-repeat:no-repeat;
   background-blend-mode:multiply;
   background-size:auto;
+  background-attachment: fixed;
   font-family:Roboto, sans-serif;
 }
 
@@ -75,4 +76,3 @@ p {
 #sidebar-sub2 {
   padding:15px;
 }
-

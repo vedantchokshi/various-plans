@@ -231,6 +231,8 @@ function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
           var promise = EntryFactory(r, null);
           promises.push(promise);
           promise.then(function(entry) {
+            //Set latest server timestamp
+            entry.timestamp = response.timestamp;
             //Add to event list
             localList[entry.id] = entry;
             if(displayNewEntries) {
@@ -251,9 +253,13 @@ function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
           //Do nothing, it is being handled by other call
         } else {
           //Otherwise update event object as it exists
-          Object.assign(localResult, r);
-          //Refresh UI
-          localResult.refreshUI();
+          //Only update if this is the latest response from the server
+          if(localResult.timestamp === undefined || localResult.timestamp < response.timestamp) {
+            Object.assign(localResult, r);
+            localResult.timestamp = response.timestamp;
+            //Refresh UI
+            localResult.refreshUI();
+          }
         }
       });
       Promise.all(promises).then(updateSuccess, updateError);
@@ -347,6 +353,11 @@ var localSession = {
         removeMarkersFromMap(this.searchmarkers); //Clear any search markers from map
         localSession.searchmarkers = [];
 
+        //Update UI
+        $("#sidebar-menu").find(".menu-heading").html("Final Route");
+        $("#sidebar-menu").find(".menu-content").empty();
+        $("#time-div").css("display", "none");
+
         //Reset Available events
         this.events.forEach(function(event) {
             event.marker.setMap(null);
@@ -368,8 +379,6 @@ var localSession = {
                 fitEventsOnMap(localSession.events);
                 //In phase 3, /api/plan/<id>/routes returns singleton containing winning routes
                 var route = routes[0];
-                $("#sidebar-menu").find(".menu-heading").html("Final Route");
-                $("#sidebar-menu").find(".menu-content").empty();
                 $("#sidebar-menu").find(".menu-content")
                     .append($("<span>", {text: "Name: " + route.name})).append("<br>")
                     .append($("<span>", {text: "Description: <Add desc pls>"})).append("<br>")
@@ -533,6 +542,8 @@ var localSession = {
           copyToClipboard(localSession.plan.joinid);
           alert("Join ID copied to clipboard.");
         });
+
+        // $("#places-list").css("max-height", ($("#map").height() - $("#time-div").height() - $("#sidebar-menu").find(".menu-heading").height() - 50));
 
         $("#modal-place").on('show.bs.modal', function (event) {
             var modal = $(this);

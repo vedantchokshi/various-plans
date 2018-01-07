@@ -59,6 +59,7 @@ class Votable {
     votePromise.then(function(result) {
       self.votes = result.votes;
       self.userVoteState = result.userVoteState;
+      self.timestamp = result.timestamp;
       self.refreshUI();
     }, function(error_obj) {
       console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
@@ -77,6 +78,7 @@ class Votable {
     votePromise.then(function(result) {
       self.votes = result.votes;
       self.userVoteState = result.userVoteState;
+      self.timestamp = result.timestamp;
       self.refreshUI();
     }, function(error_obj) {
       console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);

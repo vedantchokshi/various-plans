@@ -102,13 +102,14 @@ googleLoginListeners.onSignOut.push(function() {
     $("#signin-button").fadeIn();
   });
   $("#user-info-button").fadeOut();
-});
+  $("#join-plan-modal").find(".modal-body").html("<p id=\"plan-list-header\">You are not currently involved in any active plans.</p>");
+  });
 
 function displayUsersPlans() {
   //Add user's current plans to join modal
   api.user.plans().then(function(results) {
     if(results.results.length === 0)
-      $("#plan-list-header").html("You are not currently on any active plans.");
+      $("#plan-list-header").html("You are not currently involved in any active plans.");
     results.results.forEach(function(plan) {
       new PlanEntry(plan).render($("#join-plan-modal").find(".modal-body"));
     });
