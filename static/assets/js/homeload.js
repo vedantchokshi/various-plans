@@ -34,19 +34,34 @@ $(document).ready(function() {
      buttonText: "Select date"
   });
 
+  $("#create-plan-modal").on("show.bs.modal", function() {
+    $("#create-plan-modal").find(".error-message").hide();
+  });
+
   //Functionality for create plan button
   $("#create-plan").click(function() {
     //TODO: Feedback for empty fields
     var name = $("#planTextBox").val();
-    var eventVC = Math.floor($("#locationVoteCloseText").datetimepicker("getDate").getTime() / 1000);
-    var routeVC = Math.floor($("#routeVoteCloseText").datetimepicker("getDate").getTime() / 1000);
-    var planEnd = Math.floor($("#planCloseText").datetimepicker("getDate").getTime() / 1000);
+    var eventVC = $("#locationVoteCloseText").datetimepicker("getDate");
+    if(eventVC !== undefined && eventVC !== null)
+      eventVC = Math.floor(eventVC.getTime() / 1000);
+
+    var routeVC = $("#routeVoteCloseText").datetimepicker("getDate");
+    if(routeVC !== undefined && routeVC !== null)
+      routeVC = Math.floor(routeVC.getTime() / 1000);
+
+    var planEnd = $("#planCloseText").datetimepicker("getDate");
+    if(planEnd !== undefined && planEnd !== null)
+      planEnd = Math.floor(planEnd.getTime() / 1000);
+
     api.plan.create(name, eventVC, routeVC, planEnd).then(function(plan) {
       //Load Plan Page
       redirectWithFreshToken("/" + plan.id);
     },
     function(error_obj) {
       console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+      $("#create-plan-modal").find(".error-message").html(error_obj.message);
+      $("#create-plan-modal").find(".error-message").hide().fadeIn();
     });
   });
 
@@ -60,8 +75,8 @@ $(document).ready(function() {
       $("#active-plan-list").scrollTop($("#active-plan-list").prop("scrollHeight"));
     },
     function(error_obj){
-      //TODO: Handle Join Errors
-      console.error("API ERROR " + error_obj.status + ": " + error_obj.message);
+      console.error("API ERROR " + error_obj.status_code + ": " + error_obj.message);
+      popupModal.show("Cannot Join Plan", error_obj.message);
     });
   });
 });
@@ -115,7 +130,8 @@ function displayUsersPlans() {
     });
   },
   function(error_obj){
-    //TODO: Handle Join Errors
+    console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+    //No errors intended for users sent here.
   });
 }
 

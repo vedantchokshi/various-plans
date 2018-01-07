@@ -56,7 +56,8 @@ def token_decorator(func):
             userid = get_userid_from_token(token)
             kwargs['userid'] = userid
             return func(*args, **kwargs)
-        raise Unauthorized('No token in cookies')
+        raise Unauthorized('Please log in')
+        #raise Unauthorized('No token in cookies')
 
     return wrapper
 

@@ -92,42 +92,51 @@ def get_from_id(routeid, userid):
         raise InvalidRequest("Route id '{}' is not a valid id".format(routeid))
     route = Route.query.get(routeid)
     if route is None:
-        raise ResourceNotFound("Route not found for id '{}'".format(routeid))
+        raise ResourceNotFound("There is no route with the ID '{}'".format(routeid))
+        #raise ResourceNotFound("Route not found for id '{}'".format(routeid))
     route.userVoteState = route.get_vote(userid)
     return route
 
 
 def create(planid, name, eventid_list, userid):
     if name is None or not name:
-        raise InvalidContent('Route name is not specified')
+        raise InvalidContent('Please specify a name for the route.')
+        #raise InvalidContent('Route name is not specified')
     if eventid_list is None:
-        raise InvalidContent('Route eventidList is not specified')
+        raise InvalidContent('Please specify events for the route.')
+        #raise InvalidContent('Route eventidList is not specified')
     if len(eventid_list) == 0:
-        raise InvalidContent('Route eventidList must have a non-zero size')
+        raise InvalidContent('Please specify events for the route.')
+        #raise InvalidContent('Route eventidList must have a non-zero size')
     if len(set(eventid_list)) != len(eventid_list):
-        raise InvalidContent('Route eventidList cannot repeat an event')
+        raise InvalidContent('A route cannot contain the same event more than once.')
+        #raise InvalidContent('Route eventidList cannot repeat an event')
 
     plan = plans.get_from_id(planid, userid)
 
     if plan.phase != 2:
-        raise InvalidRequest("Plan '{}' is not in phase 2".format(planid))
+        raise InvalidRequest("{} (Plan {}) is not in the route voting stage.".format(plan.name,planid))
+        #raise InvalidRequest("Plan '{}' is not in phase 2".format(planid))
     if not len(plan.routes_all.all()) < 10:
-        raise InvalidRequest("Plan '{}' already has 10 routes".format(planid))
+        raise InvalidRequest("No more than 10 routes can be added for a plan.")
+        #raise InvalidRequest("Plan '{}' already has 10 routes".format(planid))
 
     event_list = list()
 
     for eventid in eventid_list:
         event = db_events.get_from_id(eventid, userid)
         if event.planid != plan.id:
-            raise InvalidContent("Event '{}' is not in Plan '{}'".format(event.id, plan.planid))
+            raise InvalidContent("{} (Event '{}') does not exist in {} (Plan '{}').".format(event.name, event.id, plan.name, plan.planid))
+            #raise InvalidContent("Event '{}' is not in Plan '{}'".format(event.id, plan.planid))
         if event not in plan.events:
-            raise InvalidContent("Event '{}' does not have enough votes".format(event.id))
+            raise InvalidContent("{} (Event '{}') does not have enough votes.".format(event.name, event.id))
+            #raise InvalidContent("Event '{}' does not have enough votes".format(event.id))
         event_list.append(event)
 
     for route in plan.routes:
         if eventid_list == route.eventids:
-            raise InvalidContent("Event list matches Route '{}'".format(route.id),
-                                 content={'routeid': route.id})
+            raise InvalidContent("This route has already been suggested under the name '{}'.".format(route.name), content={'routeid': route.id})
+            #raise InvalidContent("Event list matches Route '{}'".format(route.id), content={'routeid': route.id})
 
     new_route = Route(name)
 

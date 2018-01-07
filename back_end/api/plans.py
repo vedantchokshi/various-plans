@@ -41,6 +41,7 @@ def get_routes_from_plan(planid, userid):
 def create_plan(userid):
     json = request.get_json()
     if json is None:
-        raise InvalidContent("Empty json not a valid plan object")
+        raise InvalidContent("An problem occured when creating the plan.")
+        #raise InvalidContent("Empty json not a valid plan object")
     return plans.create(json.get('name'), json.get('eventVoteCloseTime'), json.get('routeVoteCloseTime'),
                         json.get('endTime'), userid), 201

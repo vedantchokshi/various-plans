@@ -71,7 +71,8 @@ def get_route_vote(routeid, userid):
 def _set_event_vote(eventid, userid, vote):
     e = events.get_from_id(eventid, userid)
     if e.plan.phase != 1:
-        raise InvalidRequest("Plan '{}' is not in phase 1, cannot vote on Event '{}'".format(e.plan.id, e.id))
+        raise InvalidRequest("{} (Plan '{}') is not in the event voting stage, cannot vote on {} (Event '{}')".format(e.plan.name, e.plan.id, e.name, e.id))
+        #raise InvalidRequest("Plan '{}' is not in phase 1, cannot vote on Event '{}'".format(e.plan.id, e.id))
     ev = EventVote.query.get((eventid, userid))
     if ev is None:
         ev = EventVote(eventid, userid, vote)
@@ -87,7 +88,8 @@ def _set_event_vote(eventid, userid, vote):
 def _set_route_vote(routeid, userid, vote):
     r = routes.get_from_id(routeid, userid)
     if r.plan.phase != 2:
-        raise InvalidRequest("Plan '{}' is not in phase 2, cannot vote on Route '{}'".format(r.plan.id, r.id))
+        raise InvalidRequest("{} (Plan '{}') is not in the route voting stage, cannot vote on {} (Route '{}')".format(r.plan.name, r.plan.id, r.name, r.id))
+        #raise InvalidRequest("Plan '{}' is not in phase 2, cannot vote on Route '{}'".format(r.plan.id, r.id))
     rv = RouteVote.query.get((routeid, userid))
     if rv is None:
         rv = RouteVote(routeid, userid, vote)

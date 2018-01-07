@@ -90,23 +90,28 @@ def get_from_id(eventid, userid):
         raise InvalidRequest("Event id '{}' is not a valid id".format(eventid))
     event = Event.query.get(eventid)
     if event is None:
-        raise ResourceNotFound("Event not found for id '{}'".format(eventid))
+        raise ResourceNotFound("There is no event with the ID '{}'".format(eventid))
+        #raise ResourceNotFound("Event not found for id '{}'".format(eventid))
     event.userVoteState = event.get_vote(userid)
     return event
 
 
 def create(planid, name, locationid, userid):
     if name is None or not name:
-        raise InvalidContent('Event name is not specified')
+        raise InvalidContent('Please specify a name for the event.')
+        #raise InvalidContent('Event name is not specified')
     if locationid is None or not locationid:
-        raise InvalidContent('Event locationid is not specified')
+        raise InvalidContent('A location was not selected for the event')
+        #raise InvalidContent('Event locationid is not specified')
 
     plan = plans.get_from_id(planid, userid)
 
     if plan.phase != 1:
-        raise InvalidRequest("Plan '{}' is not in phase 1".format(planid))
+        raise InvalidRequest("You can no longer submit events to {} (Plan {})".format(plan.name,planid))
+        #raise InvalidRequest("Plan '{}' is not in phase 1".format(planid))
     if not len(plan.events_all.all()) < 10:
-        raise InvalidRequest("Plan '{}' already has 10 events".format(planid))
+        raise InvalidRequest("No more than 10 events can be added for a plan.")
+        #raise InvalidRequest("Plan '{}' already has 10 events".format(planid))
 
     new_event = Event(name, locationid)
 
@@ -119,7 +124,7 @@ def vote(eventid, userid, vote):
     try:
         vote = int(vote)
     except ValueError:
-        raise InvalidContent('Vote is not an integer')
+        raise InvalidContent('Vote must be an integer')
 
     if not (vote >= -1 or vote <= 1):
         raise InvalidContent('Vote must be -1, 0 or 1')

@@ -27,7 +27,8 @@ def get_events_from_plan(routeid, userid):
 def vote_route(routeid, userid):
     json = request.get_json()
     if json is None:
-        raise InvalidContent("Empty json not a valid route vote object")
+        raise InvalidContent("A problem occured when voting on the route.")
+        #raise InvalidContent("Empty json not a valid route vote object")
     return routes.vote(routeid, userid, json.get('vote')), 201
 
 
@@ -37,5 +38,6 @@ def vote_route(routeid, userid):
 def create_route(userid):
     json = request.get_json()
     if json is None:
-        raise InvalidContent("Empty json not a valid route object")
+        raise InvalidContent("A problem occured when creating the route.")
+        #raise InvalidContent("Empty json not a valid route object")
     return routes.create(json.get('planid'), json.get('name'), json.get('eventidList'), userid), 201
