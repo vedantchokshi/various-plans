@@ -48,25 +48,11 @@ class Plan(db.Model):
     @property
     def phase(self):
         p = self.timephase
-
-        # Phase 1
-        if now < self.eventVoteCloseTime:
-            return 1
-
-        # Phase 2
-        if len(self.events) == 0:
+        if p > 1 and len(self.events) == 0:
             return 4
-        if now < self.routeVoteCloseTime:
-            return 2
-
-        # Phase 3
-        if len(self.routes) == 0:
+        if p > 2 and len(self.routes) == 0:
             return 4
-        if now < self.endTime:
-            return 3
-
-        # Phase 4
-        return 4
+        return p
 
     @property
     def serialise(self):

@@ -6,13 +6,13 @@ def get_events(plan):
     events = plan.events_all.all()
     if len(events) > 0:
         # Sort events based on our criteria
-        # events = sort_events(events)
-        if plan.phase < 2:
+        events = sort_events(events)
+        if plan.timephase < 2:
             # Phase 1 requires no filtering of events
             return events
         # Phases 2, 3, 4 require positively voted events
         events = [event for event in events if event.votes > 0]
-        if plan.phase < 3:
+        if plan.timephase < 3:
             # Phase 2 requires no more filtering of events
             return events
         # Phases 3 and 4 require only events from winning route
@@ -42,8 +42,7 @@ def sort_events(event_list):
     return sorted(event_list, cmp=sorter)
 
 
-plans.Plan.events = property(
-    lambda self: [x for x in self.events_all.all() if x.votes > 0] if self.phase > 1 else self.events_all.all())
+plans.Plan.events = property(get_events)
 
 
 class Event(db.Model):
