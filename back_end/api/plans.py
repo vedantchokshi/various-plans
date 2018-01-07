@@ -14,6 +14,7 @@ def get_plan(planid, userid):
     return plans.get_from_id(planid, userid), 200
 
 
+@ROUTES.route('/join/', defaults={'joinid': None})
 @ROUTES.route('/join/<joinid>', methods=['GET'])
 @jsonify_decorator
 @token_decorator
@@ -42,6 +43,6 @@ def create_plan(userid):
     json = request.get_json()
     if json is None:
         raise InvalidContent("An problem occured when creating the plan.")
-        #raise InvalidContent("Empty json not a valid plan object")
-    return plans.create(json.get('name'), json.get('eventVoteCloseTime'), json.get('routeVoteCloseTime'),
-                        json.get('endTime'), userid), 201
+        # raise InvalidContent("Empty json not a valid plan object")
+    return plans.create(json.get('name'), json.get('eventVoteCloseTime'),
+                        json.get('routeVoteCloseTime'), json.get('endTime'), userid), 201

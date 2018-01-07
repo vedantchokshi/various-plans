@@ -215,6 +215,8 @@ def add_user(joinid, userid):
     """
     Add a user to a plan, using the shared join hash code
     """
+    if joinid is None:
+        raise InvalidRequest('Please specify a joinid')
     plans = Plan.query.filter_by(joinid=joinid).all()
     if plans is None or len(plans) < 1:
         raise ResourceNotFound("Invalid Join ID.")
