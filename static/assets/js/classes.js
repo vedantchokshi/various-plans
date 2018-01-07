@@ -141,7 +141,7 @@ class Event extends Votable {
           localSession.placesService.getDetails({placeId: apiJSON.locationid}, function(_place, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
               resolve(new Event(apiJSON, _place));
-            } if (status === google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
+            } else if (status === google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
               setInterval(f, 20);
             } else {
               reject(status);
@@ -256,13 +256,18 @@ class Route extends Votable {
     }
 
     return new Promise(function(resolve, reject) {
-      localSession.directionsService.route(request, function(direction, status) {
-        if (status === google.maps.DirectionsStatus.OK) {
-          resolve(new Route(apiJSON, direction));
-        } else {
-          reject(status);
-        }
-      });
+      var f = function(){
+        localSession.directionsService.route(request, function(direction, status) {
+          if (status === google.maps.DirectionsStatus.OK) {
+            resolve(new Route(apiJSON, direction));
+          } else if (status === google.maps.DirectionsStatus.OVER_QUERY_LIMIT) {
+            setTimeout(f, 20);
+          } else {
+            reject(status);
+          }
+        });
+      };
+      f();
     });
   }
 
