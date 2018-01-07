@@ -98,7 +98,7 @@ def create(planid, name, eventid_list, userid):
 
     if plan.phase != 2:
         raise InvalidRequest("Plan '{}' is not in phase 2".format(planid))
-    if not len(plan.routes_all) < 10:
+    if not len(plan.routes_all.all()) < 10:
         raise InvalidRequest("Plan '{}' already has 10 routes".format(planid))
 
     event_list = list()

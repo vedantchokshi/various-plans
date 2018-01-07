@@ -35,7 +35,7 @@ class Plan(db.Model):
         return userid in [u.userid for u in self.users]
 
     @property
-    def phase(self):
+    def timephase(self):
         now = int(time.time())
         if now < self.eventVoteCloseTime:
             return 1
@@ -43,6 +43,29 @@ class Plan(db.Model):
             return 2
         if now < self.endTime:
             return 3
+        return 4
+
+    @property
+    def phase(self):
+        p = self.timephase
+
+        # Phase 1
+        if now < self.eventVoteCloseTime:
+            return 1
+
+        # Phase 2
+        if len(self.events) == 0:
+            return 4
+        if now < self.routeVoteCloseTime:
+            return 2
+
+        # Phase 3
+        if len(self.routes) == 0:
+            return 4
+        if now < self.endTime:
+            return 3
+
+        # Phase 4
         return 4
 
     @property
@@ -96,7 +119,8 @@ def get_events_from_id(planid, userid):
 
 
 def get_routes_from_id(planid, userid):
-    routes = get_from_id(planid, userid).routes
+    plan = get_from_id(planid, userid)
+    routes = plan.routes
     for route in routes:
         route.userVoteState = route.get_vote(userid)
     return routes
