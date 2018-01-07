@@ -542,6 +542,10 @@ var localSession = {
           alert("Join ID copied to clipboard.");
         });
 
+        $("#navbar-logo-wrapper").click(function() {
+          window.location = "/";
+        });
+
         // $("#places-list").css("max-height", ($("#map").height() - $("#time-div").height() - $("#sidebar-menu").find(".menu-heading").height() - 50));
 
         $("#modal-place").on('show.bs.modal', function (event) {

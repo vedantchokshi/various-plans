@@ -170,7 +170,8 @@
 }
 
 #nav-buttons {
-  margin-top:2.75px;
+  /*margin-top:2.75px;*/
+  padding: 5px 0px;
 }
 
 #display-row {
