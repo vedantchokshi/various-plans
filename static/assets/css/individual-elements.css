@@ -58,13 +58,14 @@
   border-radius:7px;
 }
 
-#navbar-logo-wrapper {
+#navbar-logo-link {
   cursor: pointer;
   display: inline-block;
   padding: 0px 10px 5px 10px;
+  text-decoration: none;
 }
 
-#navbar-logo-wrapper:hover {
+#navbar-logo-link:hover {
   background-color: rgba(255,255,255,0.2);
 }
 
