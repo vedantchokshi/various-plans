@@ -44,16 +44,9 @@ def disp_plan(planid):
         plan = be.db.plans.get_from_id(planid, userid)
         # if plan.phase == 4:
         #     raise InvalidRequest("Plan has ended")
-        plan_json = json.dumps(plan.serialise)
-        events_json = json.dumps([i.serialise for i in plan.events])
-        routes_json = json.dumps([i.serialise for i in plan.routes])
     except BaseApiException:
         return redirect(url_for('index'))
-    return render_template('main.html',
-                           plan=plan,
-                           planJsonStr=plan_json,
-                           eventJsonStr=events_json,
-                           routeJsonStr=routes_json)
+    return render_template('main.html', plan=plan)
 
 
 @app.errorhandler(500)
