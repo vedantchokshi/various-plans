@@ -330,7 +330,7 @@ var localSession = {
         this.events = [];
 
         //Add new events to map, but not sidebar
-        updateEventOrRoute(false, true, true).then(function() {
+        return updateEventOrRoute(false, true, true).then(function() {
             fitEventsOnMap(localSession.events);
 
             $("<button>", {"id": "add-route-button", "class": "btn btn-primary", "type": "button", text: "Add Route"})
@@ -372,7 +372,7 @@ var localSession = {
 
         //Add new events to map, but not sidebar
         //In phase 3 /api/plan/<id>/events returns only the events in the winning route
-        updateEventOrRoute(false, true, true).then(function() {
+        return updateEventOrRoute(false, true, true).then(function() {
             fitEventsOnMap(localSession.events);
 
             updateEventOrRoute(false, true, false).then(function(routes) {
@@ -402,11 +402,13 @@ var localSession = {
         //Initialise GMaps API
         this.initGMaps();
         //Initialise Session Variables
-        this.initSessionVars();
+        var sessionInitPromise = this.initSessionVars();
         //Initialise UI
         this.initUI();
         //Init Polling
-        setInterval(pollServer, 1000);
+        sessionInitPromise.then(function() {
+          setInterval(pollServer, 1000);
+        });
     },
     initSessionVars: function(){
         //Poll server for initial plan information
@@ -416,18 +418,15 @@ var localSession = {
         switch(this.getPhase()) {
             case 1:
                 //Add new events and reposition map
-                updateEventOrRoute(true, true, true).then(function() {
+                return updateEventOrRoute(true, true, true).then(function() {
                     fitEventsOnMap(localSession.events);
                 }, function(error_obj) {
                   console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
                 });
-                break;
             case 2:
-                this.enterPhase2();
-                break;
+                return this.enterPhase2();
             case 3:
-                this.enterPhase3();
-                break;
+                return this.enterPhase3();
         }
     },
     initGMaps: function() {
