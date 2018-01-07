@@ -5,20 +5,17 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
 def get_events(plan):
-    # print('{} Starting plan {} events filter'.format(time.time(), plan.id), file=sys.stderr)
     events = plan.events_all.all()
     if len(events) > 0:
         # Sort events based on our criteria
         # events = sort_events(events)
         if plan.timephase < 2:
             # Phase 1 requires no filtering of events
-            # print('{} Plan {} phase < 2, no filtering'.format(time.time(), plan.id), file=sys.stderr)
             return events
         # Phases 2, 3, 4 require positively voted events
         events = [event for event in events if event.votes > 0]
         if plan.timephase < 3:
             # Phase 2 requires no more filtering of events
-            # print('{} Plan {} filtered only positive events'.format(time.time(), plan.id), file=sys.stderr)
             return events
         # Phases 3 and 4 require only events from winning route
         routes = plan.routes
@@ -27,9 +24,20 @@ def get_events(plan):
             route = routes[0]
             route_event_ids = [event.id for event in route.events]
             events = [event for event in events if event.id in route_event_ids]
-            # print('{} Plan {} only events for winning route'.format(time.time(), plan.id), file=sys.stderr)
             return events
     return []
+
+
+def get_events_sql(plan):
+    if plan.timephase < 2:
+        events = plan.events_all.all()
+    else:
+        events = plan.events_all.filter(Event.votes > 0).all()
+    return events
+
+
+def count_positive_events_sql(plan):
+    return plan.events_all.filter(Event.votes > 0).count()
 
 
 def sort_events(event_list):
@@ -50,7 +58,8 @@ def sort_events(event_list):
     return sorted(event_list, cmp=sorter)
 
 
-plans.Plan.events = property(get_events)
+plans.Plan.events = property(get_events_sql)
+plans.Plan.events_count_positive = property(count_positive_events_sql)
 
 
 class Event(db.Model):
