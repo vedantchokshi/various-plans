@@ -5,7 +5,7 @@ from flask import Flask, render_template, json, request, redirect, url_for
 import back_end as be
 import config
 from back_end.api import get_userid_from_token
-from back_end.exceptions import BaseApiException, InvalidRequest
+from back_end.exceptions import BaseApiException
 
 app = Flask(__name__)
 app.config.from_object(config)
