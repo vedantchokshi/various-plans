@@ -77,21 +77,31 @@ def get_from_id(planid, userid):
 
 def create(name, event_vote_close_time, route_vote_close_time, end_time, userid):
     if name is None or not name:
-        # name is not specified in json or is the empty string
-        raise InvalidContent("Plan name not specified")
-    # TODO split number check with different error
-    if event_vote_close_time is None or not str(event_vote_close_time).isdigit():
-        raise InvalidContent("Plan eventVoteCloseTime not specified")
-    if route_vote_close_time is None or not str(route_vote_close_time).isdigit():
-        raise InvalidContent("Plan routeVoteCloseTime not specified")
-    # if startTime is None or not str(startTime).isdigit():
-    #     raise InvalidContent("Plan startTime not specified")
+        # name is not in json or is the empty string
+        raise InvalidContent("Plan name is not specified")
+    if event_vote_close_time is None:
+        raise InvalidContent("Plan eventVoteCloseTime is not specified")
+    if not str(event_vote_close_time).isdigit():
+        raise InvalidContent("Plan eventVoteCloseTime is not an integer")
+    if route_vote_close_time is None:
+        raise InvalidContent("Plan routeVoteCloseTime is not specified")
+    if not str(route_vote_close_time).isdigit():
+        raise InvalidContent("Plan routeVoteCloseTime is not an integer")
     if end_time is None or not str(end_time).isdigit():
-        raise InvalidContent("Plan endTime not specified")
+        raise InvalidContent("Plan endTime is not specified")
 
-    startTime = int(time.time())
+    start_time = int(time.time())
 
-    new_plan = Plan(name, event_vote_close_time, route_vote_close_time, startTime, end_time, userid)
+    # This check may cause errors if the time of receiving request is
+    # significantly later than time of checks in JS
+    if not start_time <= event_vote_close_time:
+        raise InvalidContent("eventVoteCloseTime is before startTime")
+    if not event_vote_close_time <= route_vote_close_time:
+        raise InvalidContent("routeVoteCloseTime is before eventVoteCloseTime")
+    if not route_vote_close_time <= end_time:
+        raise InvalidContent("endTime is before eventVoteCloseTime")
+
+    new_plan = Plan(name, event_vote_close_time, route_vote_close_time, start_time, end_time, userid)
 
     db.session.add(new_plan)
     db.session.commit()

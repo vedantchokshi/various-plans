@@ -1,19 +1,24 @@
+from __future__ import print_function
+
 from back_end.db import db, default_str_len, plans, events as db_events
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, BaseApiException
 
 
 def get_routes(plan):
+    # print('{} Starting plan {} routes filter'.format(time.time(), plan.id), file=sys.stderr)
     rs = plan.routes_all.all()
     if len(rs) > 0:
         # Sort routes based on our criteria
         # rs = sort_routes(rs)
         if plan.timephase < 3:
             # Phases 1 and 2 require no filtering of routes
+            # print('{} Plan {} phase < 3, no filtering'.format(time.time(), plan.id), file=sys.stderr)
             return rs
         # Phases 3 and 4 require finding the winning route
         rs = sort_routes(rs)
         r = rs[0]
         if r.votes > 0:
+            # print('{} Plan {} filtered winning vote'.format(time.time(), plan.id), file=sys.stderr)
             return [r]
     return []
 
