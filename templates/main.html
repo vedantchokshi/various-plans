@@ -133,7 +133,7 @@
     <!-- Required for the Google Signin API to run correctly -->
     <div style="display: none" class="g-signin2"></div>
 
-    <script>var _apiLoad = { plan: { id: {{ plan.id }}, name: "{{ plan.name }}", eventVoteCloseTime: {{ plan.eventVoteCloseTime }}, routeVoteCloseTime: {{ plan.routeVoteCloseTime }}, startTime: {{ plan.startTime }}, endTime: {{ plan.endTime }}, joinid: "{{ plan.joinid }}", ownerid: "{{ plan.ownerid }}", phase: {{ plan.phase }} } };</script>
+    <script>var _apiLoad = { plan: { id: {{ plan.id }}, name: "{{ plan.name }}", eventVoteCloseTime: {{ plan.event_vote_close_time }}, routeVoteCloseTime: {{ plan.route_vote_close_time }}, startTime: {{ plan.start_time }}, endTime: {{ plan.end_time }}, joinid: "{{ plan.joinid }}", ownerid: "{{ plan.ownerid }}", phase: {{ plan.phase }} } };</script>
     <script src="https://apis.google.com/js/platform.js?onload=initGapiSignin" defer></script>
     <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOArxJo-qSYvIVy-r13e57RxHnCgAwEBA&callback=mapsLoaded&libraries=places"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
