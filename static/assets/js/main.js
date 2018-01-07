@@ -533,6 +533,18 @@ var localSession = {
         });
     },
     initUI: function() {
+        //Set Main Page Height
+        var fixHeight = function() {
+          $("#display-row").height($(window).height() - $("#header").height() - 16);
+
+          $("#places-list").css("max-height", ($("#map").height() - $("#time-div").height() - $("#sidebar-menu").find(".menu-heading").height() - 50));
+          if($(window).width() <= 767)
+            $("#places-list").css("max-height", "");
+        };
+
+        $(window).resize(fixHeight);
+        fixHeight();
+
         $("#sign-out").click(function() {
           gapi.auth2.getAuthInstance().signOut();
         });
@@ -541,8 +553,6 @@ var localSession = {
           copyToClipboard(localSession.plan.joinid);
           alert("Join ID copied to clipboard.");
         });
-
-        // $("#places-list").css("max-height", ($("#map").height() - $("#time-div").height() - $("#sidebar-menu").find(".menu-heading").height() - 50));
 
         $("#modal-place").on('show.bs.modal', function (event) {
             var modal = $(this);

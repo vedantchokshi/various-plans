@@ -29,10 +29,12 @@
 #col1 {
   margin-top:15px;
   height:100%;
+  padding-bottom:15px;
 }
 
 #col2 {
   margin-top:15px;
   overflow-x:hidden;
   white-space:nowrap;
+  padding-bottom: 15px;
 }
