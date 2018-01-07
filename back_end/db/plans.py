@@ -59,6 +59,8 @@ class Plan(db.Model):
     def serialise(self):
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         s['phase'] = self.phase
+        s['events_count_positive'] = self.events_count_positive
+        s['routes_count_positive'] = self.routes_count_positive
         return s
 
 
