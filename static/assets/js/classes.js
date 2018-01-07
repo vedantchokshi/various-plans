@@ -136,14 +136,18 @@ class Event extends Votable {
   static EventFactory(apiJSON, place) {
     return new Promise(function(resolve, reject) {
       if(place === undefined || place === null) {
-        //Get place from Google API
-        localSession.placesService.getDetails({placeId: apiJSON.locationid}, function(_place, status) {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            resolve(new Event(apiJSON, _place));
-          } else {
-            reject(status);
-          }
-        });
+        function f () {
+          //Get place from Google API
+          localSession.placesService.getDetails({placeId: apiJSON.locationid}, function(_place, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+              resolve(new Event(apiJSON, _place));
+            } if (status === google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
+              setInterval(f, 200);
+            } else {
+              reject(status);
+            }
+          });
+        }
       } else {
         resolve(new Event(apiJSON, place));
       }
