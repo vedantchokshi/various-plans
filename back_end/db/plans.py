@@ -88,7 +88,15 @@ class Plan(DB.Model):
 
         :return: dictionary representation of Plan object
         """
-        result = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        result = dict()
+        result['id'] = self.id
+        result['name'] = self.name
+        result['eventVoteCloseTime'] = self.event_vote_close_time
+        result['routeVoteCloseTime'] = self.route_vote_close_time
+        result['endTime'] = self.end_time
+        result['startTime'] = self.start_time
+        result['ownerid'] = self.ownerid
+        result['joinid'] = self.joinid
         result['phase'] = self.phase
         result['events_count_positive'] = self.events_count_positive
         result['routes_count_positive'] = self.routes_count_positive
