@@ -81,3 +81,11 @@ p {
 #sidebar-sub2 {
   padding:15px;
 }
+
+#help-div {
+  display: none;
+  width:90vw;
+  height:90vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: rgb(151, 194, 85);
+}
