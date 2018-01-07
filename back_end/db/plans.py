@@ -5,7 +5,7 @@ import binascii
 import os
 import time
 
-from back_end.db import db, default_str_len
+from back_end.db import DB, STR_LEN
 from back_end.db.plan_users import PlanUser
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent, Unauthorized
 
@@ -13,7 +13,7 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 JOINID_LENGTH = 8
 
 
-class Plan(db.Model):
+class Plan(DB.Model):
     """
     Plan object that represents an entry in the 'Plans' table
 
@@ -22,14 +22,14 @@ class Plan(db.Model):
     :param str ownerid: Google auth user ID of plan creator
     """
     __tablename__ = 'Plans'
-    id = db.Column('id', db.Integer, primary_key=True)
-    name = db.Column(db.String(default_str_len), nullable=False)
-    event_vote_close_time = db.Column(db.Integer, nullable=False)
-    route_vote_close_time = db.Column(db.Integer, nullable=False)
-    start_time = db.Column(db.Integer, nullable=False)
-    end_time = db.Column(db.Integer, nullable=False)
-    joinid = db.Column(db.String(default_str_len), nullable=False)
-    ownerid = db.Column(db.String(default_str_len), nullable=False)
+    id = DB.Column('id', DB.Integer, primary_key=True)
+    name = DB.Column(DB.String(STR_LEN), nullable=False)
+    event_vote_close_time = DB.Column(DB.Integer, nullable=False)
+    route_vote_close_time = DB.Column(DB.Integer, nullable=False)
+    start_time = DB.Column(DB.Integer, nullable=False)
+    end_time = DB.Column(DB.Integer, nullable=False)
+    joinid = DB.Column(DB.String(STR_LEN), nullable=False)
+    ownerid = DB.Column(DB.String(STR_LEN), nullable=False)
 
     def __init__(self, name, times, ownerid):
         self.name = name
@@ -165,8 +165,8 @@ def create(name, event_vote_close_time, route_vote_close_time, end_time, userid)
 
     new_plan = Plan(name, times, userid)
 
-    db.session.add(new_plan)
-    db.session.commit()
+    DB.session.add(new_plan)
+    DB.session.commit()
     return new_plan
 
 
@@ -202,5 +202,5 @@ def add_user(joinid, userid):
     plan = plans[0]
     if userid not in [pu.userid for pu in plan.users]:
         plan.users.append(PlanUser(plan.id, userid))
-        db.session.commit()
+        DB.session.commit()
     return plan

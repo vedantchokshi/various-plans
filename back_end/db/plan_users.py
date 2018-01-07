@@ -1,12 +1,12 @@
-from back_end.db import db, default_str_len
+from back_end.db import DB, STR_LEN
 
 
-class PlanUser(db.Model):
+class PlanUser(DB.Model):
     __tablename__ = 'Plan_Users'
-    planid = db.Column(db.Integer, db.ForeignKey('Plans.id'), primary_key=True)
-    userid = db.Column(db.String(default_str_len), primary_key=True)
+    planid = DB.Column(DB.Integer, DB.ForeignKey('Plans.id'), primary_key=True)
+    userid = DB.Column(DB.String(STR_LEN), primary_key=True)
 
-    plan = db.relationship('Plan', backref=db.backref('users', lazy=True))
+    plan = DB.relationship('Plan', backref=DB.backref('users', lazy=True))
 
     def __init__(self, planid, userid):
         self.planid = planid

@@ -1,4 +1,4 @@
-from back_end.db import db, default_str_len
+from back_end.db import DB, STR_LEN
 from back_end.db import routes, events
 from back_end.exceptions import InvalidRequest
 
@@ -13,13 +13,13 @@ routes.Route.votes = property(lambda self: sum(r.vote for r in self.all_votes.al
 routes.Route.get_vote = lambda self, userid: get_route_vote(self.id, userid)
 
 
-class EventVote(db.Model):
+class EventVote(DB.Model):
     __tablename__ = 'EventVote'
-    eventid = db.Column(db.Integer, db.ForeignKey('Events.id'), primary_key=True)
-    userid = db.Column(db.String(default_str_len), nullable=False, primary_key=True)
-    vote = db.Column(db.Integer, nullable=False)
+    eventid = DB.Column(DB.Integer, DB.ForeignKey('Events.id'), primary_key=True)
+    userid = DB.Column(DB.String(STR_LEN), nullable=False, primary_key=True)
+    vote = DB.Column(DB.Integer, nullable=False)
 
-    event = db.relationship('Event', backref=db.backref('all_votes', lazy='dynamic'))
+    event = DB.relationship('Event', backref=DB.backref('all_votes', lazy='dynamic'))
 
     def __init__(self, eventid, userid, vote):
         self.eventid = eventid
@@ -32,13 +32,13 @@ class EventVote(db.Model):
         return s
 
 
-class RouteVote(db.Model):
+class RouteVote(DB.Model):
     __tablename__ = 'RouteVote'
-    routeid = db.Column(db.Integer, db.ForeignKey('Routes.id'), primary_key=True)
-    userid = db.Column(db.String(default_str_len), nullable=False, primary_key=True)
-    vote = db.Column(db.Integer, nullable=False)
+    routeid = DB.Column(DB.Integer, DB.ForeignKey('Routes.id'), primary_key=True)
+    userid = DB.Column(DB.String(STR_LEN), nullable=False, primary_key=True)
+    vote = DB.Column(DB.Integer, nullable=False)
 
-    route = db.relationship('Route', backref=db.backref('all_votes', lazy='dynamic'))
+    route = DB.relationship('Route', backref=DB.backref('all_votes', lazy='dynamic'))
 
     def __init__(self, routeid, userid, vote):
         self.routeid = routeid
@@ -75,11 +75,11 @@ def _set_event_vote(eventid, userid, vote):
     ev = EventVote.query.get((eventid, userid))
     if ev is None:
         ev = EventVote(eventid, userid, vote)
-        db.session.add(ev)
+        DB.session.add(ev)
     else:
         ev.vote = vote
 
-    db.session.commit()
+    DB.session.commit()
     e.userVoteState = e.get_vote(userid)
     return e
 
@@ -91,10 +91,10 @@ def _set_route_vote(routeid, userid, vote):
     rv = RouteVote.query.get((routeid, userid))
     if rv is None:
         rv = RouteVote(routeid, userid, vote)
-        db.session.add(rv)
+        DB.session.add(rv)
     else:
         rv.vote = vote
 
-    db.session.commit()
+    DB.session.commit()
     r.userVoteState = r.get_vote(userid)
     return r
