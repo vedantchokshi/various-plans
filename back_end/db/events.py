@@ -91,6 +91,8 @@ def create(planid, name, locationid, userid):
 
     if plan.phase != 1:
         raise InvalidRequest("Plan '{}' is not in phase 1".format(planid))
+    if not len(plan.events_all.all()) < 10:
+        raise InvalidRequest("Plan '{}' already has 10 events".format(planid))
 
     new_event = Event(name, locationid)
 
