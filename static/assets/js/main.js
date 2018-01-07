@@ -594,7 +594,7 @@ var localSession = {
             $("#modal-route").find(".route-sortable").empty();
             //Repopulate list with available events
             localSession.events.forEach(function(event) {
-                $("<li>", { text: event.name, "class": "ui-state-default" }).data("event-id", event.id).appendTo($("#modal-route").find(".available-event-list"));
+                $("<li>", { text: event.name, "class": "ui-state-default card-ui" }).data("event-id", event.id).appendTo($("#modal-route").find(".available-event-list"));
             });
         });
 
