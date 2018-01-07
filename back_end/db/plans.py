@@ -208,15 +208,9 @@ def add_user(joinid, userid):
     Add a user to a plan, using the shared join hash code
     """
     plans = Plan.query.filter_by(joinid=joinid).all()
-<<<<<<< HEAD
-    if (len(plans) < 1) or None :
+    if plans is None or len(plans) < 1:
         raise ResourceNotFound("Invalid Join ID.")
         #raise ResourceNotFound("Cannot find Plan for joinid '{}'".format(joinid))
-=======
-    if plans is None or len(plans) < 1:
-        raise ResourceNotFound("Cannot find Plan for joinid '{}'".format(joinid))
-    # Super unlikely that the same join code is generated for 2 plans
->>>>>>> 20e9fa65429323540ca9120ed4614ee13e0b65b1
     plan = plans[0]
     if userid not in [pu.userid for pu in plan.users]:
         plan.users.append(PlanUser(plan.id, userid))
