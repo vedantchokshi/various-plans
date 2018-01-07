@@ -39,6 +39,10 @@
   font-size:18px;
 }
 
+.prev-menu-button + .menu-heading {
+  margin-right: 30px;
+}
+
 .menu-rule {
   margin-top:6px;
 }
