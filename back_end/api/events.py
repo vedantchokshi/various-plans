@@ -31,8 +31,7 @@ def vote_event(eventid, userid):
     """
     json = request.get_json()
     if json is None:
-        raise InvalidContent("A problem occured when voting on the event.")
-        #raise InvalidContent("Empty json not a valid event vote object")
+        raise InvalidContent("A problem occurred when voting on the event")
     return events.vote(eventid, userid, json.get('vote')), 201
 
 
@@ -46,6 +45,5 @@ def create_event(userid):
     """
     json = request.get_json()
     if json is None:
-        raise InvalidContent("A problem occured when creating the event.")
-        #raise InvalidContent("Empty json not a valid event object")
+        raise InvalidContent("A problem occurred when creating the event")
     return events.create(json.get('planid'), json.get('name'), json.get('locationid'), userid), 201
