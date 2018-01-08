@@ -186,7 +186,7 @@ function displayRouteInfo(route) {
 
 //Moves menus to given level - 0 is base menu
 function openMenu(level) {
-    $(".sidebar-menu").animate({ left: "-" + ($(".sidebar-menu").width() * level) });
+    $(".sidebar-menu").stop().animate({ left: "-" + ($(".sidebar-menu").width() * level) });
 }
 
 //POLLING
@@ -639,8 +639,15 @@ var localSession = {
             $("#places-list").css("max-height", "");
         };
 
+        //Adjust Heights to fit page whenever resized
         $(window).resize(fixHeight);
+        //Adjust for initial load
         fixHeight();
+
+        //To avoid sidebar submenus from break, reset the sidebar menu position whenever resized
+        $(window).resize(function() {
+          openMenu(localSession.sidebarMenuIndex);
+        });
 
         $("#sign-out").click(function() {
           gapi.auth2.getAuthInstance().signOut();
