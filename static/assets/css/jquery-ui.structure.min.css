@@ -279,6 +279,8 @@ input.ui-button::-moz-focus-inner, button.ui-button::-moz-focus-inner {
 .ui-checkboxradio-label .ui-icon-background {
   box-shadow:inset 1px 1px 1px #ccc;
   border-radius:.12em;
+  -webkit-border-radius:.12em;
+  -moz-border-radius:.12em;
   border:none;
 }
 
@@ -286,6 +288,8 @@ input.ui-button::-moz-focus-inner, button.ui-button::-moz-focus-inner {
   width:16px;
   height:16px;
   border-radius:1em;
+  -webkit-border-radius:1em;
+  -moz-border-radius:1em;
   overflow:visible;
   border:none;
 }
@@ -955,4 +959,3 @@ input.ui-button::-moz-focus-inner, button.ui-button::-moz-focus-inner {
 body .ui-tooltip {
   border-width:2px;
 }
-

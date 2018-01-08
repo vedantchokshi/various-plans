@@ -1,10 +1,13 @@
 //Plan Entry UI
 class PlanEntry {
 
-  constructor(plan){
-    this.entry = $("<a>", {"class" : "plan-entry card-ui", "href": "/" + plan.id});
+  constructor(plan, linkable){
+    if(linkable)
+      this.entry = $("<a>", {"class" : "plan-entry card-ui", "href": "/" + plan.id});
+    else
+      this.entry = $("<a>", {"class" : "plan-entry dead card-ui"});
     this.name = $("<span>", {"class" : "plan-name"}).html("<strong>" + plan.name + "</strong>").appendTo(this.entry);
-    this.startTime = $("<span>", {"class" : "plan-join-code", text: plan.joinid}).appendTo(this.entry);
+    this.joinidOrExpiryReason = $("<span>", {"class" : "plan-join-code", text: plan.joinid}).appendTo(this.entry);
     this.endTime = $("<span>", {"class" : "plan-end-time", text: new Date(plan.endTime*1000).toLocaleString()}).appendTo(this.entry);
 
     // this.entry.click(function() {
@@ -38,8 +41,9 @@ $(document).ready(function() {
     $("#create-plan-modal").find(".error-message").hide();
   });
 
-  $("#join-plan-add").on("show.bs.modal", function() {
-    $("#join-plan-add").find(".error-message").hide();
+  $("#join-plan-modal").on("show.bs.modal", function() {
+    $("#join-plan-modal").find("#join-code").val("");
+    $("#join-plan-modal").find(".error-message").hide();
   });
 
   //Functionality for create plan button
@@ -71,10 +75,49 @@ $(document).ready(function() {
   //Functionality for the Join Plan 'Add' button
   $("#join-plan-add").click(function() {
     var joinId = $("#join-code").val();
+    $("#join-code").val("");
     api.plan.join(joinId).then(function(plan) {
-      $("#plan-list-header").html("Your Plans");
-      new PlanEntry(plan).render($("#join-plan-modal").find("#active-plan-list"));
-      $("#active-plan-list").scrollTop($("#active-plan-list").prop("scrollHeight"));
+      var activePlan = displayPlan(plan);
+
+      if(activePlan) {
+        $("#active-plan-list-header").html("Active Plans");
+        $("#active-plan-list-titles").show();
+        $("#active-plan-list-wrapper").slideDown();
+        $("#archived-plan-list-wrapper").slideUp();
+        if($("#archived-plan-list-header").is(":visible")) {
+          $("#active-plan-list-header").addClass("expandable");
+          $("#archived-plan-list-header").addClass("expandable");
+          $("#active-plan-list-header").off("click").click(function() {
+            $("#active-plan-list-wrapper").slideDown();
+            $("#archived-plan-list-wrapper").slideUp();
+          });
+
+          $("#archived-plan-list-header").off("click").click(function() {
+            $("#active-plan-list-wrapper").slideUp();
+            $("#archived-plan-list-wrapper").slideDown();
+          });
+        }
+        $("#active-plan-list").scrollTop($("#active-plan-list").prop("scrollHeight"));
+      } else {
+        $("#archived-plan-list-header").show();
+        $("#archived-plan-list-titles").show();
+        $("#active-plan-list-wrapper").slideUp();
+        $("#archived-plan-list-wrapper").slideDown();
+        if($("#active-plan-list-header").html() === "Active Plans") {
+          $("#active-plan-list-header").addClass("expandable");
+          $("#archived-plan-list-header").addClass("expandable");
+          $("#active-plan-list-header").off("click").click(function() {
+            $("#active-plan-list-wrapper").slideDown();
+            $("#archived-plan-list-wrapper").slideUp();
+          });
+
+          $("#archived-plan-list-header").off("click").click(function() {
+            $("#active-plan-list-wrapper").slideUp();
+            $("#archived-plan-list-wrapper").slideDown();
+          });
+        }
+        $("#archived-plan-list").scrollTop($("#archived-plan-list").prop("scrollHeight"));
+      }
     },
     function(error_obj){
       console.error("API ERROR " + error_obj.status_code + ": " + error_obj.message);
@@ -120,17 +163,110 @@ googleLoginListeners.onSignOut.push(function() {
     $("#signin-button").fadeIn();
   });
   $("#user-info-button").fadeOut();
-  $("#join-plan-modal").find(".modal-body").html("<p id=\"plan-list-header\">You are not currently involved in any active plans.</p>");
-  });
+  emptyUsersPlans();
+});
+
+function emptyUsersPlans() {
+  //Remove expandable classes if they have them
+  $("#active-plan-list-header").removeClass("expandable");
+  $("#archived-plan-list-header").removeClass("expandable");
+  //Hide list titles
+  $("#active-plan-list-header").html("Loading...");
+  $("#active-plan-list-titles").hide();
+  $("#archived-plan-list-header").hide();
+  $("#archived-plan-list-titles").hide();
+
+  //Remove listeners
+  $("#active-plan-list-header").off("click");
+  $("#archived-plan-list-header").off("click");
+
+  //Clear lists
+  $("#join-plan-modal").find("#active-plan-list").empty();
+  $("#join-plan-modal").find("#archived-plan-list").empty();
+}
+
+function displayPlan(plan) {
+  var currTime = Math.floor(new Date().getTime() /1000);
+  var activePlan = true;
+  var openable = true;
+
+  //Note reason for plan expiry
+  if(currTime > plan.endTime && plan.routes_count === 0) {
+    activePlan = false;
+    openable = false;
+    plan.joinid = "No Routes Added";
+  } else if(currTime > plan.endTime) {
+    activePlan = false;
+    plan.joinid = "Time Limit Exceeded";
+  } else if(currTime > plan.routeVoteCloseTime && plan.routes_count === 0) {
+    activePlan = false;
+    openable = false;
+    plan.joinid = "No Routes Added";
+  } else if(currTime > plan.eventVoteCloseTime && plan.events_count_positive === 0) {
+    activePlan = false;
+    openable = false;
+    plan.joinid = "No Events Preferred";
+  }
+
+  //Place plan entry in correct list
+  var targetList = activePlan ? $("#join-plan-modal").find("#active-plan-list") : $("#join-plan-modal").find("#archived-plan-list");
+  new PlanEntry(plan, openable).render(targetList);
+
+  return activePlan;
+}
 
 function displayUsersPlans() {
   //Add user's current plans to join modal
   api.user.plans().then(function(results) {
-    if(results.results.length === 0)
-      $("#plan-list-header").html("You are not currently involved in any active plans.");
+    var noActivePlans = 0, noArchivedPlans = 0;
     results.results.forEach(function(plan) {
-      new PlanEntry(plan).render($("#join-plan-modal").find("#active-plan-list"));
+
+      var activePlan = displayPlan(plan);
+
+      if(activePlan)
+        noActivePlans++;
+      else
+        noArchivedPlans++;
     });
+
+    //If there are no active plans
+    if(results.results.length === 0 || noActivePlans === 0) {
+      $("#active-plan-list-header").html("You are not currently involved in any active plans.");
+      $("#active-plan-list-titles").hide();
+    } else {
+      $("#active-plan-list-header").html("Active Plans");
+      $("#active-plan-list-titles").show();
+      $("#active-plan-list-wrapper").slideDown();
+    }
+    //If there are no archived plans
+    if(noArchivedPlans === 0) {
+      $("#archived-plan-list-header").hide();
+      $("#archived-plan-list-titles").hide();
+    } else {
+      $("#archived-plan-list-header").show();
+      $("#archived-plan-list-titles").show();
+      $("#archived-plan-list-wrapper").slideDown();
+    }
+
+    //If there are both archived and active plans
+    if(noActivePlans > 0 && noArchivedPlans > 0) {
+      $("#active-plan-list-header").addClass("expandable");
+      $("#archived-plan-list-header").addClass("expandable");
+      $("#archived-plan-list-wrapper").hide();
+
+      $("#active-plan-list-header").off("click").click(function() {
+        $("#active-plan-list-wrapper").slideDown();
+        $("#archived-plan-list-wrapper").slideUp();
+      });
+
+      $("#archived-plan-list-header").off("click").click(function() {
+        $("#active-plan-list-wrapper").slideUp();
+        $("#archived-plan-list-wrapper").slideDown();
+      });
+
+      $("#active-plan-list-wrapper").slideDown();
+      $("#archived-plan-list-wrapper").slideUp();
+    }
   },
   function(error_obj){
     console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);

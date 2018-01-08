@@ -57,6 +57,7 @@ class Votable {
     }
     var self = this;
     votePromise.then(function(result) {
+      console.log(result);
       self.votes = result.votes;
       self.userVoteState = result.userVoteState;
       self.timestamp = result.timestamp;
@@ -77,6 +78,7 @@ class Votable {
     }
     var self = this;
     votePromise.then(function(result) {
+      console.log(result);
       self.votes = result.votes;
       self.userVoteState = result.userVoteState;
       self.timestamp = result.timestamp;

@@ -31,6 +31,8 @@
   margin-left:auto;
   display:block;
   border-radius:15px;
+  -webkit-border-radius:15px;
+  -moz-border-radius:15px;
   width:80px;
 }
 
@@ -53,6 +55,8 @@
 #navbar-logo {
   width:35px;
   border-radius:7px;
+  -webkit-border-radius:7px;
+  -moz-border-radius:7px;
 }
 
 #navbar-logo-link {

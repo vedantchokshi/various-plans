@@ -88,13 +88,26 @@
         <h3 class="modal-title">Your Plans</h3>
       </div>
       <div class="modal-body">
-        <p id="plan-list-header">Your Plans</p>
-        <div>
-          <span class="plan-name" style="width:30%;">Plan Name</span>
-          <span class="plan-join-code" style="width:36%;">Join Code</span>
-          <span class="plan-end-time" style="width:21%;">Time of Plan</span>
+
+        <p id="active-plan-list-header" class="list-header">Loading...</p>
+        <div id="active-plan-list-wrapper">
+          <div id="active-plan-list-titles" style="display:none">
+            <span class="plan-name" style="width:30%;">Plan Name</span>
+            <span class="plan-join-code" style="width:36%;">Join Code</span>
+            <span class="plan-end-time" style="width:30%; text-align: center;">Time of Plan</span>
+          </div>
+          <div id="active-plan-list"></div>
         </div>
-        <div id="active-plan-list"></div>
+
+        <p id="archived-plan-list-header" style="display:none" class="list-header">Archived Plans</p>
+        <div id="archived-plan-list-wrapper">
+          <div id="archived-plan-list-titles" style="display:none">
+            <span class="plan-name" style="width:30%;">Plan Name</span>
+            <span class="plan-join-code" style="width:36%;">Reason for Expiry</span>
+            <span class="plan-end-time" style="width:30%; text-align: center;">Time of Plan</span>
+          </div>
+          <div id="archived-plan-list"></div>
+        </div>
       </div>
       <div class="modal-footer"><input type="text" placeholder="Enter Join Code" id="join-code" class="modal-textfield"><button class="btn btn-primary" id="join-plan-add" type="button">Add </button><span class="error-message" style="float: left;"></span></div>
     </div>

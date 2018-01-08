@@ -19,6 +19,8 @@
 .btn-primary, .btn-primary:active, .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open > .dropdown-toggle.btn-primary.focus, .open > .dropdown-toggle.btn-primary:focus, .open > .dropdown-toggle.btn-primary:hover {
   border:none;
   border-radius:6px;
+  -webkit-border-radius:6px;
+  -moz-border-radius:6px;
   padding:14px 24px;
   background:rgb(151,194,86);
   transition:background-color 0.25s;
@@ -33,6 +35,8 @@
 .btn-default, .btn-default:active, .btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open > .dropdown-toggle.btn-default.focus, .open > .dropdown-toggle.btn-default:focus, .open > .dropdown-toggle.btn-default:hover {
   border:none;
   border-radius:6px;
+  -webkit-border-radius:6px;
+  -moz-border-radius:6px;
   padding:14px 24px;
   background:rgb(237,237,237);
   transition:background-color 0.25s;
@@ -53,6 +57,8 @@
 .btn-link, .btn-link:active, .btn-link.active.focus, .btn-link.active:focus, .btn-link.active:hover, .btn-link:active.focus, .btn-link:active:focus, .btn-link:active:hover, .open > .dropdown-toggle.btn-link.focus, .open > .dropdown-toggle.btn-link:focus, .open > .dropdown-toggle.btn-link:hover {
   border:none;
   border-radius:6px;
+  -webkit-border-radius:6px;
+  -moz-border-radius:6px;
   padding:8px 15px;
   transition:background-color 0.25s;
   outline:none!important;
