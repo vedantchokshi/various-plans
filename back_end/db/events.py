@@ -7,7 +7,9 @@ from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 def get_events_sql(plan):
     if plan.timephase < 2:
         return plan.events_all.all()
-    return [x for x in plan.events_all.all() if x.votes > 0]
+    if plan.timephase < 3:
+        return [x for x in plan.events_all.all() if x.votes > 0]
+    return plan.routes[0].events
 
 
 def count_positive_events_sql(plan):
