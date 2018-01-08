@@ -36,9 +36,11 @@ googleLoginListeners.onLoad.push(gapiLoaded);
 function fitEventsOnMap(eventList) {
     //Show all markers on map
     var bounds = new google.maps.LatLngBounds();
+    var validEvents = 0;
     eventList.forEach(function(event) {
       //Check that event is Event and not placeholder "pending"
       if(event && event.place) {
+        validEvents++;
         //Viewport looks better when the map is fitted to single place with a view port
         //When fitted to multiple points, location looks better
         if (event.place.geometry.viewport && Object.keys(eventList).length === 1) {
@@ -49,7 +51,33 @@ function fitEventsOnMap(eventList) {
         }
       }
     });
-    localSession.map.fitBounds(bounds);
+
+    if(validEvents === 0) {
+      //Fit map to location so it doesn't end up in pacific ocean
+      // Try HTML5 geolocation.
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          localSession.map.setCenter(pos);
+        }, function() {
+          handleLocationError(true, infoWindow, map.getCenter());
+        });
+      } else {
+        // If browser does not support location, set position to england
+        var pos_default = {
+          //Center on england
+          lat: 54.73413609763893,
+          lng: -3.3233642578125
+        };
+        localSession.map.setCenter(pos_default);
+      }
+    } else {
+      localSession.map.fitBounds(bounds);
+    }
 }
 
 function removeMarkersFromMap(markers) {
