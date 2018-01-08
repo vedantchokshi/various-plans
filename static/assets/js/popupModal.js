@@ -26,6 +26,6 @@ var popupModal = {
    */
   init: function() {
     if(!this.inited)
-      $("<div>").html("<div class=\"modal fade\" role=\"dialog\" tabindex=\"-1\" id=\"popup-modal\"><div class=\"modal-dialog\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button><h3 class=\"modal-title\" id=\"popup-modal-title\"></h3></div><div class=\"modal-body\"><p id=\"popup-modal-message\"></p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" id=\"popup-modal-ok\" data-dismiss=\"modal\" type=\"button\">Ok</button></div></div></div></div>").appendTo(document.body);
+      $("<div>").html("<div class=\"modal fade\" role=\"dialog\" tabindex=\"-1\" id=\"popup-modal\"><div class=\"modal-dialog\" style=\"width: 450px;\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button><h3 class=\"modal-title\" id=\"popup-modal-title\"></h3></div><div class=\"modal-body\"><p id=\"popup-modal-message\"></p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" id=\"popup-modal-ok\" data-dismiss=\"modal\" type=\"button\">Ok</button></div></div></div></div>").appendTo(document.body);
   }
 };
