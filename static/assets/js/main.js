@@ -186,7 +186,7 @@ function displayRouteInfo(route) {
 
 //Moves menus to given level - 0 is base menu
 function openMenu(level) {
-    $(".sidebar-menu").stop().animate({ left: "-" + ($(".sidebar-menu").width() * level) });
+    $(".sidebar-menu").stop().animate({ left: "-" + (($(".sidebar-menu").width() + 20) * level) });
 }
 
 //POLLING

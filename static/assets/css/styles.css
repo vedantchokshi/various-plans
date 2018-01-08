@@ -4,6 +4,7 @@
   display:inline-block;
   vertical-align:top;
   position:relative;
+  margin-right:20px;
 }
 
 #sidebar-menu .menu-content {
@@ -71,15 +72,6 @@ p {
 .h2, h2 {
   font-weight:normal;
   line-height:1.3;
-}
-
-#sidebar-sub1 {
-  margin-left:15px;
-  padding-right:20px;
-}
-
-#sidebar-sub2 {
-  padding:15px;
 }
 
 #help-div {
