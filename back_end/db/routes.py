@@ -14,7 +14,8 @@ def get_routes(plan):
     """
     if plan.phase < 3:
         return plan.routes_all.all()
-    routes = [x for x in plan.routes_all.all() if x.votes > 0]
+    routes = plan.routes_all.all()
+    #routes = [x for x in plan.routes_all.all() if x.votes > 0]
     return [routes[0]] if routes else []
 
 
@@ -76,7 +77,7 @@ class Route(DB.Model):
         result['eventidList'] = self.eventids
         result['planid'] = self.planid
         result['votes'] = self.votes
-        result['userVoteState'] = getattr(self, 'user_vote_state', False)
+        result['userVoteState'] = getattr(self, 'userVoteState', False)
         return result
 
 
