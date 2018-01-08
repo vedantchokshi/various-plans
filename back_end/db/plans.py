@@ -153,7 +153,7 @@ def create(name, event_vote_close_time, route_vote_close_time, end_time, userid)
     if not route_vote_close_time <= end_time:
         raise InvalidContent("The plan cannot take place before the end of the route voting stage")
 
-    times = Times(start_time, event_vote_close_time, route_vote_close_time, event_vote_close_time)
+    times = Times(start_time, event_vote_close_time, route_vote_close_time, end_time)
 
     new_plan = Plan(name, times, userid)
 
