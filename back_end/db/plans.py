@@ -87,6 +87,7 @@ class Plan(DB.Model):
 
         :return: dictionary representation of Plan object
         """
+        # pylint: disable-msg=duplicate-code
         result = dict()
         result['id'] = self.id
         result['name'] = self.name
