@@ -3,7 +3,7 @@ Initialise database
 """
 from flask_sqlalchemy import SQLAlchemy
 
-STR_LEN = 100
+STR_LEN = 50
 
 # db variable should exist from the start
 # has helped debug in the past
