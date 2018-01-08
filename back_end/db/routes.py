@@ -15,24 +15,15 @@ def get_routes(plan):
     if plan.phase < 3:
         return plan.routes_all.all()
     routes = plan.routes_all.all()
-    #routes = [x for x in plan.routes_all.all() if x.votes > 0]
-
-    if len(routes)<1:
-        ret = []
-    else:
-        maxVotedPlan = routes[0]
-        for x in routes[1:]:
-            if(x.votes>maxVotedPlan.votes): maxVotedPlan=x
-        ret = [maxVotedPlan]
-
-    return ret
+    routes = sorted(routes, key=lambda x: x.votes, reverse=True)
+    return [routes[0]] if routes else []
 
 
 def count_routes(plan):
     """
     Get a count of all the positively voted routes associated with this plan.
     """
-    #return len([x for x in plan.routes_all.all() if x.votes > 0])
+    # return len([x for x in plan.routes_all.all() if x.votes > 0])
     return len(plan.routes_all.all())
 
 
