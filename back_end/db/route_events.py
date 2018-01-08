@@ -14,4 +14,4 @@ class RouteEvent(DB.Model):
 
 
 def get_eventids_from_routeid(routeid):
-    return RouteEvent.query.filter_by(routeid=int(routeid))
+    return [x.eventid for x in RouteEvent.query.filter_by(routeid=int(routeid))]
