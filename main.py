@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask, render_template, json, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
 
 import back_end as be
 import config
@@ -14,11 +14,6 @@ app.config.from_object(config)
 
 be.init(app)
 
-# pylint: disable-msg=wrong-import-position
-# Imports must be done after back_end.init(app)
-from back_end import db
-from back_end.db import plans
-
 
 # reset
 @app.route('/reset', methods=['GET'])
@@ -26,7 +21,7 @@ def reset():
     admins = [
         111355985876555375664,  # Rhys
         110280863980572958575,  # Michael
-        112445590598446036440   # Archie
+        112445590598446036440  # Archie
     ]
     try:
         token = request.cookies.get('vp-token')
@@ -70,5 +65,5 @@ def disp_plan(planid):
 @app.errorhandler(500)
 def server_error(e):
     # Log the error and stacktrace
-    logging.exception('An error occurred during a request.\n{}'.format(e))
+    logging.exception('An error occurred during a request.\n%s', e)
     return 'An internal error occurred.', 500
