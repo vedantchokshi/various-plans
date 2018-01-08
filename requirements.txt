@@ -3,3 +3,4 @@ flask-sqlalchemy
 pymysql
 google-auth
 requests
+pylint
