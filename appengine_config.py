@@ -1,3 +1,4 @@
+# Source: https://goo.gl/LGKWcv
 # Copyright 2016 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +23,7 @@ from google.appengine.ext import vendor
 # Add any libraries installed in the "lib" folder.
 vendor.add('lib')
 
+# === ADDED ===
 if not os.environ.get('GAE_ENV'):
     # Set up SSL for local testing
     from google.appengine.tools.devappserver2.python.runtime import sandbox
@@ -38,5 +40,5 @@ if not os.environ.get('GAE_ENV'):
     # Patch and reload the ssl module implementation.
     SYSTEM_SSL = os.path.join(RUNTIME_DIR, 'ssl.py')
     imp.load_source('ssl', SYSTEM_SSL)
-
+#=============
 # [END vendor]
