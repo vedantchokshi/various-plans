@@ -1,23 +1,21 @@
-from __future__ import print_function
-
 from back_end.db import DB, STR_LEN, plans
 from back_end.exceptions import InvalidRequest, ResourceNotFound, InvalidContent
 
 
-def get_events_sql(plan):
+def get_events(plan):
     if plan.timephase < 2:
         return plan.events_all.all()
     if plan.timephase < 3:
         return [x for x in plan.events_all.all() if x.votes > 0]
-    return plan.routes[0].events
+    return plan.routes[0].events if plan.routes else []
 
 
-def count_positive_events_sql(plan):
+def count_positive_events(plan):
     return len([x for x in plan.events_all.all() if x.votes > 0])
 
 
-plans.Plan.events = property(get_events_sql)
-plans.Plan.events_count_positive = property(count_positive_events_sql)
+plans.Plan.events = property(get_events)
+plans.Plan.events_count_positive = property(count_positive_events)
 
 
 class Event(DB.Model):
@@ -38,6 +36,11 @@ class Event(DB.Model):
 
     @property
     def serialise(self):
+        """
+        Used to create a dictionary for jsonifying
+
+        :return: dictionary representation of Event object
+        """
         s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         s['votes'] = self.votes
         s['userVoteState'] = getattr(self, 'userVoteState', False)
@@ -83,6 +86,4 @@ def vote(eventid, userid, vote):
 
     if not (vote >= -1 or vote <= 1):
         raise InvalidContent('Vote must be -1, 0 or 1')
-    e = get_from_id(eventid, userid)
-    e.vote(userid, vote)
-    return e
+    return get_from_id(eventid, userid).vote(userid, vote)
