@@ -20,6 +20,10 @@ class PhotoGallery {
         this.prevButton = $("<div>", {"class": "photo-gallery-prev"}).hide().html("<div class=\"pg-icon\"></div>").appendTo(this.dom);
         this.nextButton = $("<div>", {"class": "photo-gallery-next"}).html("<div class=\"pg-icon\"></div>").appendTo(this.dom);
 
+        if(this.count <= 1) {
+          this.nextButton.hide();
+        }
+
         this.nextButton.off("click").click(function(){ self.scrollNext(); });
         this.prevButton.off("click").click(function(){ self.scrollPrev(); });
     }
@@ -31,6 +35,7 @@ class PhotoGallery {
         this.photoUrls.push(url);
         $("<img>", {"class": "photo-gallery-entry entry-" + this.count, "src": url}).appendTo(this.dom);
         this.count++;
+        this.nextButton.show();
     }
 
     render(container) {
