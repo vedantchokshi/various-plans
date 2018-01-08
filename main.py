@@ -37,8 +37,6 @@ def reset():
         else:
             return 'You are not an admin...'
     except Exception:
-        pass
-    finally:
         return redirect(url_for('index'))
 
 
