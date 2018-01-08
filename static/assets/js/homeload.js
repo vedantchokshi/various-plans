@@ -26,6 +26,7 @@ $(document).ready(function() {
   //Add datepickers to create modal
   $( ".datepicker" ).datetimepicker({
      minDate: 0,
+     dateFormat: 'd M y',
 	   timeFormat: 'HH:mm z',
      showOn: "button",
      buttonImage: "../static/assets/img/calendar.svg",
