@@ -579,11 +579,14 @@ var localSession = {
 
             // For each place, get the icon, name and location.
             var bounds = new google.maps.LatLngBounds();
+            //Track places returned not already added
+            var validPlacesReturned = 0;
             places.forEach(function(place) {
                 if(isPlaceAdded(place.place_id)){
                     //Place already added so skip to next iteration
                     return true;
                 }
+                validPlacesReturned++;
 
                 if (!place.geometry) {
                     console.log("Returned place contains no geometry");
@@ -645,7 +648,13 @@ var localSession = {
                     bounds.extend(place.geometry.location);
                 }
             });
-            map.fitBounds(bounds);
+
+            //If no places returned then fit map to current results
+            //Or the users location if no current results
+            if(validPlacesReturned === 0)
+              fitEventsOnMap(localSession.events);
+            else
+              map.fitBounds(bounds);
         });
     },
     initUI: function() {
