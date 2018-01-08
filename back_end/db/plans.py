@@ -123,10 +123,7 @@ class Times(object):
 
 def get_from_id(planid, userid):
     """
-    test
-    :param planid:
-    :param userid:
-    :return:
+    Get a plan object from an ID
     """
     if planid is None:
         raise InvalidRequest('Please specify an plan ID.')
