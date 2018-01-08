@@ -22,15 +22,12 @@
 }
 
 .modal-textfield {
+  width: 100%;
   border-top:none;
   border-left:none;
   border-right:none;
-  margin-right:10px;
-  outline: none;
   border-radius: 4px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  padding: 1px 5px;
+  outline: none;
 }
 
 .modal-textfield:focus {
@@ -147,12 +144,6 @@
   cursor: pointer;
 }
 
-.modalLabel {
-  width:40%;
-  margin-top:5px;
-}
-
-.modalCol {
-  width:60%;
-  padding:0px;
+.top-buffer {
+  margin-top:20px;
 }
