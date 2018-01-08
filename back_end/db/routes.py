@@ -108,7 +108,7 @@ def create(planid, name, eventid_list, userid):
 
     plan = plans.get_from_id(planid, userid)
 
-    if plan.phase != 2:
+    if plan.timephase != 2:
         raise InvalidRequest(
             "{} (Plan {}) is not in the route voting stage".format(plan.name, planid))
     if not len(plan.routes_all.all()) < 10:

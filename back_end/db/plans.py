@@ -67,20 +67,6 @@ class Plan(DB.Model):
         return 4
 
     @property
-    def phase(self):
-        """
-        :return: the phase of the plan
-        :rtype: int
-        """
-        # p = self.timephase
-        # if p > 1 and len(self.events) == 0:
-        #     return 4
-        # if p > 2 and len(self.routes) == 0:
-        #     return 4
-        # return p
-        return self.timephase
-
-    @property
     def serialise(self):
         """
         Used to create a dictionary for jsonifying
@@ -97,7 +83,7 @@ class Plan(DB.Model):
         result['startTime'] = self.start_time
         result['ownerid'] = self.ownerid
         result['joinid'] = self.joinid
-        result['phase'] = self.phase
+        result['phase'] = self.timephase
         result['events_count_positive'] = self.events_count_positive
         result['routes_count_positive'] = self.routes_count_positive
         return result

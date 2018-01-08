@@ -95,7 +95,7 @@ def create(planid, name, locationid, userid):
 
     plan = plans.get_from_id(planid, userid)
 
-    if plan.phase != 1:
+    if plan.timephase != 1:
         raise InvalidRequest(
             "You can no longer submit events to {} (Plan {})".format(plan.name, planid))
     if not len(plan.events_all.all()) < 10:
