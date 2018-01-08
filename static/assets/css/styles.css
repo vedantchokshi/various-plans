@@ -89,3 +89,11 @@ p {
   background-color: rgba(0, 0, 0, 0.5);
   color: rgb(151, 194, 85);
 }
+
+.abcRioButtonIconImage {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -4px;
+}
