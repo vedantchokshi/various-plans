@@ -1,4 +1,5 @@
-/*! jQuery Timepicker Addon - v1.6.3 - 2016-04-20
+/* Source: http://trentrichardson.com/examples/timepicker/jquery-ui-timepicker-addon.js
+! jQuery Timepicker Addon - v1.6.3 - 2016-04-20
 * http://trentrichardson.com/examples/timepicker
 * Copyright (c) 2016 Trent Richardson; Licensed MIT */
 (function (factory) {
