@@ -228,10 +228,8 @@ function millistoReadable(millis) {
 }
 
 function pollServer() {
-    //console.log("Polling Server...");
     //Get current phase that session is in
     var phase = localSession.getPhase();
-    //console.log("Currently in phase " + phase);
 
     //Update countdown timer
     var timeRemaining = localSession.timeToPhaseEnd();
