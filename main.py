@@ -31,10 +31,12 @@ if app.debug:
 def index():
     return render_template('index.html')
 
+
 # [helppage]
 @app.route('/help', methods=['GET'])
 def disp_help():
     return render_template('help.html')
+
 
 # [plan view]
 @app.route('/<planid>', methods=['GET'])
