@@ -283,7 +283,14 @@ class Route extends Votable {
     super(apiJSON);
     //DirectionsResult object from GMaps API
     this.direction = direction;
-    this.lineRenderOptions = { strokeColor: "#208DE6", strokeWeight: 6, strokeOpacity: 0.6 };
+    var defaultColor = "#208DE6";
+    var randColor = "#";
+    for(var i = 0 ; i < 3; i++) {
+      //Gen random hex number between 00 and E6 so they do not become too bright
+      randColor += Math.floor(Math.random() * 230).toString(16);
+    }
+
+    this.lineRenderOptions = { strokeColor: randColor, strokeWeight: 6, strokeOpacity: 0.6 };
     this.directionsRenderer = new google.maps.DirectionsRenderer({ map: localSession.map, suppressMarkers: true, polylineOptions : this.lineRenderOptions, preserveViewport: true });
   }
 
