@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="static/assets/css/buttons.css">
     <link rel="stylesheet" href="static/assets/css/column-queries.css">
     <link rel="stylesheet" href="static/assets/css/count-down.css">
+    <link rel="stylesheet" href="static/assets/css/ellipsis-loader.css">
     <link rel="stylesheet" href="static/assets/css/jquery-ui.min.css">
     <link rel="stylesheet" href="static/assets/css/jquery-ui.structure.min.css">
     <link rel="stylesheet" href="static/assets/css/jquery-ui.theme.min.css">
@@ -133,6 +134,27 @@
 
     <!-- Required for the Google Signin API to run correctly -->
     <div style="display: none" class="g-signin2"></div>
+
+    <!-- loader -->
+    <div id="loading-div-wrapper">
+        <div id="loading-div" class="lds-ellipsis">
+          <div>
+            <div></div>
+          </div>
+          <div>
+            <div></div>
+          </div>
+          <div>
+            <div></div>
+          </div>
+          <div>
+            <div></div>
+          </div>
+          <div>
+            <div></div>
+          </div>
+        </div>
+    </div>
 
     <script>var _apiLoad = { plan: { id: {{ plan.id }}, name: "{{ plan.name }}", eventVoteCloseTime: {{ plan.event_vote_close_time }}, routeVoteCloseTime: {{ plan.route_vote_close_time }}, startTime: {{ plan.start_time }}, endTime: {{ plan.end_time }}, joinid: "{{ plan.joinid }}", ownerid: "{{ plan.ownerid }}", phase: {{ plan.phase }} } };</script>
     <script src="https://apis.google.com/js/platform.js?onload=initGapiSignin" defer></script>

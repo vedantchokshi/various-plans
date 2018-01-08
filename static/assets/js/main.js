@@ -250,6 +250,8 @@ function pollServer() {
     } else if(phase == 2) {
         //Route voting phase
         if(localSession.lastCheckedPhase != 2) {
+            //Show Loading div
+            $("#loading-div-wrapper").fadeIn();
             localSession.enterPhase2();
         }
         //Update Routes
@@ -260,6 +262,8 @@ function pollServer() {
     } else if (phase == 3) {
         //Final route phase
         if(localSession.lastCheckedPhase != 3) {
+            //Show Loading div
+            $("#loading-div-wrapper").fadeIn();
             localSession.enterPhase3();
         }
         //additional updates go here
@@ -394,6 +398,10 @@ var localSession = {
 
         //Add new events to map, but not sidebar
         return updateEventOrRoute(false, true, true).then(function() {
+
+            //Hide Loading div
+            $("#loading-div-wrapper").fadeOut();
+
             //Count up valid events
             var noEvents = 0;
             localSession.events.forEach(function(event) {
@@ -417,6 +425,8 @@ var localSession = {
               });
             }
         }, function(error_obj) {
+          //Hide Loading div
+          $("#loading-div-wrapper").fadeOut();
           console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
           //No Errors Intended for Users Here...
         });
@@ -454,6 +464,9 @@ var localSession = {
             fitEventsOnMap(localSession.events);
 
             updateEventOrRoute(false, true, false).then(function(routes) {
+                //Hide Loading div
+                $("#loading-div-wrapper").fadeOut();
+
                 //Count up valid events
                 var noRoutes = 0;
                 localSession.routes.forEach(function(route) {
@@ -485,10 +498,14 @@ var localSession = {
                 });
               }
             }, function(error_obj) {
+              //Hide Loading div
+              $("#loading-div-wrapper").fadeOut();
               console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
               //No Errors Intended for Users Here...
             });
         }, function(error_obj) {
+          //Hide Loading div
+          $("#loading-div-wrapper").fadeOut();
           console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
           //No Errors Intended for Users Here...
         });
@@ -515,8 +532,12 @@ var localSession = {
             case 1:
                 //Add new events and reposition map
                 return updateEventOrRoute(true, true, true).then(function() {
+                    //Hide Loading div
+                    $("#loading-div-wrapper").fadeOut();
                     fitEventsOnMap(localSession.events);
                 }, function(error_obj) {
+                  //Hide Loading div
+                  $("#loading-div-wrapper").fadeOut();
                   console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
                   //No Errors Intended for Users Here...
                 });
