@@ -129,17 +129,14 @@ def get_from_id(planid, userid):
     :return:
     """
     if planid is None:
-        raise InvalidRequest('Please specifiy an plan ID.')
-        # raise InvalidRequest('Plan id not specified')
+        raise InvalidRequest('Please specify an plan ID.')
     if not str(planid).isdigit():
-        raise InvalidRequest("Plan id '{}' is not a valid id".format(planid))
+        raise InvalidRequest("Plan ID '{}' is not a valid ID".format(planid))
     plan = Plan.query.get(planid)
     if plan is None:
         raise ResourceNotFound("There is no plan with the ID '{}'".format(planid))
-        # raise ResourceNotFound("Plan not found for id '{}'".format(planid))
     if not plan.check_user(userid):
         raise Unauthorized("You are not authorized for Plan '{}'".format(planid))
-        # raise Unauthorized("User not authorized for Plan '{}'".format(planid))
     return plan
 
 
@@ -149,37 +146,28 @@ def create(name, event_vote_close_time, route_vote_close_time, end_time, userid)
     """
     if name is None or not name:
         # name is not in json or is the empty string
-        raise InvalidContent("Please specify a name for the plan.")
-        # raise InvalidContent("Plan name is not specified")
+        raise InvalidContent("Please specify a name for the plan")
     if event_vote_close_time is None:
-        raise InvalidContent("Please specify a time for event voting to end.")
-        # raise InvalidContent("Plan eventVoteCloseTime is not specified")
+        raise InvalidContent("Please specify a time for event voting to end")
     if not str(event_vote_close_time).isdigit():
-        raise InvalidContent("Please specify a valid time for event voting to end.")
-        # raise InvalidContent("Plan eventVoteCloseTime is not an integer")
+        raise InvalidContent("Please specify a valid time for event voting to end")
     if route_vote_close_time is None:
-        raise InvalidContent("Please specify a time for route voting to end.")
-        # raise InvalidContent("Plan routeVoteCloseTime is not specified")
+        raise InvalidContent("Please specify a time for route voting to end")
     if not str(route_vote_close_time).isdigit():
-        raise InvalidContent("Please specify a valid time for route voting to end.")
-        # raise InvalidContent("Plan routeVoteCloseTime is not an integer")
+        raise InvalidContent("Please specify a valid time for route voting to end")
     if end_time is None or not str(end_time).isdigit():
-        raise InvalidContent("Please specify a valid time for the plan to take place.")
-        # raise InvalidContent("Plan endTime is not specified")
+        raise InvalidContent("Please specify a valid time for the plan to take place")
 
     start_time = int(time.time())
 
     # This check may cause errors if the time of receiving request is
     # significantly later than time of checks in JS
     if not start_time <= event_vote_close_time:
-        raise InvalidContent("The event voting cannot end in the past.")
-        # raise InvalidContent("eventVoteCloseTime is before startTime")
+        raise InvalidContent("The event voting cannot end in the past")
     if not event_vote_close_time <= route_vote_close_time:
-        raise InvalidContent("The route voting cannot end before the event voting ends.")
-        # raise InvalidContent("routeVoteCloseTime is before eventVoteCloseTime")
+        raise InvalidContent("The route voting cannot end before the event voting end")
     if not route_vote_close_time <= end_time:
-        raise InvalidContent("The plan cannot take place before the end of the route voting stage.")
-        # raise InvalidContent("endTime is before eventVoteCloseTime")
+        raise InvalidContent("The plan cannot take place before the end of the route voting stage")
 
     times = Times(start_time, event_vote_close_time, route_vote_close_time, event_vote_close_time)
 
@@ -219,8 +207,7 @@ def add_user(joinid, userid):
         raise InvalidRequest('Please specify a Join ID.')
     plans = Plan.query.filter_by(joinid=joinid).all()
     if plans is None or len(plans) < 1:
-        raise ResourceNotFound("Invalid Join ID.")
-        # raise ResourceNotFound("Cannot find Plan for joinid '{}'".format(joinid))
+        raise ResourceNotFound("Invalid join ID")
     plan = plans[0]
     if userid in [pu.userid for pu in plan.users]:
         raise InvalidRequest("You are already registered to '{}'".format(plan.name))
