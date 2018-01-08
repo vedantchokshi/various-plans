@@ -52,7 +52,7 @@ class Plan(DB.Model):
             raise Unauthorized("You are not authorized for Plan '{}'".format(self.id))
 
     @property
-    def timephase(self):
+    def phase(self):
         """
         :return: the phase of the plan based on time
         :rtype: int
@@ -83,7 +83,7 @@ class Plan(DB.Model):
         result['startTime'] = self.start_time
         result['ownerid'] = self.ownerid
         result['joinid'] = self.joinid
-        result['phase'] = self.timephase
+        result['phase'] = self.phase
         result['events_count_positive'] = self.events_count_positive
         result['routes_count_positive'] = self.routes_count_positive
         return result

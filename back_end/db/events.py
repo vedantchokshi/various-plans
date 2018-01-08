@@ -11,9 +11,9 @@ def get_events(plan):
     This list is filtered to all positively voted events if the plan
     is in phase 2 and to only the events in the winning route in phase 3.
     """
-    if plan.timephase < 2:
+    if plan.phase < 2:
         return plan.events_all.all()
-    if plan.timephase < 3:
+    if plan.phase < 3:
         return [x for x in plan.events_all.all() if x.votes > 0]
     return plan.routes[0].events if plan.routes else []
 
@@ -95,7 +95,7 @@ def create(planid, name, locationid, userid):
 
     plan = plans.get_from_id(planid, userid)
 
-    if plan.timephase != 1:
+    if plan.phase != 1:
         raise InvalidRequest(
             "You can no longer submit events to {} (Plan {})".format(plan.name, planid))
     if not len(plan.events_all.all()) < 10:

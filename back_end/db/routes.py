@@ -12,7 +12,7 @@ def get_routes(plan):
     This list is filtered to the winning route if the plan is
     in phases 3 and 4.
     """
-    if plan.timephase < 3:
+    if plan.phase < 3:
         return plan.routes_all.all()
     routes = [x for x in plan.routes_all.all() if x.votes > 0]
     return [routes[0]] if routes else []
@@ -108,7 +108,7 @@ def create(planid, name, eventid_list, userid):
 
     plan = plans.get_from_id(planid, userid)
 
-    if plan.timephase != 2:
+    if plan.phase != 2:
         raise InvalidRequest(
             "{} (Plan {}) is not in the route voting stage".format(plan.name, planid))
     if not len(plan.routes_all.all()) < 10:
