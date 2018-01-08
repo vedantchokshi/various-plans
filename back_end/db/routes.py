@@ -18,15 +18,16 @@ def get_routes(plan):
     return [routes[0]] if routes else []
 
 
-def count_positive_routes(plan):
+def count_routes(plan):
     """
     Get a count of all the positively voted routes associated with this plan.
     """
-    return len([x for x in plan.routes_all.all() if x.votes > 0])
+    #return len([x for x in plan.routes_all.all() if x.votes > 0])
+    return len(plan.routes_all.all())
 
 
 plans.Plan.routes = property(get_routes)
-plans.Plan.routes_count_positive = property(count_positive_routes)
+plans.Plan.routes_count = property(count_routes)
 
 
 class Route(DB.Model):

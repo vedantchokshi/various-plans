@@ -99,7 +99,7 @@ class Plan(DB.Model):
         result['joinid'] = self.joinid
         result['phase'] = self.phase
         result['events_count_positive'] = self.events_count_positive
-        result['routes_count_positive'] = self.routes_count_positive
+        result['routes_count'] = self.routes_count
         return result
 
 
