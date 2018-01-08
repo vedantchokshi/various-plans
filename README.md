@@ -13,7 +13,18 @@ may vary on other shells or OSs.
 * virtualenv
 * pip
 
-Check you have all these commands before continuing
+Check you have all these commands before continuing.
+
+gcloud components needed:
+
+```bash
+core
+app-engine-python
+app-engine-python-extras
+```
+
+Run `gcloud components list` to see which you have and install any missing according to
+the above list.
 
 ### Clone repository / pull
 By now you should have cloned the repository, make sure you have the
@@ -40,11 +51,10 @@ Now you can use pip to install the module requirements
 $ pip install -t lib -r requirements.txt
 ```
 This will create a lib folder containing Flask and a bunch of other
-modules. You only need to do this once. Now that a virtual environment
-with all the modules you need is set up, you can run the server locally
+modules. You only need to do this once.
 
 ### Exit virtual environment
-To exit the virtual environment...
+You should now exit the virtual environment otherwise gcloud will get confused
 ```bash
 $ deactivate
 ```
@@ -68,8 +78,8 @@ $ gcloud app browse
 
 ### Setting up local Google Cloud SQL connection
 
-Open the gcloud sql link [here][1]. This should take you to the 'Install
-the SQL proxy' heading.
+Open the gcloud sql link [here][1]. This should take you to the _Install
+the SQL proxy_ heading.
 This will let you download the OS-specific file.
 
 Please ensure you save the file as `cloud_sql_proxy` as this is ignored

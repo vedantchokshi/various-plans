@@ -4,35 +4,72 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Help Page - Various Plans</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Help - Various Plans</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700">
-    <link rel="stylesheet" href="static/assets/css/help.css">
+    <link rel="stylesheet" href="static/assets/css/Roboto.css">
+    <link rel="stylesheet" href="static/assets/css/buttons.css">
+    <link rel="stylesheet" href="static/assets/css/column-queries.css">
+    <link rel="stylesheet" href="static/assets/css/count-down.css">
+    <link rel="stylesheet" href="static/assets/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="static/assets/css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="static/assets/css/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="static/assets/css/drop-down.css">
+    <link rel="stylesheet" href="static/assets/css/individual-elements.css">
+    <link rel="stylesheet" href="static/assets/css/map.css">
+    <link rel="stylesheet" href="static/assets/css/modal.css">
+    <link rel="stylesheet" href="static/assets/css/styles.css">
+
+    <style>
+      .page-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+      .container {
+        margin-top: 50px;
+      }
+    </style>
 </head>
 
 <body>
     <div class="page-header">
-        <img src="static/assets/img/vp-logo.png" id="navbar-logo">
-        <h1><strong>Various</strong> Plans - Information</h1>
+      <a id="navbar-logo-link" href="/">
+        <h2 id="navbar"><img src="static/assets/img/vp-logo.png" id="navbar-logo"><small class="heading-title"> <strong>Various</strong> Plans</small></h2>
+      </a>
     </div>
-    <p>Log on screen
-To use our application, you must login using your Google Account details. You will need to create one if you do not already have one.
-
-Create Plan
-Once successfully logged in, a new plan can be created. The name of the plan, the time at which voting and selecting plans and routes and the time of the actual event will need to be specified.
-
-Join Existing Plan
-A list of all previously joined plans can be seen. To continue to plan or view an existing plan, click on the tile of the plan in which you would like to visit. To join a plan, obtain the code provided by the creator and input it into the bottom of the popup screen. Upon successful addition of the join code, the plan will appear on your list of plans where it can now be selected.
-
-Stage 1 - Deciding Locations
-To search for locations in which you would like to visit, use the search bar on the map. Locations can be added to the list of locations by selecting the pin in which the map returns. From here you will be prompted to name the location and after it has been successfully added it will be added to the list in which user’s part of the plan can now vote on. You can also vote on any of the locations suggested by other users by selecting the up or down arrow on each event. Once the end time of the stage has been reached (specified by the creator of the plan), all of the positively voted locations by users will be carried forward to Stage 2.
-
-Stage 2 - Deciding Routes:
-During this stage, the events carried forward from Stage 1 can now be ordered to create different routes in which you would like to take. To add a route, drag locations form the events table and place them into the route table. The order in which the locations are placed, is the order in which you would like to visit each location. To see each user suggested route, by hovering over each route, the route will be drawn on the map. Once again routes can be voted on by selecting the up or down arrows for each route.
-
-Final Stage
-Once the time has elapsed for Stage 2, the route with the highest number of votes (or a random route will be selected if joint highest) will be displayed to all users. The stops of the route can be seen and a visualisation of the route can be seen on the map.</p>
+    <div class="container">
+        <h3><strong>What is Various Plans?</strong></h3>
+        <p class="text-justify">Various Plans is an event planning application that allows you and your friends to collaboratively design your perfect meet up or day out with the use of our unique voting system.</p>
+        <h3><strong>Accounts </strong></h3>
+        <p class="text-justify">We appreciate that people do not like creating accounts for all the services they use and registeration processes can be tedious. Therefore, to use our application, you can login using your Google Account details. </p>
+        <h3><strong>How it Works?</strong></h3>
+        <h4><strong>S</strong>tage 1 - Deciding Locations</h4>
+        <p class="text-justify">In this stage, all the people in the group can add suggestions for places that they may think are relevant to the event. Everyone can then vote on all the suggested locations; up-voting if they like the suggestion or down-voting otherwise. This
+            can be done until the end time of the stage has been reached (specified by the creator of the plan), all of the positively voted locations by users will be carried forward to Stage 2.</p>
+        <p class="text-justify">To search for locations which you would like to suggest, use the search bar on the map. Locations can be added to the list of locations by selecting the pin in which the map returns. From here you will be prompted to name the location and after
+            it has been successfully added it will be added to the list in which user’s part of the plan can now vote on. You can vote on any of the locations suggested by other users by selecting the up or down arrow on each event. You can click on different
+            locations to view more details about the location.</p>
+        <h4><strong>S</strong>tage 2 - Deciding Routes</h4>
+        <p class="text-justify">Now that we have the list of events people are positively interested in, all the poeple in the group can now suggest routes that can be taken for the trip. Like in Stage 1, everyone can then vote on all the suggested routes; up-voting if they
+            like the suggestion or down-voting otherwise. This can be done until the end time of the stage has been reached (specified by the creator of the plan).</p>
+        <p class="text-justify">To add a route, drag locations form the events table and place them into the route table. The order in which the locations are placed, is the order in which you would like to visit each location. To see each user suggested route, by hovering over
+            each route, the route will be drawn on the map. Once again routes can be voted on by selecting the up or down arrows for each route. Clicking on a route gives you more details about the route.</p>
+        <p class="text-justify">Once the time has elapsed for Stage 2, the route with the highest number of votes (or a random route will be selected if joint highest) will be displayed to all users. The stops of the route can be seen and a visualisation of the route can be
+            seen on the map. </p>
+        <h3><strong>Create A Plan</strong></h3>
+        <p class="text-justify">Once successfully logged in, a new plan can be created. From the Home Page you can click Create a Plan. You will need to enter the following details:</p>
+        <ul>
+            <li><strong>Name of the Plan</strong> - This is the name of your plan that can you can use to identify your plans easily when you choose to view your plans</li>
+            <li><strong>Events Close Time (Stage 1) </strong>- This is the time when you would like to end the voting and the suggestions of places you and your friends would like to visit. Please see Stage 1 for more details.</li>
+            <li><strong>Routes Close Time (Stage 2) </strong>- This is the time when you would like to end the voting and the suggestions of routes you and your friends would like to create. Please see Stage 2 for more details.</li>
+            <li><strong>Time of Plan</strong> - This is the time of when your plan is taking place.</li>
+        </ul>
+        <h3><strong>View or Join an Existing Plan </strong></h3>
+        <p class="text-justify">From the Home Page you can click View or Join an Existing Plan. Here, you can view the plans you have already join or join a new plan using a join in code. You can then click on an event to view it.</p>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>

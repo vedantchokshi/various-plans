@@ -30,10 +30,11 @@
         <h2 id="navbar">
           <a id="navbar-logo-link" href="/">
             <img src="static/assets/img/vp-logo.png" id="navbar-logo">
-            <small id="heading-title"> <strong>Various</strong> Plans</small>
+            <small class="heading-title"> <strong>Various</strong> Plans</small>
           </a>
+          <small class="heading-title" style="margin-left:0px;">|&nbsp;&nbsp;&nbsp{{ plan.name }}</small>
           <div class="btn-group" role="group" id="nav-buttons">
-            <a class="btn btn-link link-buttons" role="button" id="help" href="/help">
+            <a class="btn btn-link link-buttons" role="button" id="help" href="/help" target="_blank">
               <strong>Help</strong><i class="glyphicon glyphicon-question-sign"></i>
             </a>
             <a class="btn btn-link link-buttons" role="button" id="join-id-button">
@@ -96,10 +97,10 @@
                 </div>
                 <div class="modal-body"><span id="place-details"> </span>
                     <div class="row">
-                        <div class="col-md-12"><label>Event Name</label><input type="text" id="event-name"><span class="error-message"></span></div>
+                        <div class="col-md-12"><label>Event Name</label><input type="text" id="event-name"></div>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" type="button" id="add-place">Add </button></div>
+                <div class="modal-footer"><span class="error-message" style="float:left; padding: 15px 0;"></span><button class="btn btn-primary" type="button" id="add-place">Add </button></div>
             </div>
         </div>
     </div>
@@ -112,7 +113,7 @@
                 <div class="modal-body">
                   <div class="row">
                       <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"><label>Route Name</label></div>
-                      <div class="col-lg-9 col-lg-pull-1 col-md-9 col-md-pull-1 col-sm-9 col-sm-pull-1 col-xs-9 col-xs-pull-1"><input type="text" id="route-name" class="modal-textfield"><span class="error-message"> </span></div>
+                      <div class="col-lg-9 col-lg-pull-1 col-md-9 col-md-pull-1 col-sm-9 col-sm-pull-1 col-xs-9 col-xs-pull-1"><input type="text" id="route-name" class="modal-textfield"></div>
                   </div>
                   <div class="row">
                       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -125,7 +126,7 @@
                       </div>
                   </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" type="button" id="add-route" style="background-color:#337ab7;">Add </button></div>
+                <div class="modal-footer"><span class="error-message" style="float:left; padding: 15px 0;"></span><button class="btn btn-primary" type="button" id="add-route" style="background-color:#337ab7;">Add </button></div>
             </div>
         </div>
     </div>

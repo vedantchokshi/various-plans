@@ -12,7 +12,7 @@ def get_routes(plan):
     This list is filtered to the winning route if the plan is
     in phases 3 and 4.
     """
-    if plan.timephase < 3:
+    if plan.phase < 3:
         return plan.routes_all.all()
     routes = [x for x in plan.routes_all.all() if x.votes > 0]
     return [routes[0]] if routes else []
@@ -48,6 +48,14 @@ class Route(DB.Model):
         self.name = name
         self.user_vote_state = None
 
+    def check_user(self, userid):
+        """
+        Check if a user is allowed to access the route's plan
+
+        :param str userid: Google auth user ID
+        """
+        return self.plan.check_user(userid)
+
     @property
     def eventids(self):
         """
@@ -81,6 +89,7 @@ def get_from_id(routeid, userid):
     route = Route.query.get(routeid)
     if route is None:
         raise ResourceNotFound("There is no route with the ID '{}'".format(routeid))
+    route.check_user(userid)
     route.userVoteState = route.get_vote(userid)
     return route
 

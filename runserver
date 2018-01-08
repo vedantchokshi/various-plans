@@ -1,4 +1,0 @@
-#!/bin/bash
-
-./cloud_sql_proxy -instances="various-plans:europe-west1:library"=tcp:3306 &
-python2.7 /bin/dev_appserver.py app.yaml

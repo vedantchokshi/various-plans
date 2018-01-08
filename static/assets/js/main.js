@@ -99,7 +99,6 @@ function displayEventInfo(event) {
     $(submenu).find(".menu-content").empty();
     $(submenu).find(".menu-content")
         .append($("<span>", {text: "Name: " + event.name})).append("<br>")
-        .append($("<span>", {text: "Description: <Add desc pls>"})).append("<br>")
         .append($("<span>", {text: "Current Votes: " + String(event.votes)})).append("<br>")
         .append($("<span>", {text: "Venue: " + event.place.name})).append("<br>")
         .append($("<span>", {text: "Address: " + event.place.formatted_address})).append("<br>");
@@ -120,13 +119,18 @@ function displayEventInfo(event) {
 
 function displayRouteInfo(route) {
     localSession.sidebarMenuIndex++;
+
+    //Work out total walking duration
+    var duration = 0;
+    route.direction.routes[0].legs.forEach(function(leg) { duration += leg.duration.value; });
+
     var submenu = "#sidebar-sub" + localSession.sidebarMenuIndex;
     $(submenu).find(".menu-heading").html("Route Info");
     $(submenu).find(".menu-content").empty();
     $(submenu).find(".menu-content")
         .append($("<span>", {text: "Name: " + route.name})).append("<br>")
-        .append($("<span>", {text: "Description: <Add desc pls>"})).append("<br>")
         .append($("<span>", {text: "Current Votes: " + String(route.votes)})).append("<br>")
+        .append($("<span>", {text: "Estimated Route Walking Time: " + millistoReadable(duration*1000)})).append("<br>")
         .append($("<span>", {text: "Stops"})).append("<br>");
 
     //Add each event to info page
@@ -140,7 +144,9 @@ function displayRouteInfo(route) {
         openMenu(localSession.sidebarMenuIndex);
         //Make all route lines and markers visible again
         localSession.routes.forEach(function(route) {
+          if(route !== "invalid") {
             route.setVisibleOnMap(true);
+          }
         });
         localSession.events.forEach(function(event) {
             event.setVisibleOnMap(true);
@@ -172,6 +178,27 @@ function updateTimeDiv(millis){
     $("#time-div").find(".number-days").html(days);
 }
 
+function millistoReadable(millis) {
+    var days, hours, mins, secs, readable = "";
+    secs = Math.floor(millis / 1000);
+    mins = Math.floor(secs / 60);
+    secs = secs % 60;
+    hours = Math.floor(mins / 60);
+    mins = mins % 60;
+    days = Math.floor(hours / 24);
+    hours = hours % 24;
+
+    if(days > 0)
+      readable += days + " days, ";
+    if(hours > 0)
+      readable += hours + " hours, ";
+    if(mins > 0)
+      readable += mins + " mins, ";
+    if(secs > 0)
+      readable += secs + " secs, ";
+    return readable;
+}
+
 function pollServer() {
     //console.log("Polling Server...");
     //Get current phase that session is in
@@ -190,6 +217,7 @@ function pollServer() {
         //Event voting phase, update events
         updateEventOrRoute(true, true, true).then(null, function(error_obj) {
           console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+          //No Errors Intended for Users Here...
         });
     } else if(phase == 2) {
         //Route voting phase
@@ -199,6 +227,7 @@ function pollServer() {
         //Update Routes
         updateEventOrRoute(true, true, false).then(null, function(error_obj) {
           console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+          //No Errors Intended for Users Here...
         });
     } else if (phase == 3) {
         //Final route phase
@@ -218,7 +247,7 @@ function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
   var sideBarContainer = isEvents ? "#sidebar-menu .menu-content" : "#sidebar-menu #route-list";
 
   return new Promise(function(updateSuccess, updateError) {
-    apiCall(localSession.plan.id).then(function(response){
+    apiCall(localSession.plan.id).then(function(response) {
       var serverResponse = response.results;
       var promises = [];
       serverResponse.forEach(function(r) {
@@ -246,11 +275,17 @@ function updateEventOrRoute(displayNewEntries, displayOnMap, isEvents) {
           }, function(error_status) {
             var eventRoute = isEvents ? "event" : "route";
             console.error("Error in creating " + eventRoute + ": " + error_status);
-            //Reset local list
-            localList[r.id] = undefined;
+            if(error_status === "ZERO_RESULTS") {
+              //Invalidate Entry
+              localList[r.id] = "invalid";
+            }
+            else {
+              //Reset local list
+              localList[r.id] = undefined;
+            }
           });
-        } else if(localResult === "pending") {
-          //Do nothing, it is being handled by other call
+        } else if(localResult === "pending" || localResult === "invalid") {
+          //Do nothing, it is being handled by other call, or is just an invalid object stored in the backend which should be ignored.
         } else {
           //Otherwise update event object as it exists
           //Only update if this is the latest response from the server
@@ -331,17 +366,32 @@ var localSession = {
 
         //Add new events to map, but not sidebar
         return updateEventOrRoute(false, true, true).then(function() {
-            fitEventsOnMap(localSession.events);
+            //Count up valid events
+            var noEvents = 0;
+            localSession.events.forEach(function(event) {
+              if(event !== "invalid" && event !== "pending") {
+                noEvents++;
+              }
+            });
 
-            $("<button>", {"id": "add-route-button", "class": "btn btn-primary", "type": "button", text: "Add Route"})
-                .appendTo($("#sidebar-menu").find(".menu-content"))
-                .click(function() {
-                    $("#modal-route").modal("show");
-                });
+            if(noEvents === 0) {
+              //No Events agreed upon
+              popupModal.show("Plan Expired", "No preffered locations could be selected for this plan.").then(function() {
+                window.location = "/";
+              });
+            } else {
+              fitEventsOnMap(localSession.events);
+
+              $("<button>", {"id": "add-route-button", "class": "btn btn-primary", "type": "button", text: "Add Route"})
+              .appendTo($("#sidebar-menu").find(".menu-content"))
+              .click(function() {
+                $("#modal-route").modal("show");
+              });
+            }
         }, function(error_obj) {
-          //Api Load Events Error
+          console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+          //No Errors Intended for Users Here...
         });
-        //TODO: what if no one has submitted anything?
     },
     enterPhase3: function() {
         this.lastCheckedPhase = 3;
@@ -376,26 +426,44 @@ var localSession = {
             fitEventsOnMap(localSession.events);
 
             updateEventOrRoute(false, true, false).then(function(routes) {
-                fitEventsOnMap(localSession.events);
-                //In phase 3, /api/plan/<id>/routes returns singleton containing winning routes
-                var route = routes[0];
-                $("#sidebar-menu").find(".menu-content")
+                //Count up valid events
+                var noRoutes = 0;
+                localSession.routes.forEach(function(route) {
+                  if(route !== "invalid" && route !== "pending") {
+                    noRoutes++;
+                  }
+                });
+
+                if(noRoutes === 0) {
+                  //No Events agreed upon
+                  popupModal.show("Plan Expired", "No routes were added to this plan.").then(function() {
+                    window.location = "/";
+                  });
+                } else {
+                  fitEventsOnMap(localSession.events);
+                  //In phase 3, /api/plan/<id>/routes returns singleton containing winning routes
+                  var route = routes[0];
+                  var duration = 0;
+                  route.direction.routes[0].legs.forEach(function(leg) { duration += leg.duration.value; });
+                  $("#sidebar-menu").find(".menu-content")
                     .append($("<span>", {text: "Name: " + route.name})).append("<br>")
-                    .append($("<span>", {text: "Description: <Add desc pls>"})).append("<br>")
-                    .append($("<span>", {text: "Current Votes: " + String(route.votes)})).append("<br>")
+                    .append($("<span>", {text: "Votes: " + String(route.votes)})).append("<br>")
+                    .append($("<span>", {text: "Estimated Route Walking Time: " + millistoReadable(duration*1000)})).append("<br>")
                     .append($("<span>", {text: "Stops"})).append("<br>");
 
                 //Add each event to info page
                 route.getIncludedEvents().forEach(function(route) {
                     route.displayUI($("#sidebar-menu").find(".menu-content"), false);
                 });
+              }
             }, function(error_obj) {
-              //Api Load Routes Error
+              console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+              //No Errors Intended for Users Here...
             });
         }, function(error_obj) {
-            //Api Load Events Error
+          console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+          //No Errors Intended for Users Here...
         });
-        //TODO: what if no one has submitted anything?
     },
 
     initialise: function() {
@@ -422,6 +490,7 @@ var localSession = {
                     fitEventsOnMap(localSession.events);
                 }, function(error_obj) {
                   console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+                  //No Errors Intended for Users Here...
                 });
             case 2:
                 return this.enterPhase2();
@@ -551,7 +620,7 @@ var localSession = {
 
         $("#join-id-button").click(function() {
           copyToClipboard(localSession.plan.joinid);
-          alert("Join ID copied to clipboard.");
+          popupModal.show("", "Join ID copied to clipboard.");
         });
 
         $("#modal-place").on('show.bs.modal', function (event) {
@@ -572,6 +641,8 @@ var localSession = {
                     //Remove the markers for the other search results
                     removeMarkersFromMap(localSession.searchmarkers);
                     localSession.searchmarkers = [];
+                    //Clear Search Box Text Content
+                    $("#map-search").val("");
                     //Notify server of event creation
                     api.event.create(inputName, localSession.plan.id, place.place_id).then(function(response) {
                       //Create event from server response
@@ -583,13 +654,14 @@ var localSession = {
                         //Reposition map
                         fitEventsOnMap(localSession.events);
                         modal.modal('hide');
-                      }, function() {
-                        //TODO: Better Error mesage
-                        alert("Couldn't add event.");
+                      }, function(status_code) {
+                        popupModal.show("", "Google API responded with error: " + status_code);
                       });
                     },
                     function(error_obj) {
                       console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+                      $("#modal-place").find(".error-message").html(error_obj.message);
+                      $("#modal-place").find(".error-message").hide().fadeIn();
                     });
                   }
             });
@@ -639,9 +711,17 @@ var localSession = {
                     route.display();
                     //TODO: Reposition map
                     $("#modal-route").modal('hide');
+                  }, function(status_code) {
+                    if(status_code === "ZERO_RESULTS") {
+                      popupModal.show("", "It is not possible to walk this route.");
+                    } else {
+                      popupModal.show("", "Google API responded with error: " + status_code);
+                    }
                   });
                 }, function(error_obj) {
                   console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+                  $("#modal-route").find(".error-message").html(error_obj.message);
+                  $("#modal-route").find(".error-message").hide().fadeIn();
                 });
               }
         });

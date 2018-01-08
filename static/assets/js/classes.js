@@ -63,6 +63,7 @@ class Votable {
       self.refreshUI();
     }, function(error_obj) {
       console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+      popupModal.show("Could not vote", error_obj.message);
     });
   }
 
@@ -82,6 +83,7 @@ class Votable {
       self.refreshUI();
     }, function(error_obj) {
       console.error("API ERROR CODE " + error_obj.status_code + ": " + error_obj.message);
+      popupModal.show("Could not vote", error_obj.message);
     });
   }
 
@@ -199,8 +201,10 @@ class Event extends Votable {
           self.highlightMarker(true);
           self.dom.highlight(true);
           localSession.routes.forEach(function(route) {
-              if(route.eventidList.includes(self.id))
-                  route.dom.highlight(true);
+              if(route !== "invalid") {
+                if(route.eventidList.includes(self.id))
+                    route.dom.highlight(true);
+              }
           });
       });
 
@@ -208,8 +212,10 @@ class Event extends Votable {
           self.highlightMarker(false);
           self.dom.highlight(false);
           localSession.routes.forEach(function(route) {
+            if(route !== "invalid") {
               if(route.eventidList.includes(self.id))
                   route.dom.highlight(false);
+            }
           });
       });
   }
@@ -299,8 +305,10 @@ class Route extends Votable {
     //Remove other lines
     var thisId = this.id;
     localSession.routes.forEach(function(route) {
-        if(route.id !== thisId)
-            route.setVisibleOnMap(false);
+        if(route !== "invalid") {
+          if(route.id !== thisId)
+              route.setVisibleOnMap(false);
+        }
     });
     //Show info in the menu
     displayRouteInfo(this);
@@ -311,8 +319,10 @@ class Route extends Votable {
       //Fade out other lines
       var thisId = this.id;
       localSession.routes.forEach(function(route) {
+        if(route !== "invalid") {
           if(route.id !== thisId)
             route.editLineOptions({ strokeOpacity: 0 });
+        }
       });
       //Enlarge included event markers
       this.eventidList.forEach(function(eventId) {
@@ -324,7 +334,9 @@ class Route extends Votable {
       super.mouseout();
       //Reset line opacities
       localSession.routes.forEach(function(route) {
+        if(route !== "invalid") {
           route.editLineOptions({ strokeOpacity: 0.6 });
+        }
       });
       //Reset included event markers
       this.eventidList.forEach(function(eventId) {

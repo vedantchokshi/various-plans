@@ -1,3 +1,6 @@
+"""
+EventVote and RouteVote objects and voting functions for other models
+"""
 from back_end.db import DB, STR_LEN
 from back_end.db import routes, events
 from back_end.exceptions import InvalidRequest
@@ -14,6 +17,10 @@ routes.Route.get_vote = lambda self, userid: get_route_vote(self.id, userid)
 
 
 class EventVote(DB.Model):
+    # pylint: disable-msg=too-few-public-methods
+    """
+    EventVote object that records how a user voted on an event
+    """
     __tablename__ = 'EventVote'
     eventid = DB.Column(DB.Integer, DB.ForeignKey('Events.id'), primary_key=True)
     userid = DB.Column(DB.String(STR_LEN), nullable=False, primary_key=True)
@@ -28,11 +35,23 @@ class EventVote(DB.Model):
 
     @property
     def serialise(self):
-        s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        return s
+        """
+        Used to create a dictionary for jsonifying
+
+        :return: dictionary representation of EventVote object
+        """
+        result = dict()
+        result['eventid'] = self.eventid
+        result['userid'] = self.userid
+        result['vote'] = self.vote
+        return result
 
 
 class RouteVote(DB.Model):
+    # pylint: disable-msg=too-few-public-methods
+    """
+    RouteVote object that records how a user voted on a route
+    """
     __tablename__ = 'RouteVote'
     routeid = DB.Column(DB.Integer, DB.ForeignKey('Routes.id'), primary_key=True)
     userid = DB.Column(DB.String(STR_LEN), nullable=False, primary_key=True)
@@ -47,56 +66,69 @@ class RouteVote(DB.Model):
 
     @property
     def serialise(self):
-        s = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        return s
+        """
+        Used to create a dictionary for jsonifying
 
+        :return: dictionary representation of RouteVote object
+        """
+        result = dict()
+        result['routeid'] = self.routeid
+        result['userid'] = self.userid
+        result['vote'] = self.vote
+        return result
 
-# TODO validate arguments
-# TODO throw errors not None?
 
 def get_event_vote(eventid, userid):
-    ev = EventVote.query.get((eventid, userid))
-    if ev is None:
+    """
+    Get how a user voted on an event
+    """
+    event_vote = EventVote.query.get((eventid, userid))
+    if event_vote is None:
         return 0
-    return ev.vote
+    return event_vote.vote
 
 
 def get_route_vote(routeid, userid):
-    rv = RouteVote.query.get((routeid, userid))
-    if rv is None:
+    """
+    Get how a user voted on a route
+    """
+    route_vote = RouteVote.query.get((routeid, userid))
+    if route_vote is None:
         return 0
-    return rv.vote
+    return route_vote.vote
 
 
 def _set_event_vote(eventid, userid, vote):
-    e = events.get_from_id(eventid, userid)
-    if e.plan.phase != 1:
-        raise InvalidRequest("{} (Plan '{}') is not in the event voting stage, cannot vote on {} (Event '{}')".format(e.plan.name, e.plan.id, e.name, e.id))
-        #raise InvalidRequest("Plan '{}' is not in phase 1, cannot vote on Event '{}'".format(e.plan.id, e.id))
-    ev = EventVote.query.get((eventid, userid))
-    if ev is None:
-        ev = EventVote(eventid, userid, vote)
-        DB.session.add(ev)
+    event = events.get_from_id(eventid, userid)
+    if event.plan.phase != 1:
+        raise InvalidRequest(
+            "{} (Plan '{}') is not in the event voting stage, cannot vote on {} (Event '{}')"
+            .format(event.plan.name, event.plan.id, event.name, event.id))
+    event_vote = EventVote.query.get((eventid, userid))
+    if event_vote is None:
+        event_vote = EventVote(eventid, userid, vote)
+        DB.session.add(event_vote)
     else:
-        ev.vote = vote
+        event_vote.vote = vote
 
     DB.session.commit()
-    e.userVoteState = e.get_vote(userid)
-    return e
+    event.userVoteState = event.get_vote(userid)
+    return event
 
 
 def _set_route_vote(routeid, userid, vote):
-    r = routes.get_from_id(routeid, userid)
-    if r.plan.phase != 2:
-        raise InvalidRequest("{} (Plan '{}') is not in the route voting stage, cannot vote on {} (Route '{}')".format(r.plan.name, r.plan.id, r.name, r.id))
-        #raise InvalidRequest("Plan '{}' is not in phase 2, cannot vote on Route '{}'".format(r.plan.id, r.id))
-    rv = RouteVote.query.get((routeid, userid))
-    if rv is None:
-        rv = RouteVote(routeid, userid, vote)
-        DB.session.add(rv)
+    route = routes.get_from_id(routeid, userid)
+    if route.plan.phase != 2:
+        raise InvalidRequest(
+            "{} (Plan '{}') is not in the route voting stage, cannot vote on {} (Route '{}')"
+            .format(route.plan.name, route.plan.id, route.name, route.id))
+    route_vote = RouteVote.query.get((routeid, userid))
+    if route_vote is None:
+        route_vote = RouteVote(routeid, userid, vote)
+        DB.session.add(route_vote)
     else:
-        rv.vote = vote
+        route_vote.vote = vote
 
     DB.session.commit()
-    r.userVoteState = r.get_vote(userid)
-    return r
+    route.userVoteState = route.get_vote(userid)
+    return route

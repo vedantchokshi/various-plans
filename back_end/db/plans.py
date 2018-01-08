@@ -47,13 +47,12 @@ class Plan(DB.Model):
         Check if a user is allowed to access the plan
 
         :param str userid: Google auth user ID
-        :return: True if user has joined the plan, False otherwise
-        :rtype: bool
         """
-        return userid in [u.userid for u in self.users]
+        if not userid in [u.userid for u in self.users]:
+            raise Unauthorized("You are not authorized for Plan '{}'".format(self.id))
 
     @property
-    def timephase(self):
+    def phase(self):
         """
         :return: the phase of the plan based on time
         :rtype: int
@@ -68,26 +67,13 @@ class Plan(DB.Model):
         return 4
 
     @property
-    def phase(self):
-        """
-        :return: the phase of the plan
-        :rtype: int
-        """
-        # p = self.timephase
-        # if p > 1 and len(self.events) == 0:
-        #     return 4
-        # if p > 2 and len(self.routes) == 0:
-        #     return 4
-        # return p
-        return self.timephase
-
-    @property
     def serialise(self):
         """
         Used to create a dictionary for jsonifying
 
         :return: dictionary representation of Plan object
         """
+        # pylint: disable-msg=duplicate-code
         result = dict()
         result['id'] = self.id
         result['name'] = self.name
@@ -132,8 +118,7 @@ def get_from_id(planid, userid):
     plan = Plan.query.get(planid)
     if plan is None:
         raise ResourceNotFound("There is no plan with the ID '{}'".format(planid))
-    if not plan.check_user(userid):
-        raise Unauthorized("You are not authorized for Plan '{}'".format(planid))
+    plan.check_user(userid)
     return plan
 
 

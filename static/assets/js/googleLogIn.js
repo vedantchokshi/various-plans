@@ -25,8 +25,7 @@ function initGapiSignin() {
       });
     }
   }, function(){
-    //On Error:
-    //TODO: Error Handling
+    popupModal.show("Error Loading Google API", "A problem occurred while initialising the Google Sign In API.");
   });
 
 }
