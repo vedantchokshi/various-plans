@@ -47,6 +47,9 @@ class Route(DB.Model):
         self.name = name
         self.user_vote_state = None
 
+    def check_user(self, userid):
+        return self.plan.check_user(userid)
+
     @property
     def eventids(self):
         """
@@ -80,6 +83,7 @@ def get_from_id(routeid, userid):
     route = Route.query.get(routeid)
     if route is None:
         raise ResourceNotFound("There is no route with the ID '{}'".format(routeid))
+    route.check_user(userid)
     route.userVoteState = route.get_vote(userid)
     return route
 
