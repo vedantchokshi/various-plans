@@ -43,13 +43,10 @@ def disp_help():
 def disp_plan(planid):
     token = request.cookies.get('vp-token')
     if token is None:
-        # TODO change this to template with script to redo request with header
         return redirect(url_for('index'))
     try:
         userid = get_userid_from_token(token)
         plan = be.db.plans.get_from_id(planid, userid)
-        # if plan.phase == 4:
-        #     raise InvalidRequest("Plan has ended")
     except BaseApiException:
         return redirect(url_for('index'))
     return render_template('main.html', plan=plan)

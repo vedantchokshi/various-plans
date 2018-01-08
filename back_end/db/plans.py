@@ -47,10 +47,9 @@ class Plan(DB.Model):
         Check if a user is allowed to access the plan
 
         :param str userid: Google auth user ID
-        :return: True if user has joined the plan, False otherwise
-        :rtype: bool
         """
-        return userid in [u.userid for u in self.users]
+        if not userid in [u.userid for u in self.users]:
+            raise Unauthorized("You are not authorized for Plan '{}'".format(self.id))
 
     @property
     def timephase(self):
@@ -88,6 +87,7 @@ class Plan(DB.Model):
 
         :return: dictionary representation of Plan object
         """
+        # pylint: disable-msg=duplicate-code
         result = dict()
         result['id'] = self.id
         result['name'] = self.name
@@ -132,8 +132,7 @@ def get_from_id(planid, userid):
     plan = Plan.query.get(planid)
     if plan is None:
         raise ResourceNotFound("There is no plan with the ID '{}'".format(planid))
-    if not plan.check_user(userid):
-        raise Unauthorized("You are not authorized for Plan '{}'".format(planid))
+    plan.check_user(userid)
     return plan
 
 

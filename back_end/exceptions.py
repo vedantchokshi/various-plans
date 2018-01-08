@@ -1,4 +1,12 @@
+"""
+All exceptions used by API and database
+"""
+
+
 class BaseApiException(Exception):
+    """
+    Base exception class for all API exceptions
+    """
     status_code = 500
     content = {}
 
@@ -12,26 +20,43 @@ class BaseApiException(Exception):
 
     @property
     def serialise(self):
-        rv = dict()
-        rv['message'] = self.message
-        rv['status_code'] = self.status_code
+        """
+        Used to create a dictionary for jsonifying
+
+        :return: dictionary representation of Exception object
+        """
+        result = dict()
+        result['message'] = self.message
+        result['status_code'] = self.status_code
         if self.content is not None:
             for key, value in self.content.items():
-                rv[key] = value
-        return rv
+                result[key] = value
+        return result
 
 
 class InvalidRequest(BaseApiException):
+    """
+    Request did not make sense
+    """
     status_code = 400
 
 
 class Unauthorized(BaseApiException):
+    """
+    User is unauthorized to make the request
+    """
     status_code = 401
 
 
 class ResourceNotFound(BaseApiException):
+    """
+    Resource requests was not found
+    """
     status_code = 404
 
 
 class InvalidContent(BaseApiException):
+    """
+    Request content did not make sense
+    """
     status_code = 422
