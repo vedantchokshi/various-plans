@@ -656,8 +656,16 @@ var localSession = {
           $("#display-row").height($(window).height() - $("#header").height() - 16);
 
           $("#places-list").css("max-height", ($("#map").height() - $("#time-div").height() - $("#sidebar-menu").find(".menu-heading").height() - 50));
-          if($(window).width() <= 767)
+
+
+          $("#sidebar-sub1").find(".menu-content").css("max-height", ($("#map").height() - $("#time-div").height() - $("#sidebar-sub1").find(".menu-heading").height() - 76));
+          $("#sidebar-sub2").find(".menu-content").css("max-height", ($("#map").height() - $("#time-div").height() - $("#sidebar-sub2").find(".menu-heading").height() - 76));
+
+          if($(window).width() <= 767) {
             $("#places-list").css("max-height", "");
+            $("#sidebar-sub1").find(".menu-content").css("max-height", "");
+            $("#sidebar-sub2").find(".menu-content").css("max-height", "");
+          }
         };
 
         //Adjust Heights to fit page whenever resized

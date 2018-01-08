@@ -12,6 +12,10 @@
   overflow-x:hidden;
 }
 
+.menu-content {
+  overflow-y: auto;
+}
+
 .vote-entry-count {
   display:inline-block;
   width:100%;
