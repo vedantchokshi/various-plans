@@ -18,12 +18,28 @@ be.init(app)
 from back_end import db
 from back_end.db import plans
 
-if app.debug:
-    # DEV reset
-    @app.route('/reset', methods=['GET'])
-    def reset():
-        be.db.reset()
-        return 'Reset!'
+
+# reset
+@app.route('/reset', methods=['GET'])
+def reset():
+    admins = [
+        111355985876555375664,
+        110280863980572958575
+    ]
+    try:
+        token = request.cookies.get('vp-token')
+        if token is None:
+            raise ValueError
+        userid = get_userid_from_token(token)
+        if userid in admins:
+            be.db.reset()
+            return 'Reset!'
+        else:
+            return 'You are not an admin...'
+    except Exception:
+        pass
+    finally:
+        return redirect(url_for('index'))
 
 
 # [homepage]
