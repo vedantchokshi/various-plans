@@ -7,13 +7,14 @@ import config
 from back_end.api import get_userid_from_token
 from back_end.exceptions import BaseApiException
 
+# pylint: disable-msg=invalid-name
+# app is not a constant
 app = Flask(__name__)
 app.config.from_object(config)
-# TODO change when final release
-app.debug = True
 
 be.init(app)
 
+# pylint: disable-msg=wrong-import-position
 # Imports must be done after back_end.init(app)
 from back_end import db
 from back_end.db import plans
@@ -23,8 +24,9 @@ from back_end.db import plans
 @app.route('/reset', methods=['GET'])
 def reset():
     admins = [
-        111355985876555375664,
-        110280863980572958575
+        111355985876555375664,  # Rhys
+        110280863980572958575,  # Michael
+        112445590598446036440   # Archie
     ]
     try:
         token = request.cookies.get('vp-token')
@@ -34,9 +36,8 @@ def reset():
         if int(userid) in admins:
             be.db.reset()
             return 'Reset!'
-        else:
-            return 'You are not an admin...'
-    except Exception:
+        return 'You are not an admin...'
+    except (BaseApiException, ValueError):
         return redirect(url_for('index'))
 
 
