@@ -63,7 +63,7 @@ body {
   background-image:url("../../assets/img/background.jpg");
   background-repeat:no-repeat;
   background-blend-mode:multiply;
-  background-size:auto;
+  background-size:cover;
   background-attachment: fixed;
   font-family:Roboto, sans-serif;
 }
