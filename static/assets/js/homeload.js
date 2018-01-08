@@ -38,9 +38,12 @@ $(document).ready(function() {
     $("#create-plan-modal").find(".error-message").hide();
   });
 
+  $("#join-plan-add").on("show.bs.modal", function() {
+    $("#join-plan-add").find(".error-message").hide();
+  });
+
   //Functionality for create plan button
   $("#create-plan").click(function() {
-    //TODO: Feedback for empty fields
     var name = $("#planTextBox").val();
     var eventVC = $("#locationVoteCloseText").datetimepicker("getDate");
     if(eventVC !== undefined && eventVC !== null)
@@ -67,7 +70,6 @@ $(document).ready(function() {
 
   //Functionality for the Join Plan 'Add' button
   $("#join-plan-add").click(function() {
-    //TODO: Feedback for empty field
     var joinId = $("#join-code").val();
     api.plan.join(joinId).then(function(plan) {
       $("#plan-list-header").html("Your Plans");
@@ -76,7 +78,8 @@ $(document).ready(function() {
     },
     function(error_obj){
       console.error("API ERROR " + error_obj.status_code + ": " + error_obj.message);
-      popupModal.show("Cannot Join Plan", error_obj.message);
+      $("#join-plan-modal").find(".error-message").html(error_obj.message);
+      $("#join-plan-modal").find(".error-message").hide().fadeIn();
     });
   });
 });
