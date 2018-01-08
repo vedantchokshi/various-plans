@@ -25,7 +25,7 @@ def get_route(routeid, userid):
 @token_decorator
 def get_events_from_plan(routeid, userid):
     """
-    Returns the list of events in JSON format containing all events 
+    Returns the list of events in JSON format containing all events
     belonging to a route with the `routeid` provided in URL.
     """
     return routes.get_from_id(routeid, userid).events, 200
@@ -42,8 +42,7 @@ def vote_route(routeid, userid):
     """
     json = request.get_json()
     if json is None:
-        raise InvalidContent("A problem occured when voting on the route.")
-        #raise InvalidContent("Empty json not a valid route vote object")
+        raise InvalidContent("A problem occurred when voting on the route")
     return routes.vote(routeid, userid, json.get('vote')), 201
 
 
@@ -57,6 +56,5 @@ def create_route(userid):
     """
     json = request.get_json()
     if json is None:
-        raise InvalidContent("A problem occured when creating the route.")
-        #raise InvalidContent("Empty json not a valid route object")
+        raise InvalidContent("A problem occurred when creating the route")
     return routes.create(json.get('planid'), json.get('name'), json.get('eventidList'), userid), 201
