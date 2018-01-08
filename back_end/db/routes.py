@@ -48,6 +48,11 @@ class Route(DB.Model):
         self.user_vote_state = None
 
     def check_user(self, userid):
+        """
+        Check if a user is allowed to access the route's plan
+
+        :param str userid: Google auth user ID
+        """
         return self.plan.check_user(userid)
 
     @property
