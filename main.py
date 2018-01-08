@@ -31,7 +31,7 @@ def reset():
         if token is None:
             raise ValueError
         userid = get_userid_from_token(token)
-        if userid in admins:
+        if int(userid) in admins:
             be.db.reset()
             return 'Reset!'
         else:
