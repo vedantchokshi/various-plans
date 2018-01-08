@@ -40,6 +40,10 @@ class PhotoGallery {
     }
 
     scrollNext() {
+        //Lock buttons
+        this.nextButton.off("click");
+        this.prevButton.off("click");
+
         this.prevButton.show();
 
         if(this.index === this.count-2)
@@ -48,11 +52,18 @@ class PhotoGallery {
         if(this.index < this.count-1) {
             this.index++;
             var self = this;
-            this.repositionGallery();
+            this.repositionGallery().then(function(){
+              self.nextButton.off("click").click(function(){ self.scrollNext(); });
+              self.prevButton.off("click").click(function(){ self.scrollPrev(); });
+            });
         }
     }
 
     scrollPrev() {
+        //Lock buttons
+        this.nextButton.off("click");
+        this.prevButton.off("click");
+
         this.nextButton.show();
 
         if(this.index === 1)
@@ -60,7 +71,11 @@ class PhotoGallery {
 
         if(this.index > 0) {
             this.index--;
-            this.repositionGallery();
+            var self = this;
+            this.repositionGallery().then(function(){
+              self.nextButton.off("click").click(function(){ self.scrollNext(); });
+              self.prevButton.off("click").click(function(){ self.scrollPrev(); });
+            });
         }
     }
 
