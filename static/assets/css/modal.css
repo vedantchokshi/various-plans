@@ -104,10 +104,22 @@
   -webkit-box-shadow: 0 3px 0 0 rgb(220,220,220);
   -moz-box-shadow: 0 3px 0 0 rgb(220,220,220);
   cursor: pointer;
+  padding-left: 44px;
+  background-color: rgb(240,240,240);
+  background-image: url(../img/dropdown-arrow.svg);
+  background-repeat: no-repeat;
+  background-position-y: 16px;
 }
 
-.list-header.expandable:hover {
-  background-color: rgb(240,240,240);
+.list-header.expandable.expanded {
+  box-shadow: 0 3px 0 0 rgb(180,180,180);
+  -webkit-box-shadow: 0 3px 0 0 rgb(180,180,180);
+  -moz-box-shadow: 0 3px 0 0 rgb(220,220,220);
+  background-color: rgb(200,200,200);
+}
+
+.list-header.expandable:not(.expanded):hover {
+    background-color: rgb(230,230,230);
 }
 
 .route-sortable {
