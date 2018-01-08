@@ -147,6 +147,8 @@ def create(name, event_vote_close_time, route_vote_close_time, end_time, userid)
     if name is None or not name:
         # name is not in json or is the empty string
         raise InvalidContent("Please specify a name for the plan")
+    if len(name) > STR_LEN:
+        raise InvalidContent("Plan name is too long")
     if event_vote_close_time is None:
         raise InvalidContent("Please specify a time for event voting to end")
     if not str(event_vote_close_time).isdigit():
