@@ -16,7 +16,16 @@ def get_routes(plan):
         return plan.routes_all.all()
     routes = plan.routes_all.all()
     #routes = [x for x in plan.routes_all.all() if x.votes > 0]
-    return [routes[0]] if routes else []
+
+    if len(routes)<1:
+        ret = []
+    else:
+        maxVotedPlan = routes[0]
+        for x in routes[1:]:
+            if(x.votes>maxVotedPlan.votes): maxVotedPlan=x
+        ret = [maxVotedPlan]
+
+    return ret
 
 
 def count_routes(plan):
