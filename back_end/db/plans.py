@@ -103,6 +103,7 @@ class Plan(DB.Model):
 
 
 class Times(object):
+    # pylint: disable-msg=too-few-public-methods
     """
     Object to hold all the times needed to create a plan
 
